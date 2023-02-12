@@ -59,5 +59,6 @@ pnpm --filter nextjs dev
 
 3. Run prettier automatically on save
 https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code 
-
 ```
+
+### Make sure that pre-commit hook is running
