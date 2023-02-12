@@ -1,8 +1,8 @@
+import type { AppRouter } from "@acme/api";
+import { transformer } from "@acme/api/transformer";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@acme/api";
-import { transformer } from "@acme/api/transformer";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -19,15 +19,15 @@ export const api = createTRPCNext<AppRouter>({
         loggerLink({
           enabled: (opts) =>
             process.env.NODE_ENV === "development" ||
-            (opts.direction === "down" && opts.result instanceof Error),
+            (opts.direction === "down" && opts.result instanceof Error)
         }),
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
-      ],
+          url: `${getBaseUrl()}/api/trpc`
+        })
+      ]
     };
   },
-  ssr: false,
+  ssr: false
 });
 
 /**

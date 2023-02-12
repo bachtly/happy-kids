@@ -32,18 +32,32 @@ To get it running, follow the steps below:
 ### Setup dependencies
 
 ```
-# Install dependencies
+1. Install dependencies
 pnpm i
 
-# Configure environment variables.
-# There is an `.env.example` in the root directory you can use for reference
+2. Configure environment variables. There is an `.env.example` in the root directory you can use for reference
 cp .env.example .env
 
-# Push the Prisma schema to your database
+3. Push the Prisma schema to your database
 pnpm db:push
+
+4. Install Android Studio tools [as shown on expo docs](https://docs.expo.dev/workflow/android-studio-emulator/).
+
+5. Run at the project root folder.
+pnpm dev
+
+(Optional) It might be easier to run each app in separate terminal windows so you get the logs from each app separately
+pnpm --filter expo dev
+pnpm --filter nextjs dev
 ```
 
-### Configure Expo `dev`-script
+### Setup IDE
+```
+1. Download Webstorm 2022.3.x
 
-1. Install Android Studio tools [as shown on expo docs](https://docs.expo.dev/workflow/android-studio-emulator/).
-2. Run `pnpm dev` at the project root folder.
+2. Download prettier pluggin for Webstorm
+
+3. Run prettier automatically on save
+https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code 
+
+```

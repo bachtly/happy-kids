@@ -1,11 +1,11 @@
-import React from "react";
-import Constants from "expo-constants";
+import type { AppRouter } from "@acme/api";
+import { transformer } from "@acme/api/transformer";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@acme/api";
-import { transformer } from "@acme/api/transformer";
+import Constants from "expo-constants";
+import React from "react";
 
 /**
  * A set of typesafe hooks for consuming your API.
@@ -45,7 +45,7 @@ const getBaseUrl = () => {
  * Use only in _app.tsx
  */
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
+  children
 }) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const [trpcClient] = React.useState(() =>
@@ -53,10 +53,10 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
       transformer,
       links: [
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
-      ],
-    }),
+          url: `${getBaseUrl()}/api/trpc`
+        })
+      ]
+    })
   );
 
   return (

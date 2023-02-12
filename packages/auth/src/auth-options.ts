@@ -1,7 +1,7 @@
+import { prisma } from "@acme/db";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type DefaultSession, type NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
-import { prisma } from "@acme/db";
 
 /**
  * Module augmentation for `next-auth` types
@@ -37,14 +37,14 @@ export const authOptions: NextAuthOptions = {
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
-    },
+    }
   },
   adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID as string,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-    }),
+      clientSecret: process.env.DISCORD_CLIENT_SECRET as string
+    })
     /**
      * ...add more providers here
      *
@@ -54,5 +54,5 @@ export const authOptions: NextAuthOptions = {
      * NextAuth.js docs for the provider you want to use. Example:
      * @see https://next-auth.js.org/providers/github
      **/
-  ],
+  ]
 };

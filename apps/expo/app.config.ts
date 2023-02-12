@@ -10,29 +10,28 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: "light",
   splash: {
     image: "./assets/icon.png",
-    resizeMode: "contain",
-    backgroundColor: "#1F104A",
+    resizeMode: "contain"
   },
   updates: {
-    fallbackToCacheTimeout: 0,
+    fallbackToCacheTimeout: 0
   },
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: "your.bundle.identifier",
+    bundleIdentifier: "your.bundle.identifier"
   },
   android: {
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
-      backgroundColor: "#1F104A",
-    },
+      backgroundColor: "#1F104A"
+    }
   },
   extra: {
     eas: {
-      projectId: "your-project-id",
-    },
+      projectId: "your-project-id"
+    }
   },
-  plugins: ["./expo-plugins/with-modify-gradle.js"],
+  plugins: ["./expo-plugins/with-modify-gradle.js"]
 });
 
 export default defineConfig;

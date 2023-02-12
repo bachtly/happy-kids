@@ -5,11 +5,11 @@ module.exports = {
   singleQuote: false,
   jsxSingleQuote: false,
   semi: true,
-  trailingComma: "all",
+  trailingComma: "none",
   tabWidth: 2,
   plugins: [
     require.resolve("prettier-plugin-organize-imports"),
-    require.resolve("prettier-plugin-tailwindcss"),
+    require.resolve("prettier-plugin-tailwindcss")
   ],
   tailwindConfig: "./packages/config/tailwind",
   importOrder: [
@@ -23,12 +23,12 @@ module.exports = {
     "^~/components/(.*)$",
     "^~/styles/(.*)$",
     "^~/(.*)$",
-    "^[./]",
+    "^[./]"
   ],
   importOrderSeparation: false,
   importOrderSortSpecifiers: true,
   importOrderBuiltinModulesToTop: true,
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
   importOrderMergeDuplicateImports: true,
-  importOrderCombineTypeAndValueImports: true,
+  importOrderCombineTypeAndValueImports: true
 };

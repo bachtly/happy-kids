@@ -1,5 +1,5 @@
-import { SafeAreaView, Text, View } from "react-native";
 import { SplashScreen, Stack, useSearchParams } from "expo-router";
+import { SafeAreaView, Text, View } from "react-native";
 
 import { api } from "../../src/utils/api";
 
