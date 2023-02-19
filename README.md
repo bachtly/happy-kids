@@ -58,13 +58,14 @@ pnpm --filter nextjs dev
 ```
 
 ### Setup IDE
+
 ```
 1. Download Webstorm 2022.3.x
 
 2. Download prettier pluggin for Webstorm
 
 3. Run prettier automatically on save
-https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code 
+https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code
 ```
 
 ### Make sure that pre-commit hook is running

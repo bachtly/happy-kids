@@ -2,18 +2,16 @@ import { Kysely, MysqlDialect } from "kysely";
 import { DB } from "kysely-codegen";
 import mysql from "mysql2";
 
-export * from "@prisma/client";
-
 const globalForDB = globalThis as unknown as {
   mysqlDB: Kysely<DB>;
 };
 
 const pool = mysql.createPool({
-  host: "127.0.0.1",
-  user: "root",
-  password: "",
-  database: "KindergartenSchema",
-  port: 3306,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_SCHEMA,
+  port: parseInt(process.env.DB_PORT ?? "3000"),
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
