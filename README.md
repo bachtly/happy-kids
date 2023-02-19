@@ -22,7 +22,7 @@ packages
  ├─ auth
      └─ authentication using next-auth. **NOTE: Only for Next.js app, not Expo**
  └─ db
-     └─ typesafe db-calls using Prisma
+     └─ typesafe db-calls using Kysely
 ```
 
 ## Quick Start
@@ -32,18 +32,24 @@ To get it running, follow the steps below:
 ### Setup dependencies
 
 ```
-1. Install dependencies
+1. Node version
+v19.6.0
+
+2. Install dependencies
 pnpm i
 
-2. Configure environment variables. There is an `.env.example` in the root directory you can use for reference
+3. Configure environment variables. There is an `.env.example` in the root directory you can use for reference
 cp .env.example .env
 
-3. Push the Prisma schema to your database
-pnpm db:push
+4. Start Mysql Server
+mysql.server start
 
-4. Install Android Studio tools [as shown on expo docs](https://docs.expo.dev/workflow/android-studio-emulator/).
+5. Generate Kysely Models from Mysql
+pnpm kysely-codegen
 
-5. Run at the project root folder.
+6. Install Android Studio tools [as shown on expo docs](https://docs.expo.dev/workflow/android-studio-emulator/).
+
+7. Run at the project root folder.
 pnpm dev
 
 (Optional) It might be easier to run each app in separate terminal windows so you get the logs from each app separately

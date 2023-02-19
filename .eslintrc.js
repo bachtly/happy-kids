@@ -2,16 +2,16 @@
 const config = {
   extends: ["prettier", "eslint:recommended"],
   parserOptions: {
-    ecmaVersion: "latest",
+    ecmaVersion: "latest"
   },
   env: {
-    es6: true,
+    es6: true
   },
   overrides: [
     {
       extends: [
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
       ],
       files: ["**/*.ts", "**/*.tsx"],
       parserOptions: {
@@ -20,20 +20,13 @@ const config = {
         project: [
           "./tsconfig.json",
           "./apps/*/tsconfig.json",
-          "./packages/*/tsconfig.json",
-        ],
+          "./packages/*/tsconfig.json"
+        ]
       },
       rules: {
-        "@typescript-eslint/no-unused-vars": [
-          "error",
-          {
-            argsIgnorePattern: "^_",
-            varsIgnorePattern: "^_",
-            caughtErrorsIgnorePattern: "^_",
-          },
-        ],
-      },
-    },
+        "@typescript-eslint/no-empty-function": "off"
+      }
+    }
   ],
   root: true,
   reportUnusedDisableDirectives: true,
@@ -41,8 +34,8 @@ const config = {
     ".eslintrc.js",
     "**/*.config.js",
     "**/*.config.cjs",
-    "packages/config/**",
-  ],
+    "packages/config/**"
+  ]
 };
 
 module.exports = config;

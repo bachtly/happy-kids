@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "eslint": "^8.32.0",
+    "reflect-metadata": "^0.1.13",
     "typescript": "^4.9.5"
   }
 }

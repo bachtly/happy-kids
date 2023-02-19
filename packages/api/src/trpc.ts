@@ -7,7 +7,7 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 import { getServerSession, type Session } from "@acme/auth";
-import { prisma } from "@acme/db";
+import { mysqlDB } from "@acme/db";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
@@ -38,7 +38,7 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
-    prisma
+    mysqlDB
   };
 };
 
