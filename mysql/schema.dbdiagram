@@ -1,22 +1,22 @@
 Table KindergartenSchema.School {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   name varchar
   address varchar
 }
 
 Table KindergartenSchema.Class {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   name varchar
   schoolYear int
 
-  schoolId binary(16) [ref: - KindergartenSchema.School.id]
+  schoolId varchar(36) [ref: - KindergartenSchema.School.id]
 }
 
 Table KindergartenSchema.StudentClassRelationship {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
 
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
-  classId binary(16) [ref: - KindergartenSchema.Class.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+  classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
 
 Enum KindergartenSchema.UserGroup {
@@ -26,7 +26,7 @@ Enum KindergartenSchema.UserGroup {
 }
 
 Table KindergartenSchema.User {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   username varchar [not null, unique]
   password varchar
   fullname varchar
@@ -34,69 +34,69 @@ Table KindergartenSchema.User {
   email varchar [null, unique]
   phone bigint [not null, unique]
 
-  schoolId binary(16) [ref: - KindergartenSchema.School.id]
+  schoolId varchar(36) [ref: - KindergartenSchema.School.id]
   employeeRole varchar
 
   userGroup KindergartenSchema.UserGroup [null]
 }
 
 Table KindergartenSchema.TeacherClassRelationship{
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
 
-  teacherId binary(16) [ref: - KindergartenSchema.User.id]
-  classId binary(16) [ref: - KindergartenSchema.Class.id]
+  teacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
 
 Table KindergartenSchema.Relative {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   fullname varchar
   phone bigint
   avatarUrl varchar
   note varchar
 
-  parentId binary(16) [ref: - KindergartenSchema.User.id]
+  parentId varchar(36) [ref: - KindergartenSchema.User.id]
 }
 
 Table KindergartenSchema.Student {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   fullname varchar
   avatarUrl varchar
   birthdate datetime
 
-  parentId binary(16) [ref: - KindergartenSchema.User.id]
+  parentId varchar(36) [ref: - KindergartenSchema.User.id]
 }
 
 Table KindergartenSchema.Post {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   createdAt datetime
   title varchar
   content text
 
-  employeeId binary(16) [ref: - KindergartenSchema.User.id]
+  employeeId varchar(36) [ref: - KindergartenSchema.User.id]
 }
 
 Table KindergartenSchema.UserCommentPostRelationship {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   content varchar
   time datetime
 
-  userId binary(16) [ref: - KindergartenSchema.User.id]
-  postId binary(16) [ref: - KindergartenSchema.Post.id]
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
+  postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
 
 Table KindergartenSchema.UserReactPostRelationship {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   time datetime
 
-  userId binary(16) [ref: - KindergartenSchema.User.id]
-  postId binary(16) [ref: - KindergartenSchema.Post.id]
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
+  postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
 
 Table KindergartenSchema.UserCanViewPostRelationship {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
 
-  userId binary(16) [ref: - KindergartenSchema.User.id]
-  postId binary(16) [ref: - KindergartenSchema.Post.id]
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
+  postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
 
 Enum KindergartenSchema.LetterStatusEnum {
@@ -106,7 +106,7 @@ Enum KindergartenSchema.LetterStatusEnum {
 }
 
 Table KindergartenSchema.LeaveLetter {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
 
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
@@ -115,12 +115,12 @@ Table KindergartenSchema.LeaveLetter {
   toTime datetime
   reason text
 
-  updatedByTeacherId binary(16) [ref: - KindergartenSchema.User.id]
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
+  updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Table KindergartenSchema.MedicineLetter {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
 
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
@@ -128,59 +128,59 @@ Table KindergartenSchema.MedicineLetter {
   isUsed bool
   note text
 
-  updatedByTeacherId binary(16) [ref: - KindergartenSchema.User.id]
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
+  updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Table KindergartenSchema.Medicine {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   name varchar
   photoUrl text
   amount varchar
 
-  medicineLetterId binary(16) [ref: - KindergartenSchema.MedicineLetter.id]
+  medicineLetterId varchar(36) [ref: - KindergartenSchema.MedicineLetter.id]
 }
 
 Table KindergartenSchema.MedicineUseTime {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   time datetime
 
-  medicineLetterId binary(16) [ref: - KindergartenSchema.MedicineLetter.id]
+  medicineLetterId varchar(36) [ref: - KindergartenSchema.MedicineLetter.id]
 }
 
 Table KindergartenSchema.PickupLetter {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   note varchar
   pickupTime datetime
 
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
 
-  pickerRelativeId binary(16) [ref: - KindergartenSchema.Relative.id]
-  updatedByTeacherId binary(16) [ref: - KindergartenSchema.User.id]
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
+  pickerRelativeId varchar(36) [ref: - KindergartenSchema.Relative.id]
+  updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Table KindergartenSchema.NoteLetter {
-  id binary(16) [pk]
+  id varchar(36) [pk]
 
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
 
   content text
 
-  updatedByTeacherId binary(16) [ref: - KindergartenSchema.User.id]
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
+  updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Table KindergartenSchema.NoteLetterReply {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   createdAt datetime
 
   content text
 
-  userId binary(16) [ref: - KindergartenSchema.User.id]
-  noteLetterId binary(16) [ref: - KindergartenSchema.NoteLetter.id]
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
+  noteLetterId varchar(36) [ref: - KindergartenSchema.NoteLetter.id]
 }
 
 Enum KindergartenSchema.CheckInStatusEnum {
@@ -191,7 +191,7 @@ Enum KindergartenSchema.CheckInStatusEnum {
 }
 
 Table KindergartenSchema.Attendance {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   date datetime
   checkinTime datetime
   checkoutTime datetime
@@ -201,53 +201,53 @@ Table KindergartenSchema.Attendance {
   checkoutPhotoUrl varchar
   status KindergartenSchema.CheckInStatusEnum
 
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
-  teacherId binary(16) [ref: - KindergartenSchema.User.id]
-  pickerRelativeId binary(16) [ref: - KindergartenSchema.Relative.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+  teacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  pickerRelativeId varchar(36) [ref: - KindergartenSchema.Relative.id]
 }
 
 Table KindergartenSchema.Timetable {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   startDate datetime
   weekNumber int
   fileUrl varchar
 
-  classId binary(16) [ref: - KindergartenSchema.Class.id]
+  classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
 
 Table KindergartenSchema.Lecture {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   startTime datetime
   endTime datetime
   name varchar
 
-  timetableId binary(16) [ref: - KindergartenSchema.Timetable.id]
+  timetableId varchar(36) [ref: - KindergartenSchema.Timetable.id]
 }
 
 Table KindergartenSchema.Menu {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   date datetime
 }
 
 Table KindergartenSchema.MenuClassRelationship {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
 
-  menuId binary(16) [ref: - KindergartenSchema.Menu.id]
-  classId binary(16) [ref: - KindergartenSchema.Class.id]
+  menuId varchar(36) [ref: - KindergartenSchema.Menu.id]
+  classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
 
 Table KindergartenSchema.Meal {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   time datetime
 
-  menuId binary(16) [ref: - KindergartenSchema.Menu.id]
+  menuId varchar(36) [ref: - KindergartenSchema.Menu.id]
 }
 
 Table KindergartenSchema.Dish {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   name  varchar
 
-  mealId binary(16) [ref: - KindergartenSchema.Meal.id]
+  mealId varchar(36) [ref: - KindergartenSchema.Meal.id]
 }
 
 Enum KindergartenSchema.ActivityEnum {
@@ -259,13 +259,13 @@ Enum KindergartenSchema.ActivityEnum {
 }
 
 Table KindergartenSchema.DailyRemark {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   date datetime
   activity KindergartenSchema.ActivityEnum
   content text
 
-  teacherId binary(16) [ref: - KindergartenSchema.User.id]
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
+  teacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Enum KindergartenSchema.RemarkPeriodEnum {
@@ -276,14 +276,14 @@ Enum KindergartenSchema.RemarkPeriodEnum {
 }
 
 Table KindergartenSchema.PeriodRemark {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   period KindergartenSchema.RemarkPeriodEnum
   content text
   startTime datetime
   endTime datetime
 
-  teacherId binary(16) [ref: - KindergartenSchema.User.id]
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
+  teacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Enum KindergartenSchema.TuitionFeeStatusEnum {
@@ -292,32 +292,32 @@ Enum KindergartenSchema.TuitionFeeStatusEnum {
 }
 
 Table KindergartenSchema.TuitionFee {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   status KindergartenSchema.TuitionFeeStatusEnum
   startTime datetime
   endTime datetime
   billUrl varchar
   amount bigint
 
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Table KindergartenSchema.Album {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   title varchar
   description text
 }
 
 Table KindergartenSchema.AlbumStudentRelationship {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
 
-  studentId binary(16) [ref: - KindergartenSchema.Student.id]
-  albumId binary(16) [ref: - KindergartenSchema.Album.id]
+  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+  albumId varchar(36) [ref: - KindergartenSchema.Album.id]
 }
 
 Table KindergartenSchema.AlbumPhoto {
-  id binary(16) [pk, default: `UUID_TO_BIN(UUID())`]
+  id varchar(36) [pk, default: `UUID()`]
   photoUrl text
 
-  albumId binary(16) [ref: - KindergartenSchema.Album.id]
+  albumId varchar(36) [ref: - KindergartenSchema.Album.id]
 }
