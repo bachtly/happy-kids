@@ -8,7 +8,12 @@
     "clean": "rm -rf .turbo node_modules",
     "with-env": "dotenv -e ../../.env --"
   },
+  "dependencies": {
+    "mysql2": "^3.1.2",
+    "kysely": "^0.23.4"
+  },
   "devDependencies": {
+    "kysely-codegen": "^0.9.0",
     "dotenv-cli": "^7.0.0",
     "typescript": "^4.9.5"
   }
