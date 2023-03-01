@@ -15,12 +15,15 @@ const RootLayout = () => {
         tabBarActiveTintColor: Theme.colors.white,
         tabBarLabelStyle: {
           textTransform: "capitalize"
+        },
+        tabBarIndicatorStyle: {
+          backgroundColor: Theme.colors.white
         }
       }}
     >
-      <Tab.Screen name={"History"} component={AttendanceHome}></Tab.Screen>
+      <Tab.Screen name={"Lịch sử"} component={AttendanceHome}></Tab.Screen>
       <Tab.Screen
-        name={"Statistics"}
+        name={"Thống kê"}
         component={AttendanceStatistics}
       ></Tab.Screen>
     </Tab.Navigator>
