@@ -1,7 +1,8 @@
 import { Moment } from "moment";
 import { useState } from "react";
-import { Modal, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import CalendarPicker from "react-native-calendar-picker";
+import { Modal, Portal } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
 interface DatePickerProps {
@@ -21,6 +22,7 @@ const DatePicker = (props: DatePickerProps) => {
   const onSelectDate = (date: Moment) => {
     if (timeStart == null || timeEnd != null) {
       setTimeStart(date);
+      setTimeEnd(null);
     } else {
       setTimeEnd(date);
     }
@@ -48,20 +50,26 @@ const DatePicker = (props: DatePickerProps) => {
 
   return (
     <View>
-      <Modal
-        visible={modelVisible}
-        onRequestClose={() => onCloseModel()}
-        onShow={() => onShowModel()}
-      >
-        <View>
-          <CalendarPicker
-            onDateChange={(date) => onSelectDate(date)}
-            allowRangeSelection={props.useRange}
-          />
-        </View>
-      </Modal>
+      <Portal>
+        <Modal
+          visible={modelVisible}
+          onDismiss={() => onCloseModel()}
+          style={{
+            alignItems: "center"
+          }}
+        >
+          <View className={"bg-white p-2"}>
+            <CalendarPicker
+              onDateChange={(date) => onSelectDate(date)}
+              allowRangeSelection={props.useRange}
+              // height={400}
+              width={320}
+            />
+          </View>
+        </Modal>
+      </Portal>
       <Pressable className={"flex-row"} onPress={() => setModelVisible(true)}>
-        <View className={"flex-row border-b-2 border-b-blue-500"}>
+        <View className={"flex-row border-b-2 border-b-cyan-400"}>
           <View className={" flex-row "}>
             <View>
               <Text className={"m-auto mb-1"}>
