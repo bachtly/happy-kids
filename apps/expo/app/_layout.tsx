@@ -47,9 +47,9 @@ const RootLayout = () => {
           <PaperProvider theme={theme}>
             <Stack
               screenOptions={{
-                headerTintColor: "#fff",
+                headerTintColor: theme.colors.background,
                 headerStyle: {
-                  backgroundColor: "#1750c9"
+                  backgroundColor: theme.colors.primary
                 }
               }}
             />
