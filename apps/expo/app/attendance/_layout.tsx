@@ -1,5 +1,5 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import Theme from "../../src/utils/theme";
+import { useTheme } from "react-native-paper";
 import AttendanceHome from "./index";
 import AttendanceStatistics from "./statistics";
 
@@ -8,16 +8,18 @@ const Tab = createMaterialTopTabNavigator();
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 const RootLayout = () => {
+  const { colors } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: { backgroundColor: Theme.colors.primary },
-        tabBarActiveTintColor: Theme.colors.white,
+        tabBarStyle: { backgroundColor: colors.primary },
+        tabBarActiveTintColor: colors.white,
         tabBarLabelStyle: {
           textTransform: "capitalize"
         },
         tabBarIndicatorStyle: {
-          backgroundColor: Theme.colors.white
+          backgroundColor: colors.white
         }
       }}
     >
