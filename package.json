@@ -7,6 +7,7 @@
   "packageManager": "pnpm@7.27.0",
   "dependencies": {
     "@manypkg/cli": "^0.20.0",
+    "@trpc/server": "^10.9.0",
     "@types/eslint": "^8.21.0",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",

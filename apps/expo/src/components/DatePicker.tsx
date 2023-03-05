@@ -1,36 +1,35 @@
 import { Moment } from "moment";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import CalendarPicker from "react-native-calendar-picker";
-import { Modal, Portal } from "react-native-paper";
+import { Button, Dialog, Portal, Text } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
 interface DatePickerProps {
   // React State passed from outside
   initTimeStart: Moment | null;
   initTimeEnd: Moment | null;
-  setTimeStart: (date: Moment | null) => void;
-  setTimeEnd: (date: Moment | null) => void;
+  setTimeStart: (date: Moment) => void;
+  setTimeEnd: (date: Moment) => void;
   useRange: boolean;
 }
 
 const DatePicker = (props: DatePickerProps) => {
-  const [modelVisible, setModelVisible] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [timeStart, setTimeStart] = useState<Moment | null>(null);
   const [timeEnd, setTimeEnd] = useState<Moment | null>(null);
 
-  const onSelectDate = (date: Moment) => {
-    if (timeStart == null || timeEnd != null) {
+  const showDialog = () => {
+    setDialogVisible(true);
+  };
+
+  const onSelectDate = (date: Moment, type: "START_DATE" | "END_DATE") => {
+    if (type == "START_DATE") {
       setTimeStart(date);
       setTimeEnd(null);
     } else {
       setTimeEnd(date);
     }
-  };
-
-  const onShowModel = () => {
-    setTimeStart(null);
-    setTimeEnd(null);
   };
 
   const onCloseModel = () => {
@@ -41,54 +40,72 @@ const DatePicker = (props: DatePickerProps) => {
     } else {
       props.setTimeStart(timeStart);
       props.setTimeEnd(timeEnd);
-      props.initTimeStart = timeStart;
-      props.initTimeEnd = timeEnd;
     }
 
-    setModelVisible(false);
+    setDialogVisible(false);
   };
 
   return (
     <View>
       <Portal>
-        <Modal
-          visible={modelVisible}
+        <Dialog
+          visible={dialogVisible}
           onDismiss={() => onCloseModel()}
           style={{
-            alignItems: "center"
+            alignItems: "center",
+            backgroundColor: "#fff"
           }}
         >
-          <View className={"bg-white p-2"}>
-            <CalendarPicker
-              onDateChange={(date) => onSelectDate(date)}
-              allowRangeSelection={props.useRange}
-              // height={400}
-              width={320}
-            />
+          <Dialog.Content className={"mt-0 p-0"}>
+            <View className={"bg-whites"}>
+              <CalendarPicker
+                onDateChange={(date, type) => onSelectDate(date, type)}
+                allowRangeSelection={props.useRange}
+                width={320} // This need to be recalculated relatively by screen width
+                initialDate={timeStart?.toDate() ?? undefined}
+                selectedStartDate={timeStart?.toDate() ?? undefined}
+                selectedEndDate={timeEnd?.toDate() ?? undefined}
+              />
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              onPress={() => {
+                setDialogVisible(false);
+                onCloseModel();
+              }}
+            >
+              Chọn ngày
+            </Button>
+          </Dialog.Actions>
+          <View>
+            <Text>{props.initTimeStart?.toString() ?? ""}</Text>
+            <Text>{props.initTimeEnd?.toString() ?? ""}</Text>
+            <Text>{timeStart?.toString() ?? ""}</Text>
+            <Text>{timeEnd?.toString() ?? ""}</Text>
           </View>
-        </Modal>
+        </Dialog>
       </Portal>
-      <Pressable className={"flex-row"} onPress={() => setModelVisible(true)}>
-        <View className={"flex-row border-b-2 border-b-cyan-400"}>
-          <View className={" flex-row "}>
-            <View>
-              <Text className={"m-auto mb-1"}>
-                {props.initTimeStart?.format("DD/MM/YYYY").toString() ??
-                  "__/__/____"}
-              </Text>
-            </View>
-            <View>
-              <Text className={"m-auto mb-1"}> - </Text>
-            </View>
-            <View>
-              <Text className={"m-auto mb-1"}>
-                {props.initTimeEnd?.format("DD/MM/YYYY").toString() ??
-                  "__/__/____"}
-              </Text>
-            </View>
+
+      <Pressable className={"flex-row space-x-2"} onPress={() => showDialog()}>
+        <View className={""}>
+          <FontAwesomeIcon name="calendar" size={25} />
+        </View>
+        <View className={" m-auto flex-row"}>
+          <View>
+            <Text className={"m-auto"}>
+              {props.initTimeStart?.format("DD/MM/YYYY").toString() ??
+                "__/__/____"}
+            </Text>
           </View>
-          <View className={"m-1 ml-2 flex-initial"}>
-            <FontAwesomeIcon name="calendar" size={25} />
+          <View>
+            <Text className={"m-auto"}> - </Text>
+          </View>
+          <View>
+            <Text className={"m-auto"}>
+              {props.initTimeEnd?.format("DD/MM/YYYY").toString() ??
+                "__/__/____"}
+            </Text>
           </View>
         </View>
       </Pressable>

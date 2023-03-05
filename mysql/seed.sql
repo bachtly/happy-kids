@@ -341,6 +341,17 @@ VALUES
     ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedIn', @stid6, @tid2)
 ;
 
+-- Attendance more for student @stid1
+INSERT INTO Attendance
+(date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, teacherId)
+VALUES
+    ('2023-01-12', '2023-01-12T7:00:00', '2023-01-12T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1),
+    ('2023-01-13', '2023-01-13T7:00:00', '2023-01-13T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1),
+    ('2023-01-14', '2023-01-14T7:00:00', '2023-01-14T17:00:00', @avatar, @avatar, 'AbsenseWithoutPermission', @stid1, @tid2),
+    ('2023-01-15', '2023-01-15T7:00:00', '2023-01-15T17:00:00', @avatar, @avatar, 'AbsenseWithPermission', @stid1, @tid1),
+    ('2023-01-16', '2023-01-16T7:00:00', '2023-01-16T17:00:00', @avatar, @avatar, 'AbsenseWithPermission', @stid1, @tid2)
+;
+
 -- DailyRemark
 INSERT INTO DailyRemark (date, activity, teacherId, studentId, content)
 VALUES
