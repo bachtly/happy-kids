@@ -9,6 +9,8 @@ const GetAttendanceListRequest = z.object({
 const AttendanceItem = z.object({
   date: z.nullable(z.date()),
   status: z.nullable(z.string()),
+  checkinTime: z.nullable(z.date()),
+  checkoutTime: z.nullable(z.date()),
   checkinNote: z.nullable(z.string()),
   checkoutNote: z.nullable(z.string())
 });

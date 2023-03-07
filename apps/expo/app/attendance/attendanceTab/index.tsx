@@ -1,22 +1,27 @@
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import {Pressable, ScrollView, View} from "react-native";
+import { Text, useTheme, Button, Portal } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AttendanceItem, {
   AttendanceItemProps
-} from "../../src/components/attendance/AttendanceItem";
-import DatePicker from "../../src/components/DatePicker";
-import { api } from "../../src/utils/api";
-import { useAuthContext } from "../../src/utils/auth-context-provider";
+} from "../../../src/components/attendance/AttendanceItem";
+import DatePicker from "../../../src/components/DatePicker";
+import { api } from "../../../src/utils/api";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import * as NavigationBar from 'expo-navigation-bar';
+import { Stack } from "expo-router";
+import {useRouter} from "expo-router"
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
-const AttendanceHome = () => {
+const AttendanceHistory = () => {
   // properties
   const { colors } = useTheme();
   const { studentId } = useAuthContext();
+  const vis = NavigationBar.useVisibility();
+  const router = useRouter();
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
@@ -90,7 +95,7 @@ const AttendanceHome = () => {
         )}
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-export default AttendanceHome;
+export default AttendanceHistory

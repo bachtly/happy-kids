@@ -21,7 +21,7 @@ class AttendanceService {
 
     const attendances = await this.mysqlDB
       .selectFrom("Attendance")
-      .select(["date", "status", "checkinNote", "checkoutNote"])
+      .select(["date", "status", "checkinTime", "checkoutTime" ,"checkinNote", "checkoutNote"])
       .where("date", ">=", timeStart)
       .where("date", "<=", timeEnd)
       .where("studentId", "=", studentId)
