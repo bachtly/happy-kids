@@ -6,6 +6,8 @@ import { useAuthContext } from "../src/utils/auth-context-provider";
 export default function Index() {
   const { onLogout } = useAuthContext();
   const router = useRouter();
+
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Trang chủ" }} />
