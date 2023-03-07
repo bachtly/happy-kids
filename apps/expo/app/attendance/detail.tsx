@@ -1,5 +1,4 @@
-import {Text, View} from "react-native";
-import {Stack} from "expo-router"
+import { Text, View } from "react-native";
 
 const AttendanceDetail = () => {
   return (
@@ -7,6 +6,6 @@ const AttendanceDetail = () => {
       <Text>FUCK</Text>
     </View>
   );
-}
+};
 
 export default AttendanceDetail;

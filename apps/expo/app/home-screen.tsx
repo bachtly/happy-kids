@@ -7,7 +7,6 @@ const HomeScreen = () => {
   const { onLogout } = useAuthContext();
   const router = useRouter();
 
-
   return (
     <View>
       <Stack.Screen options={{ title: "Trang chủ" }} />

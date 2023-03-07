@@ -6,13 +6,8 @@
       "cache": false
     },
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        ".expo/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", ".expo/**"]
     },
     "lint": {},
     "clean": {
