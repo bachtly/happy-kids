@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
-import {Pressable, ScrollView, View} from "react-native";
-import { Text, useTheme, Button, Portal } from "react-native-paper";
+import { Pressable, ScrollView, View } from "react-native";
+import { Text, useTheme } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AttendanceItem, {
   AttendanceItemProps
@@ -9,9 +9,8 @@ import AttendanceItem, {
 import DatePicker from "../../../src/components/DatePicker";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
-import * as NavigationBar from 'expo-navigation-bar';
-import { Stack } from "expo-router";
-import {useRouter} from "expo-router"
+import * as NavigationBar from "expo-navigation-bar";
+import { useRouter } from "expo-router";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -50,7 +49,7 @@ const AttendanceHistory = () => {
   }, [timeStart, timeEnd, filter]);
 
   return (
-    <View className={"bg-white px-2"}>
+    <View className={"flex-1 bg-white px-2"}>
       <View className={"fixed my-4 flex-row justify-between"}>
         <View className={""}>
           <DatePicker
@@ -95,7 +94,7 @@ const AttendanceHistory = () => {
         )}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-export default AttendanceHistory
+export default AttendanceHistory;
