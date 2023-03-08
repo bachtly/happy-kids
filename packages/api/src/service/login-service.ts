@@ -29,7 +29,7 @@ class LoginService {
           return {
             status: LoginStatus.enum.Success,
             message: "login succeeded",
-            userId: resp.id.toString("base64")
+            userId: resp.id
           };
         }
       })
