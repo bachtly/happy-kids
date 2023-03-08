@@ -1,16 +1,14 @@
+import * as NavigationBar from "expo-navigation-bar";
+import { useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import AttendanceItem, {
-  AttendanceItemProps
-} from "../../../src/components/attendance/AttendanceItem";
+import AttendanceItem from "../../../src/components/attendance/AttendanceItem";
 import DatePicker from "../../../src/components/DatePicker";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
-import * as NavigationBar from "expo-navigation-bar";
-import { useRouter } from "expo-router";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");

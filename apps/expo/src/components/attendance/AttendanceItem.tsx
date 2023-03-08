@@ -1,16 +1,8 @@
-import { View } from "react-native";
-import { Button, Text, Card } from "react-native-paper";
-import moment from "moment";
 import { useRouter } from "expo-router";
-
-interface AttendanceItemProps {
-  status: string | null;
-  checkinTime: Date | null;
-  checkoutTime: Date | null;
-  checkinNote: string | null;
-  checkoutNote: string | null;
-  date: Date | null;
-}
+import moment from "moment";
+import { View } from "react-native";
+import { Button, Card, Text } from "react-native-paper";
+import { AttendanceItemModel } from "../../models/AttendanceModels";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -30,7 +22,7 @@ const STATUS_ENUM_TO_VERBOSE = new Map([
   ["AbsenseWithoutPermission", "Vắng không phép"]
 ]);
 
-const AttendanceItem = (props: AttendanceItemProps) => {
+const AttendanceItem = (props: AttendanceItemModel) => {
   const router = useRouter();
 
   return (
@@ -56,7 +48,10 @@ const AttendanceItem = (props: AttendanceItemProps) => {
               <Button
                 className={"my-auto"}
                 onPress={() => {
-                  router.push("/attendance/detail");
+                  if (props.date) {
+                    router.setParams({ date: props.date.toString() });
+                    router.push(`/attendance/${props.id}`);
+                  }
                 }}
               >
                 Chi tiết
@@ -70,4 +65,3 @@ const AttendanceItem = (props: AttendanceItemProps) => {
 };
 
 export default AttendanceItem;
-export type { AttendanceItemProps };

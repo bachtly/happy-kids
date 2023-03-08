@@ -1,5 +1,5 @@
-import { useTheme } from "react-native-paper";
 import { Stack } from "expo-router";
+import { useTheme } from "react-native-paper";
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
@@ -20,7 +20,7 @@ const RootLayout = () => {
         options={{ title: "Điểm danh" }}
       ></Stack.Screen>
       <Stack.Screen
-        name={"detail"}
+        name={"[id]"}
         options={{ title: "Chi tiết điểm danh" }}
       ></Stack.Screen>
     </Stack>

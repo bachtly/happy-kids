@@ -57,6 +57,7 @@ importers:
       expo: 48.0.0-beta.2
       expo-constants: ~14.2.1
       expo-font: ~11.1.1
+      expo-image-picker: ^14.1.1
       expo-linking: ~4.0.1
       expo-router: ^1.0.0-rc5
       expo-secure-store: ~12.1.1
@@ -85,6 +86,7 @@ importers:
       expo: 48.0.0-beta.2_@babel+core@7.20.12
       expo-constants: 14.2.1_expo@48.0.0-beta.2
       expo-font: 11.1.1_expo@48.0.0-beta.2
+      expo-image-picker: 14.1.1_expo@48.0.0-beta.2
       expo-linking: 4.0.1_expo@48.0.0-beta.2
       expo-router: 1.0.0-rc6_fhqpf536vcfrzfvyeqk7ttlby4
       expo-secure-store: 12.1.1_expo@48.0.0-beta.2
@@ -5060,6 +5062,29 @@ packages:
     dependencies:
       expo: 48.0.0-beta.2_@babel+core@7.20.12
       fontfaceobserver: 2.3.0
+    dev: false
+
+  /expo-image-loader/4.1.1_expo@48.0.0-beta.2:
+    resolution:
+      {
+        integrity: sha512-ciEHVokU0f6w0eTxdRxLCio6tskMsjxWIoV92+/ZD37qePUJYMfEphPhu1sruyvMBNR8/j5iyOvPFVGTfO8oxA==
+      }
+    peerDependencies:
+      expo: "*"
+    dependencies:
+      expo: 48.0.0-beta.2_@babel+core@7.20.12
+    dev: false
+
+  /expo-image-picker/14.1.1_expo@48.0.0-beta.2:
+    resolution:
+      {
+        integrity: sha512-SvWtnkLW7jp5Ntvk3lVcRQmhFYja8psmiR7O6P/+7S6f4llt3vaFwb4I3+pUXqJxxpi7BHc2+95qOLf0SFOIag==
+      }
+    peerDependencies:
+      expo: "*"
+    dependencies:
+      expo: 48.0.0-beta.2_@babel+core@7.20.12
+      expo-image-loader: 4.1.1_expo@48.0.0-beta.2
     dev: false
 
   /expo-keep-awake/12.0.1_expo@48.0.0-beta.2:

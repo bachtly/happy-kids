@@ -24,6 +24,7 @@
     "expo": "48.0.0-beta.2",
     "expo-constants": "~14.2.1",
     "expo-font": "~11.1.1",
+    "expo-image-picker": "^14.1.1",
     "expo-linking": "~4.0.1",
     "expo-navigation-bar": "^2.1.1",
     "expo-router": "^1.0.0-rc5",
