@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTheme } from "react-native-paper";
-import AttendanceStatistics from "./statistics";
 import AttendanceHistory from "./index";
+import AttendanceStatistics from "./statistics";
 
 const Tab = createMaterialTopTabNavigator();
 
