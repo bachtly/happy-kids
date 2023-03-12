@@ -1,8 +1,8 @@
 import { useSearchParams } from "expo-router";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Divider, Text, TextInput } from "react-native-paper";
 import MyImagePicker from "../../../src/components/ImagePicker";
 import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
@@ -44,58 +44,100 @@ const AttendanceDetail = () => {
       .toString()}`;
   };
 
-  const getTimeString = (time: Date, format: string) => {
-    return `${moment(time).format(format).toString()}`;
+  const getTimeString = (time: Date | null | undefined, format: string) => {
+    return time ? `${moment(time).format(format).toString()}` : "" ?? "";
   };
 
   return (
-    <View className={"flex-1 bg-white p-5"}>
-      <View className={"mb-2"}>
-        {attendance && attendance.date && (
-          <Text variant={"titleMedium"}>
-            {getDateString(attendance.date, DATE_FORMAT)}
-          </Text>
-        )}
-      </View>
-
-      <View className={"mb-2"}>
-        <View className={"mb-2"}>
-          <Text variant={"titleSmall"}>Điểm danh đến</Text>
+    <ScrollView>
+      <View className={"flex-1 bg-white p-5"}>
+        <View className={"mb-5"}>
+          {attendance && attendance.date && (
+            <Text variant={"titleLarge"}>
+              {getDateString(attendance.date, DATE_FORMAT)}
+            </Text>
+          )}
         </View>
-        <Text>Giáo viên: {attendance?.teacherFullname ?? ""}</Text>
-        <Text>
-          Thời gian:{" "}
-          {attendance?.checkinTime
-            ? getTimeString(attendance.checkinTime, TIME_FORMAT)
-            : ""}
-        </Text>
-        <Text>Ghi chú của giáo viên: {attendance?.checkinNote ?? ""}</Text>
-        <Text>Hình ảnh:</Text>
-        {attendance && attendance.checkinPhotoUrl && (
-          <View className={"h-24 w-24"}>
-            <MyImagePicker
-              imageData={attendance?.checkinPhotoUrl ?? ""}
-              setImageData={() => {}}
-            />
+
+        <View className={"mb-5"}>
+          <View className={"mb-5"}>
+            <Text variant={"titleMedium"}>Điểm danh đến</Text>
           </View>
-        )}
-      </View>
 
-      <View>
-        <View className={"mb-2"}>
-          <Text variant={"titleSmall"}>Điểm danh về</Text>
+          <View className={"flex-row justify-between mb-2"}>
+            <Text>Giáo viên: </Text>
+            <Text>{attendance?.teacherFullname ?? ""}</Text>
+          </View>
+          <Divider className={"mb-2"} />
+
+          <View className={"flex-row justify-between mb-2"}>
+            <Text>Thời gian: </Text>
+            <Text>{getTimeString(attendance?.checkinTime, TIME_FORMAT)}</Text>
+          </View>
+          <Divider className={"mb-2"} />
+
+          <View className={"mb-2"}>
+            <Text className={"mb-2"}>Ghi chú của giáo viên: </Text>
+            <TextInput disabled={true}>
+              {attendance?.checkinNote ?? ""}
+            </TextInput>
+          </View>
+          <Divider className={"mb-2"} />
+
+          <View className={"mb-2"}>
+            <Text className={"mb-2"}>Hình ảnh:</Text>
+            {attendance && attendance.checkinPhotoUrl && (
+              <View className={"h-24 w-24"}>
+                <MyImagePicker
+                  imageData={attendance?.checkinPhotoUrl ?? ""}
+                  setImageData={() => {}}
+                />
+              </View>
+            )}
+          </View>
+          <Divider className={"mb-2"} />
         </View>
-        <Text>Giáo viên: {attendance?.teacherFullname ?? ""}</Text>
-        <Text>
-          Thời gian:{" "}
-          {attendance?.checkoutTime
-            ? getTimeString(attendance.checkoutTime, TIME_FORMAT)
-            : ""}
-        </Text>
-        <Text>Ghi chú của giáo viên: {attendance?.checkinNote ?? ""}</Text>
-        <Text>Hình ảnh:</Text>
+
+        <View>
+          <View className={"mb-5"}>
+            <Text variant={"titleMedium"}>Điểm danh về</Text>
+          </View>
+
+          <View className={"flex-row justify-between mb-2"}>
+            <Text>Giáo viên: </Text>
+            <Text>{attendance?.teacherFullname ?? ""}</Text>
+          </View>
+          <Divider className={"mb-2"} />
+
+          <View className={"flex-row justify-between mb-2"}>
+            <Text>Thời gian: </Text>
+            <Text>{getTimeString(attendance?.checkoutTime, TIME_FORMAT)}</Text>
+          </View>
+          <Divider className={"mb-2"} />
+
+          <View className={"mb-2"}>
+            <Text className={"mb-2"}>Ghi chú của giáo viên: </Text>
+            <TextInput disabled={true}>
+              {attendance?.checkinNote ?? ""}
+            </TextInput>
+          </View>
+          <Divider className={"mb-2"} />
+
+          <View className={"mb-2"}>
+            <Text className={"mb-2"}>Hình ảnh:</Text>
+            {attendance && attendance.checkoutPhotoUrl && (
+              <View className={"h-24 w-24"}>
+                <MyImagePicker
+                  imageData={attendance?.checkoutPhotoUrl ?? ""}
+                  setImageData={() => {}}
+                />
+              </View>
+            )}
+          </View>
+          <Divider className={"mb-2"} />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
