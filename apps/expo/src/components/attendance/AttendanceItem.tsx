@@ -37,10 +37,16 @@ const AttendanceItem = (props: AttendanceItemModel) => {
           </View>
           <View className={""}>
             <Text>
-              Điểm danh đến: {moment(props.checkinTime).format(TIME_FORMAT)}
+              Điểm danh đến:{" "}
+              {(props.checkinTime &&
+                moment(props.checkinTime).format(TIME_FORMAT)) ||
+                ""}
             </Text>
             <Text>
-              Điểm danh về: {moment(props.checkoutTime).format(TIME_FORMAT)}
+              Điểm danh về:{" "}
+              {(props.checkoutTime &&
+                moment(props.checkoutTime).format(TIME_FORMAT)) ||
+                ""}
             </Text>
           </View>
           {props.status && STATUS_ENUM_TO_VERBOSE.has(props.status) && (

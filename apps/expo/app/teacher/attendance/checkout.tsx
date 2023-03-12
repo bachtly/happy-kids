@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import StudentItem from "../../../src/components/attendance/StudentItem";
+import CheckOutItem from "../../../src/components/attendance/CheckOutItem";
 import { StudentModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
@@ -35,7 +35,7 @@ const AttendanceCheckout = () => {
       <ScrollView>
         <View className={"pt-3"}>
           {studentList && studentList.length > 0 ? (
-            studentList.map((item, key) => <StudentItem key={key} {...item} />)
+            studentList.map((item, key) => <CheckOutItem key={key} {...item} />)
           ) : (
             <View className={"mt-5 mb-10"}>
               <Text
