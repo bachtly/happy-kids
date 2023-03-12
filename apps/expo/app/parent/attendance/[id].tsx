@@ -3,9 +3,9 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
-import MyImagePicker from "../../src/components/ImagePicker";
-import { AttendanceItemModel } from "../../src/models/AttendanceModels";
-import { api } from "../../src/utils/api";
+import MyImagePicker from "../../../src/components/ImagePicker";
+import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
+import { api } from "../../../src/utils/api";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -18,13 +18,6 @@ const DATE_OF_WEEK = [
 ];
 const DATE_FORMAT = "DD/MM/YYYY";
 const TIME_FORMAT = "hh:mm";
-
-const STATUS_ENUM_TO_VERBOSE = new Map([
-  ["NotCheckedIn", "Chưa điểm danh"],
-  ["CheckedIn", "Đã điểm danh"],
-  ["AbsenseWithPermission", "Vắng có phép"],
-  ["AbsenseWithoutPermission", "Vắng không phép"]
-]);
 
 const AttendanceDetail = () => {
   const { id } = useSearchParams();
@@ -79,10 +72,12 @@ const AttendanceDetail = () => {
         <Text>Ghi chú của giáo viên: {attendance?.checkinNote ?? ""}</Text>
         <Text>Hình ảnh:</Text>
         {attendance && attendance.checkinPhotoUrl && (
-          <MyImagePicker
-            imageData={attendance?.checkinPhotoUrl}
-            setImageData={() => {}}
-          />
+          <View className={"h-24 w-24"}>
+            <MyImagePicker
+              imageData={attendance?.checkinPhotoUrl ?? ""}
+              setImageData={() => {}}
+            />
+          </View>
         )}
       </View>
 

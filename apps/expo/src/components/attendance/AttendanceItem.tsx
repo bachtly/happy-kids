@@ -14,6 +14,7 @@ const DATE_OF_WEEK = [
   "Thứ bảy"
 ];
 const DATE_FORMAT = "DD/MM/YYYY";
+const TIME_FORMAT = "hh:mm";
 
 const STATUS_ENUM_TO_VERBOSE = new Map([
   ["NotCheckedIn", "Chưa điểm danh"],
@@ -36,9 +37,11 @@ const AttendanceItem = (props: AttendanceItemModel) => {
           </View>
           <View className={""}>
             <Text>
-              Điểm danh đến: {moment(props.checkinTime).format(DATE_FORMAT)}
+              Điểm danh đến: {moment(props.checkinTime).format(TIME_FORMAT)}
             </Text>
-            <Text>Điểm danh đến:</Text>
+            <Text>
+              Điểm danh về: {moment(props.checkoutTime).format(TIME_FORMAT)}
+            </Text>
           </View>
           {props.status && STATUS_ENUM_TO_VERBOSE.has(props.status) && (
             <View className={"flex-row justify-between"}>
@@ -50,7 +53,7 @@ const AttendanceItem = (props: AttendanceItemModel) => {
                 onPress={() => {
                   if (props.date) {
                     router.setParams({ date: props.date.toString() });
-                    router.push(`/attendance/${props.id}`);
+                    router.push(`/parent/attendance/${props.id}`);
                   }
                 }}
               >

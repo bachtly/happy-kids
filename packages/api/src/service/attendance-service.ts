@@ -44,7 +44,7 @@ class AttendanceService {
 
   getAttendanceItemDetail = async (id: string) => {
     console.log(
-      `getAttendanceListService receive request ${JSON.stringify({
+      `getAttendanceItemDetail receive request ${JSON.stringify({
         id: id
       })}`
     );
@@ -93,7 +93,7 @@ class AttendanceService {
     studentId: string
   ) => {
     console.log(
-      `getAttendanceListService receive request ${JSON.stringify({
+      `getAttendanceStatistics receive request ${JSON.stringify({
         timeStart: timeStart,
         timeEnd: timeEnd,
         studentId: studentId
@@ -137,6 +137,72 @@ class AttendanceService {
 
     return {
       statistics: statistics,
+      message: null
+    };
+  };
+
+  getStudentList = async (classId: string) => {
+    console.log(
+      `getStudentList receive request ${JSON.stringify({
+        classId: classId
+      })}`
+    );
+
+    const students = await this.mysqlDB
+      .selectFrom("Student")
+      .innerJoin(
+        "StudentClassRelationship",
+        "Student.id",
+        "StudentClassRelationship.studentId"
+      )
+      .select(["Student.id", "Student.fullname", "Student.avatarUrl"])
+      .where("StudentClassRelationship.classId", "=", classId)
+      .execute()
+      .then((resp) => resp.flat());
+
+    return {
+      students: students,
+      message: null
+    };
+  };
+
+  checkIn = async (
+    studentId: string,
+    status: string,
+    note: string,
+    time: Date,
+    teacherId: string,
+    photoUrl: string
+  ) => {
+    console.log(
+      `checkIn receive request ${JSON.stringify({
+        status: status,
+        date: time,
+        checkInTime: time,
+        checkInNote: note,
+        studentId: studentId,
+        teacherId: teacherId,
+        checkInPhotoUrl: photoUrl
+      })}`
+    );
+
+    const count = await this.mysqlDB
+      .insertInto("Attendance")
+      .values({
+        status: status,
+        date: time,
+        checkInTime: time,
+        checkInNote: note,
+        studentId: studentId,
+        teacherId: teacherId,
+        checkInPhotoUrl: photoUrl
+      })
+      .executeTakeFirstOrThrow()
+      .then((res) => res.numInsertedOrUpdatedRows);
+
+    if (count && count <= 0) return { message: "Insertion fail." };
+
+    return {
       message: null
     };
   };

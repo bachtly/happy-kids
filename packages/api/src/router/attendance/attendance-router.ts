@@ -1,12 +1,16 @@
 import { attendanceService } from "../../service/common-services";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 import {
+  CheckInRequest,
+  CheckInResponse,
   GetAttendanceItemDetailRequest,
   GetAttendanceItemDetailResponse,
   GetAttendanceListRequest,
   GetAttendanceListResponse,
   GetAttendanceStatisticsRequest,
-  GetAttendanceStatisticsResponse
+  GetAttendanceStatisticsResponse,
+  GetStudentListRequest,
+  GetStudentListResponse
 } from "./protocols";
 
 const attendanceRouter = createTRPCRouter({
@@ -39,6 +43,28 @@ const attendanceRouter = createTRPCRouter({
           input.timeStart,
           input.timeEnd,
           input.studentId
+        )
+    ),
+
+  getStudentList: publicProcedure
+    .input(GetStudentListRequest)
+    .output(GetStudentListResponse)
+    .mutation(
+      async ({ input }) => await attendanceService.getStudentList(input.classId)
+    ),
+
+  checkIn: publicProcedure
+    .input(CheckInRequest)
+    .output(CheckInResponse)
+    .mutation(
+      async ({ input }) =>
+        await attendanceService.checkIn(
+          input.studentId,
+          input.status,
+          input.note ?? "",
+          input.time,
+          input.teacherId,
+          input.photoUrl ?? ""
         )
     )
 });

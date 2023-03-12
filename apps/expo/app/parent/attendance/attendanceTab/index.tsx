@@ -3,18 +3,18 @@ import { useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { List, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
-import DatePicker from "../../../src/components/DatePicker";
-import { AttendanceStatisticsModel } from "../../../src/models/AttendanceModels";
-import { api } from "../../../src/utils/api";
-import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import AttendanceItem from "../../../../src/components/attendance/AttendanceItem";
+import DatePicker from "../../../../src/components/DatePicker";
+import { AttendanceItemModel } from "../../../../src/models/AttendanceModels";
+import { api } from "../../../../src/utils/api";
+import { useAuthContext } from "../../../../src/utils/auth-context-provider";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
-const AttendanceStatistics = () => {
+const AttendanceHistory = () => {
   // properties
   const { colors } = useTheme();
   const { studentId } = useAuthContext();
@@ -31,10 +31,11 @@ const AttendanceStatistics = () => {
   });
 
   // data
-  const [statistics, setStatistics] =
-    useState<AttendanceStatisticsModel | null>(null);
-  const attMutation = api.attendance.getAttendanceStatistics.useMutation({
-    onSuccess: (resp) => setStatistics(resp.statistics)
+  const [attendanceList, setAttendanceList] = useState<AttendanceItemModel[]>(
+    []
+  );
+  const attMutation = api.attendance.getAttendanceList.useMutation({
+    onSuccess: (resp) => setAttendanceList(resp.attendances)
   });
 
   // update list when search criterias change
@@ -75,42 +76,24 @@ const AttendanceStatistics = () => {
       </View>
 
       <ScrollView>
-        <List.Item
-          title={`Đã điểm danh: ${
-            (statistics?.CheckedIn as unknown as string) ?? "0"
-          }`}
-          // description="Item description"
-          left={() => (
-            <View className={"m-auto ml-5"}>
-              <FontAwesomeIcon name={"circle"} size={15}></FontAwesomeIcon>
-            </View>
-          )}
-        />
-        <List.Item
-          title={`Vắng có phép: ${
-            (statistics?.AbsenseWithPermission as unknown as string) ?? "0"
-          }`}
-          // description="Item description"
-          left={() => (
-            <View className={"m-auto ml-5"}>
-              <FontAwesomeIcon name={"circle"} size={15}></FontAwesomeIcon>
-            </View>
-          )}
-        />
-        <List.Item
-          title={`Vắng không phép: ${
-            (statistics?.AbsenseWithoutPermission as unknown as string) ?? "0"
-          }`}
-          // description="Item description"
-          left={() => (
-            <View className={"m-auto ml-5"}>
-              <FontAwesomeIcon name={"circle"} size={15}></FontAwesomeIcon>
-            </View>
-          )}
-        />
+        {attendanceList != null && attendanceList.length > 0 ? (
+          attendanceList.map((item, key) => (
+            <AttendanceItem key={key} {...item} />
+          ))
+        ) : (
+          <View className={"mt-5 mb-10"}>
+            <Text
+              className={"text-center"}
+              variant={"titleLarge"}
+              style={{ color: colors.gray }}
+            >
+              Không có dữ liệu để hiển thị
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
 };
 
-export default AttendanceStatistics;
+export default AttendanceHistory;

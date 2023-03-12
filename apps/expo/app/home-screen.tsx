@@ -10,8 +10,14 @@ const HomeScreen = () => {
   return (
     <View>
       <Stack.Screen options={{ title: "Trang chủ" }} />
-      <Button onPress={() => router.push("attendance")}>Điểm danh</Button>
       <Text onPress={() => onLogout()}>Home screen</Text>
+      <Button onPress={() => router.push("parent/attendance")}>
+        Điểm danh phụ huynh
+      </Button>
+      <Button onPress={() => router.push("teacher/attendance")}>
+        Điểm danh giáo viên
+      </Button>
+      <Button onPress={() => router.push("attendance")}>Điểm danh</Button>
     </View>
   );
 };

@@ -32,6 +32,8 @@ export {
   GetAttendanceStatisticsResponse,
   AttendanceStatistics
 };
+export { Student, GetStudentListResponse, GetStudentListRequest };
+export { CheckInRequest, CheckInResponse };
 
 const GetAttendanceItemDetailRequest = z.object({
   id: z.string()
@@ -73,5 +75,33 @@ const AttendanceStatistics = z.object({
 
 const GetAttendanceStatisticsResponse = z.object({
   statistics: z.nullable(AttendanceStatistics),
+  message: z.nullable(z.string())
+});
+
+const Student = z.object({
+  id: z.string(),
+  fullname: z.string(),
+  avatarUrl: z.nullable(z.string())
+});
+
+const GetStudentListRequest = z.object({
+  classId: z.string()
+});
+
+const GetStudentListResponse = z.object({
+  students: z.array(Student),
+  message: z.nullable(z.string())
+});
+
+const CheckInRequest = z.object({
+  studentId: z.string(),
+  status: z.string(),
+  note: z.nullable(z.string()),
+  time: z.date(),
+  teacherId: z.string(),
+  photoUrl: z.nullable(z.string())
+});
+
+const CheckInResponse = z.object({
   message: z.nullable(z.string())
 });
