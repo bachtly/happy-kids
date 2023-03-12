@@ -23,6 +23,8 @@ interface StudentModel {
   id: string;
   fullname: string;
   avatarUrl: string | null;
+
+  className?: string | null;
 }
 
 export { AttendanceItemModel, AttendanceStatisticsModel, StudentModel };

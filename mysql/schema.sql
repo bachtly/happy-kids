@@ -162,7 +162,8 @@ CREATE TABLE `KindergartenSchema`.`Attendance` (
   `checkoutPhotoUrl` varchar(255),
   `status` ENUM ('CheckedIn', 'NotCheckedIn', 'AbsenseWithPermission', 'AbsenseWithoutPermission'),
   `studentId` varchar(36),
-  `teacherId` varchar(36),
+  `checkInTeacherId` varchar(36),
+  `checkOutTeacherId` varchar(36),
   `pickerRelativeId` varchar(36)
 );
 
@@ -310,7 +311,9 @@ ALTER TABLE `KindergartenSchema`.`NoteLetterReply` ADD FOREIGN KEY (`noteLetterI
 
 ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`teacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`checkInTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`checkOutTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`pickerRelativeId`) REFERENCES `KindergartenSchema`.`Relative` (`id`);
 

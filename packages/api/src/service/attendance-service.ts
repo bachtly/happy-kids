@@ -1,5 +1,6 @@
 import { Kysely, sql } from "kysely";
 import { DB } from "kysely-codegen";
+import moment from "moment";
 import { injectable } from "tsyringe";
 
 @injectable()
@@ -155,10 +156,18 @@ class AttendanceService {
         "Student.id",
         "StudentClassRelationship.studentId"
       )
-      .select(["Student.id", "Student.fullname", "Student.avatarUrl"])
+      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+      .select([
+        "Student.id",
+        "Student.fullname",
+        "Student.avatarUrl",
+        "Class.name as className"
+      ])
       .where("StudentClassRelationship.classId", "=", classId)
       .execute()
       .then((resp) => resp.flat());
+
+    console.log(`Student lists from db: ${JSON.stringify(students)}`);
 
     return {
       students: students,
@@ -166,7 +175,7 @@ class AttendanceService {
     };
   };
 
-  checkIn = async (
+  checkin = async (
     studentId: string,
     status: string,
     note: string,
@@ -194,13 +203,70 @@ class AttendanceService {
         checkInTime: time,
         checkInNote: note,
         studentId: studentId,
-        teacherId: teacherId,
+        checkInTeacherId: teacherId,
         checkInPhotoUrl: photoUrl
       })
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows);
 
     if (count && count <= 0) return { message: "Insertion fail." };
+
+    return {
+      message: null
+    };
+  };
+
+  checkout = async (
+    studentId: string,
+    note: string,
+    time: Date,
+    teacherId: string,
+    photoUrl: string,
+    pickerRelativeId: string
+  ) => {
+    console.log(
+      `checkOut receive request ${JSON.stringify({
+        date: time,
+        checkOutTime: time,
+        checkInNote: note,
+        studentId: studentId,
+        teacherId: teacherId,
+        checkOutPhotoUrl: photoUrl,
+        pickerRelativeId: pickerRelativeId
+      })}`
+    );
+
+    const startOfDate = moment(moment(time).format("MM/DD/YYYY")).toDate();
+    const endOfDate = moment(moment(time).format("MM/DD/YYYY"))
+      .add(1, "day")
+      .toDate();
+
+    const query = this.mysqlDB
+      .updateTable("Attendance")
+      .set({
+        checkoutTime: time,
+        checkoutNote: note,
+        checkoutTeacherId: teacherId,
+        checkoutPhotoUrl: photoUrl,
+        pickerRelativeId: pickerRelativeId != "" ? pickerRelativeId : null
+      })
+      .where("studentId", "=", studentId)
+      .where("date", "<=", endOfDate)
+      .where("date", ">=", startOfDate);
+
+    console.log(`Query executed: ${query.compile().sql}`);
+    console.log(
+      `Query params: ${JSON.stringify({
+        endOfDate: endOfDate,
+        startOfDate: startOfDate
+      })}`
+    );
+
+    const count = await query
+      .executeTakeFirstOrThrow()
+      .then((res) => res.numUpdatedRows);
+
+    if (count && count <= 0) return { message: "Update fail." };
 
     return {
       message: null
