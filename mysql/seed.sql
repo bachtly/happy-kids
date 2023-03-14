@@ -310,7 +310,7 @@ VALUES
 ;
 
 -- Attendance T2 2023-01-02
-INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkInTeacherId, checkOutTeacherId)
+INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId)
 VALUES
     ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'AbsenseWithPermission', @stid1, @tid1, @tid1),
     ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedIn', @stid2, @tid1, @tid2),
@@ -321,7 +321,7 @@ VALUES
 
 -- Attendance T5 2023-01-05
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkoutNote, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkInTeacherId, checkOutTeacherId, pickerRelativeId)
+(date, checkinTime, checkoutTime, checkoutNote, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId, pickerRelativeId)
 VALUES
     ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1, null),
     ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedIn', @stid2, @tid1, @tid1, null),
@@ -332,7 +332,7 @@ VALUES
 
 -- Attendance T4 2023-01-11
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkInTeacherId, checkOutTeacherId)
+(date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId)
 VALUES
     ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1),
     ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedIn', @stid2, @tid1, @tid1),
@@ -343,7 +343,7 @@ VALUES
 
 -- Attendance more for student @stid1
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkInTeacherId, checkOutTeacherId)
+(date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId)
 VALUES
     ('2023-01-12', '2023-01-12T7:00:00', '2023-01-12T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1),
     ('2023-01-13', '2023-01-13T7:00:00', '2023-01-13T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1),

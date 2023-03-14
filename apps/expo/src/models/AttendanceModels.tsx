@@ -8,8 +8,9 @@ interface AttendanceItemModel {
   checkoutNote: string | null;
   checkinPhotoUrl?: string | null;
   checkoutPhotoUrl?: string | null;
-  teacherFullname: string | null;
-  pickerRelativeFullname: string | null;
+  checkinTeacherFullname?: string | null;
+  checkoutTeacherFullname?: string | null;
+  pickerRelativeFullname?: string | null;
 }
 
 interface AttendanceStatisticsModel {
@@ -19,12 +20,15 @@ interface AttendanceStatisticsModel {
   AbsenseWithoutPermission: number;
 }
 
-interface StudentModel {
+interface AttendanceStudentModel {
   id: string;
   fullname: string;
   avatarUrl: string | null;
 
   className?: string | null;
+
+  attendanceStatus: string | null;
+  attendanceCheckinNote: string | null;
 }
 
-export { AttendanceItemModel, AttendanceStatisticsModel, StudentModel };
+export type {AttendanceItemModel, AttendanceStatisticsModel, AttendanceStudentModel};

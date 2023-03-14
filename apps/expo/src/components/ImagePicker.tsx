@@ -7,6 +7,7 @@ interface MyImagePickerProps {
   // React State passed from outside
   imageData: string;
   setImageData: (imageData: string) => void;
+  disabled?: boolean;
 }
 
 const MyImagePicker = (props: MyImagePickerProps) => {
@@ -30,7 +31,7 @@ const MyImagePicker = (props: MyImagePickerProps) => {
 
   return (
     <View className="w-full h-full items-center">
-      <TouchableOpacity className={"w-full h-full"} onPress={pickImage}>
+      <TouchableOpacity className={"w-full h-full"} onPress={pickImage} disabled={props.disabled ?? false}>
         {imageData !== "" ? (
           <Image source={{ uri: imageData }} className={"h-full w-full"} />
         ) : (

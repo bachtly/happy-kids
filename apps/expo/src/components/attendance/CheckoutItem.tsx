@@ -2,7 +2,7 @@ import moment from "moment";
 import { useState } from "react";
 import { View } from "react-native";
 import { Avatar, Button, Card, Text, TextInput } from "react-native-paper";
-import { StudentModel } from "../../models/AttendanceModels";
+import { AttendanceStudentModel } from "../../models/AttendanceModels";
 import { api } from "../../utils/api";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import MyImagePicker from "../ImagePicker";
@@ -19,7 +19,7 @@ const STATUS_ENUM_TO_VERBOSE = new Map([
   ["AbsenseWithPermission", "Có phép"],
   ["AbsenseWithoutPermission", "Không phép"]
 ]);
-const CheckoutItem = (props: StudentModel) => {
+const CheckoutItem = (props: AttendanceStudentModel) => {
   const [image, setImage] = useState("");
   const [note, setNote] = useState("");
 

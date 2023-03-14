@@ -1,11 +1,14 @@
-import { Kysely, sql } from "kysely";
-import { DB } from "kysely-codegen";
+import {Kysely, sql} from "kysely";
+import {DB} from "kysely-codegen";
 import moment from "moment";
-import { injectable } from "tsyringe";
+import {injectable} from "tsyringe";
+import {Student} from "../router/attendance/protocols";
+import {z} from "zod";
 
 @injectable()
 class AttendanceService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>) {
+  }
 
   getAttendanceList = async (
     timeStart: Date,
@@ -52,7 +55,8 @@ class AttendanceService {
 
     const attendance = await this.mysqlDB
       .selectFrom("Attendance")
-      .innerJoin("User as Teacher", "Attendance.teacherId", "Teacher.id")
+      .leftJoin("User as CheckinTeacher", "Attendance.checkinTeacherId", "CheckinTeacher.id")
+      .leftJoin("User as CheckoutTeacher", "Attendance.checkoutTeacherId", "CheckoutTeacher.id")
       .leftJoin(
         "User as Relative",
         "Attendance.pickerRelativeId",
@@ -68,7 +72,8 @@ class AttendanceService {
         "Attendance.checkoutNote",
         "Attendance.checkinPhotoUrl",
         "Attendance.checkoutPhotoUrl",
-        "Teacher.fullname as teacherFullname",
+        "CheckinTeacher.fullname as checkinTeacherFullname",
+        "CheckoutTeacher.fullname as checkoutTeacherFullname",
         "Relative.fullname as pickerRelativeFullname"
       ])
       .where("Attendance.id", "=", id)
@@ -149,7 +154,12 @@ class AttendanceService {
       })}`
     );
 
-    const students = await this.mysqlDB
+    const startOfDate = moment(moment(moment.now()).format("MM/DD/YYYY")).toDate();
+    const endOfDate = moment(moment(moment.now()).format("MM/DD/YYYY"))
+      .add(1, "day")
+      .toDate();
+
+    const query = this.mysqlDB
       .selectFrom("Student")
       .innerJoin(
         "StudentClassRelationship",
@@ -157,20 +167,55 @@ class AttendanceService {
         "StudentClassRelationship.studentId"
       )
       .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+      .leftJoin(
+        this.mysqlDB.selectFrom('Attendance')
+          .select(['studentId', 'status', 'checkinNote'])
+          .where("date", "<=", endOfDate)
+          .where("date", ">=", startOfDate).as('Attendance'),
+        'Attendance.studentId',
+        'Student.id'
+      )
       .select([
         "Student.id",
         "Student.fullname",
         "Student.avatarUrl",
-        "Class.name as className"
+        "Class.name as className",
+        "Attendance.status",
+        "Attendance.checkinNote"
       ])
-      .where("StudentClassRelationship.classId", "=", classId)
-      .execute()
+      .where("Class.id", "=", classId)
+
+    console.log(`getStudentList query: ${query.compile().sql}`)
+    console.log(`getStudentList query params: ${JSON.stringify({
+      startOfDate: startOfDate,
+      endOfDate: endOfDate
+    })}`)
+
+    const rawStudents = await query.execute()
       .then((resp) => resp.flat());
 
-    console.log(`Student lists from db: ${JSON.stringify(students)}`);
+    console.log(`Student lists from db: ${JSON.stringify(rawStudents)}`);
+
+    const refinedStudents = rawStudents.map((student) => {
+      return {
+        id: student.id as string,
+        fullname: student.fullname as string,
+        avatarUrl: student.avatarUrl as string,
+        className: student.className as string,
+        attendanceStatus: student.status,
+        attendanceCheckinNote: student.checkinNote,
+      }
+    })
+
+      rawStudents.map((item) => {
+      if (!item.attendanceStatus) {
+        item.attendanceStatus = 'NotCheckedIn' as never;
+      }
+      return item;
+    })
 
     return {
-      students: students,
+      students: refinedStudents,
       message: null
     };
   };
@@ -209,7 +254,7 @@ class AttendanceService {
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows);
 
-    if (count && count <= 0) return { message: "Insertion fail." };
+    if (count && count <= 0) return {message: "Insertion fail."};
 
     return {
       message: null
@@ -266,7 +311,7 @@ class AttendanceService {
       .executeTakeFirstOrThrow()
       .then((res) => res.numUpdatedRows);
 
-    if (count && count <= 0) return { message: "Update fail." };
+    if (count && count <= 0) return {message: "Update fail."};
 
     return {
       message: null

@@ -2,7 +2,7 @@ import { useSearchParams } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Divider, Text, TextInput } from "react-native-paper";
+import { Divider, Text, TextInput, useTheme } from "react-native-paper";
 import MyImagePicker from "../../../src/components/ImagePicker";
 import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
@@ -21,6 +21,7 @@ const TIME_FORMAT = "hh:mm";
 
 const AttendanceDetail = () => {
   const { id } = useSearchParams();
+  const theme = useTheme();
 
   const [attendance, setAttendance] = useState<AttendanceItemModel | null>(
     null
@@ -66,7 +67,7 @@ const AttendanceDetail = () => {
 
           <View className={"flex-row justify-between mb-2"}>
             <Text>Giáo viên: </Text>
-            <Text>{attendance?.teacherFullname ?? ""}</Text>
+            <Text>{attendance?.checkinTeacherFullname ?? ""}</Text>
           </View>
           <Divider className={"mb-2"} />
 
@@ -78,8 +79,8 @@ const AttendanceDetail = () => {
 
           <View className={"mb-2"}>
             <Text className={"mb-2"}>Ghi chú của giáo viên: </Text>
-            <TextInput disabled={true}>
-              {attendance?.checkinNote ?? ""}
+            <TextInput disabled={true} style={{fontSize: theme.fonts.bodyMedium.fontSize}}>
+              {attendance?.checkinNote ?? "Không có ghi chú"}
             </TextInput>
           </View>
           <Divider className={"mb-2"} />
@@ -91,6 +92,7 @@ const AttendanceDetail = () => {
                 <MyImagePicker
                   imageData={attendance?.checkinPhotoUrl ?? ""}
                   setImageData={() => {}}
+                  disabled={true}
                 />
               </View>
             )}
@@ -105,7 +107,7 @@ const AttendanceDetail = () => {
 
           <View className={"flex-row justify-between mb-2"}>
             <Text>Giáo viên: </Text>
-            <Text>{attendance?.teacherFullname ?? ""}</Text>
+            <Text>{attendance?.checkoutTeacherFullname ?? ""}</Text>
           </View>
           <Divider className={"mb-2"} />
 
@@ -117,8 +119,8 @@ const AttendanceDetail = () => {
 
           <View className={"mb-2"}>
             <Text className={"mb-2"}>Ghi chú của giáo viên: </Text>
-            <TextInput disabled={true}>
-              {attendance?.checkinNote ?? ""}
+            <TextInput disabled={true} style={{fontSize: theme.fonts.bodyMedium.fontSize}}>
+              {attendance?.checkinNote ?? "Không có ghi chú"}
             </TextInput>
           </View>
           <Divider className={"mb-2"} />
@@ -130,6 +132,7 @@ const AttendanceDetail = () => {
                 <MyImagePicker
                   imageData={attendance?.checkoutPhotoUrl ?? ""}
                   setImageData={() => {}}
+                  disabled={true}
                 />
               </View>
             )}

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import {z} from "zod";
 
 const GetAttendanceListRequest = z.object({
   timeStart: z.date(),
@@ -21,7 +21,7 @@ const GetAttendanceListResponse = z.object({
   message: z.nullable(z.string())
 });
 
-export { AttendanceItem, GetAttendanceListRequest, GetAttendanceListResponse };
+export {AttendanceItem, GetAttendanceListRequest, GetAttendanceListResponse};
 export {
   GetAttendanceItemDetailRequest,
   GetAttendanceItemDetailResponse,
@@ -32,9 +32,9 @@ export {
   GetAttendanceStatisticsResponse,
   AttendanceStatistics
 };
-export { Student, GetStudentListResponse, GetStudentListRequest };
-export { CheckInRequest, CheckInResponse };
-export { CheckOutRequest, CheckOutResponse };
+export {Student, GetStudentListResponse, GetStudentListRequest};
+export {CheckInRequest, CheckInResponse};
+export {CheckOutRequest, CheckOutResponse};
 
 const GetAttendanceItemDetailRequest = z.object({
   id: z.string()
@@ -51,7 +51,8 @@ const AttendanceItemDetail = z.object({
   checkinPhotoUrl: z.nullable(z.string()),
   checkoutPhotoUrl: z.nullable(z.string()),
 
-  teacherFullname: z.nullable(z.string()),
+  checkinTeacherFullname: z.nullable(z.string()),
+  checkoutTeacherFullname: z.nullable(z.string()),
 
   pickerRelativeFullname: z.nullable(z.string())
 });
@@ -83,7 +84,10 @@ const Student = z.object({
   id: z.string(),
   fullname: z.string(),
   avatarUrl: z.nullable(z.string()),
-  className: z.nullable(z.string())
+  className: z.nullable(z.string()),
+
+  attendanceStatus: z.nullable(z.string()),
+  attendanceCheckinNote: z.nullable(z.string())
 });
 
 const GetStudentListRequest = z.object({

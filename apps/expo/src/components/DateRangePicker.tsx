@@ -5,30 +5,40 @@ import CalendarPicker from "react-native-calendar-picker";
 import { Button, Dialog, Portal, Text } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
-interface DatePickerProps {
+interface DateRangePickerProps {
   // React State passed from outside
-  initTime: Moment | null;
-  setTime: (date: Moment) => void;
+  initTimeStart: Moment | null;
+  initTimeEnd: Moment | null;
+  setTimeStart: (date: Moment) => void;
+  setTimeEnd: (date: Moment) => void;
 }
 
-const DatePicker = (props: DatePickerProps) => {
+const DateRangePicker = (props: DateRangePickerProps) => {
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [time, setTime] = useState<Moment | null>(null);
+  const [timeStart, setTimeStart] = useState<Moment | null>(null);
+  const [timeEnd, setTimeEnd] = useState<Moment | null>(null);
 
   const showDialog = () => {
     setDialogVisible(true);
   };
 
-  const onSelectDate = (date: Moment) => {
-    setTime(date);
+  const onSelectDate = (date: Moment, type: "START_DATE" | "END_DATE") => {
+    if (type == "START_DATE") {
+      setTimeStart(date);
+      setTimeEnd(null);
+    } else {
+      setTimeEnd(date);
+    }
   };
 
   const onCloseModel = () => {
-    if (time == null) {
+    if (timeStart == null || timeEnd == null) {
       // prevent partial select, restore selection if available
-      setTime(props.initTime);
+      setTimeStart(props.initTimeStart);
+      setTimeEnd(props.initTimeEnd);
     } else {
-      props.setTime(time);
+      props.setTimeStart(timeStart);
+      props.setTimeEnd(timeEnd);
     }
 
     setDialogVisible(false);
@@ -48,10 +58,12 @@ const DatePicker = (props: DatePickerProps) => {
           <Dialog.Content className={"mt-0 p-0"}>
             <View className={"bg-whites"}>
               <CalendarPicker
-                onDateChange={(date) => onSelectDate(date)}
-                allowRangeSelection={false}
+                onDateChange={(date, type) => onSelectDate(date, type)}
+                allowRangeSelection={true}
                 width={320} // This need to be recalculated relatively by screen width
-                initialDate={time?.toDate() ?? undefined}
+                initialDate={timeStart?.toDate() ?? undefined}
+                selectedStartDate={timeStart?.toDate() ?? undefined}
+                selectedEndDate={timeEnd?.toDate() ?? undefined}
               />
             </View>
           </Dialog.Content>
@@ -75,7 +87,16 @@ const DatePicker = (props: DatePickerProps) => {
         <View className={" m-auto flex-row"}>
           <View>
             <Text className={"m-auto"}>
-              {props.initTime?.format("DD/MM/YYYY").toString() ??
+              {props.initTimeStart?.format("DD/MM/YYYY").toString() ??
+                "__/__/____"}
+            </Text>
+          </View>
+          <View>
+            <Text className={"m-auto"}> - </Text>
+          </View>
+          <View>
+            <Text className={"m-auto"}>
+              {props.initTimeEnd?.format("DD/MM/YYYY").toString() ??
                 "__/__/____"}
             </Text>
           </View>
@@ -85,4 +106,4 @@ const DatePicker = (props: DatePickerProps) => {
   );
 };
 
-export default DatePicker;
+export default DateRangePicker;

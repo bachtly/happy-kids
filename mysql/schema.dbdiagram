@@ -202,8 +202,8 @@ Table KindergartenSchema.Attendance {
   status KindergartenSchema.CheckInStatusEnum
 
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
-  checkInTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
-  checkOutTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  checkinTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  checkoutTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   pickerRelativeId varchar(36) [ref: - KindergartenSchema.Relative.id]
 }
 
