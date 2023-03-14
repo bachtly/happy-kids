@@ -184,6 +184,7 @@ Table KindergartenSchema.NoteLetterReply {
 }
 
 Enum KindergartenSchema.CheckInStatusEnum {
+  CheckedOut
   CheckedIn
   NotCheckedIn
   AbsenseWithPermission

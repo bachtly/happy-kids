@@ -313,40 +313,40 @@ VALUES
 INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId)
 VALUES
     ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'AbsenseWithPermission', @stid1, @tid1, @tid1),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedIn', @stid2, @tid1, @tid2),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedIn', @stid3, @tid2, @tid2),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedIn', @stid4, @tid1, @tid1),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedIn', @stid6, @tid2, @tid2)
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedOut', @stid2, @tid1, @tid2),
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedOut', @stid3, @tid2, @tid2),
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedOut', @stid4, @tid1, @tid1),
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @avatar, @avatar, 'CheckedOut', @stid6, @tid2, @tid2)
 ;
 
 -- Attendance T5 2023-01-05
 INSERT INTO Attendance
 (date, checkinTime, checkoutTime, checkoutNote, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId, pickerRelativeId)
 VALUES
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1, null),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedIn', @stid2, @tid1, @tid1, null),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedIn', @stid3, @tid2, @tid2, null),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', 'Bé được chú Tư rước', @avatar, @avatar, 'CheckedIn', @stid4, @tid1, @tid1, @rlid1),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedIn', @stid6, @tid2, @tid2, null)
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedOut', @stid1, @tid1, @tid1, null),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedOut', @stid2, @tid1, @tid1, null),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedOut', @stid3, @tid2, @tid2, null),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', 'Bé được chú Tư rước', @avatar, @avatar, 'CheckedOut', @stid4, @tid1, @tid1, @rlid1),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @avatar, @avatar, 'CheckedOut', @stid6, @tid2, @tid2, null)
 ;
 
 -- Attendance T4 2023-01-11
 INSERT INTO Attendance
 (date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId)
 VALUES
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1),
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedIn', @stid2, @tid1, @tid1),
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedOut', @stid1, @tid1, @tid1),
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedOut', @stid2, @tid1, @tid1),
     ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'AbsenseWithoutPermission', @stid3, @tid2, @tid2),
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedIn', @stid4, @tid1, @tid1),
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedIn', @stid6, @tid2, @tid2)
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedOut', @stid4, @tid1, @tid1),
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @avatar, @avatar, 'CheckedOut', @stid6, @tid2, @tid2)
 ;
 
 -- Attendance more for student @stid1
 INSERT INTO Attendance
 (date, checkinTime, checkoutTime, checkinPhotoUrl, checkoutPhotoUrl, status, studentId, checkinTeacherId, checkoutTeacherId)
 VALUES
-    ('2023-01-12', '2023-01-12T7:00:00', '2023-01-12T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1),
-    ('2023-01-13', '2023-01-13T7:00:00', '2023-01-13T17:00:00', @avatar, @avatar, 'CheckedIn', @stid1, @tid1, @tid1),
+    ('2023-01-12', '2023-01-12T7:00:00', '2023-01-12T17:00:00', @avatar, @avatar, 'CheckedOut', @stid1, @tid1, @tid1),
+    ('2023-01-13', '2023-01-13T7:00:00', '2023-01-13T17:00:00', @avatar, @avatar, 'CheckedOut', @stid1, @tid1, @tid1),
     ('2023-01-14', '2023-01-14T7:00:00', '2023-01-14T17:00:00', @avatar, @avatar, 'AbsenseWithoutPermission', @stid1, @tid2, @tid2),
     ('2023-01-15', '2023-01-15T7:00:00', '2023-01-15T17:00:00', @avatar, @avatar, 'AbsenseWithPermission', @stid1, @tid1, @tid1),
     ('2023-01-16', '2023-01-16T7:00:00', '2023-01-16T17:00:00', @avatar, @avatar, 'AbsenseWithPermission', @stid1, @tid2, @tid2)

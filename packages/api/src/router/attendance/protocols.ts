@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 
 const GetAttendanceListRequest = z.object({
   timeStart: z.date(),
@@ -21,7 +21,7 @@ const GetAttendanceListResponse = z.object({
   message: z.nullable(z.string())
 });
 
-export {AttendanceItem, GetAttendanceListRequest, GetAttendanceListResponse};
+export { AttendanceItem, GetAttendanceListRequest, GetAttendanceListResponse };
 export {
   GetAttendanceItemDetailRequest,
   GetAttendanceItemDetailResponse,
@@ -32,9 +32,9 @@ export {
   GetAttendanceStatisticsResponse,
   AttendanceStatistics
 };
-export {Student, GetStudentListResponse, GetStudentListRequest};
-export {CheckInRequest, CheckInResponse};
-export {CheckOutRequest, CheckOutResponse};
+export { Student, GetStudentListResponse, GetStudentListRequest };
+export { CheckInRequest, CheckInResponse };
+export { CheckOutRequest, CheckOutResponse };
 
 const GetAttendanceItemDetailRequest = z.object({
   id: z.string()

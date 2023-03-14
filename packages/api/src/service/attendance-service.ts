@@ -1,14 +1,11 @@
-import {Kysely, sql} from "kysely";
-import {DB} from "kysely-codegen";
+import { Kysely, sql } from "kysely";
+import { DB } from "kysely-codegen";
 import moment from "moment";
-import {injectable} from "tsyringe";
-import {Student} from "../router/attendance/protocols";
-import {z} from "zod";
+import { injectable } from "tsyringe";
 
 @injectable()
 class AttendanceService {
-  constructor(private mysqlDB: Kysely<DB>) {
-  }
+  constructor(private mysqlDB: Kysely<DB>) {}
 
   getAttendanceList = async (
     timeStart: Date,
@@ -55,8 +52,16 @@ class AttendanceService {
 
     const attendance = await this.mysqlDB
       .selectFrom("Attendance")
-      .leftJoin("User as CheckinTeacher", "Attendance.checkinTeacherId", "CheckinTeacher.id")
-      .leftJoin("User as CheckoutTeacher", "Attendance.checkoutTeacherId", "CheckoutTeacher.id")
+      .leftJoin(
+        "User as CheckinTeacher",
+        "Attendance.checkinTeacherId",
+        "CheckinTeacher.id"
+      )
+      .leftJoin(
+        "User as CheckoutTeacher",
+        "Attendance.checkoutTeacherId",
+        "CheckoutTeacher.id"
+      )
       .leftJoin(
         "User as Relative",
         "Attendance.pickerRelativeId",
@@ -154,7 +159,9 @@ class AttendanceService {
       })}`
     );
 
-    const startOfDate = moment(moment(moment.now()).format("MM/DD/YYYY")).toDate();
+    const startOfDate = moment(
+      moment(moment.now()).format("MM/DD/YYYY")
+    ).toDate();
     const endOfDate = moment(moment(moment.now()).format("MM/DD/YYYY"))
       .add(1, "day")
       .toDate();
@@ -168,12 +175,14 @@ class AttendanceService {
       )
       .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
       .leftJoin(
-        this.mysqlDB.selectFrom('Attendance')
-          .select(['studentId', 'status', 'checkinNote'])
+        this.mysqlDB
+          .selectFrom("Attendance")
+          .select(["studentId", "status", "checkinNote"])
           .where("date", "<=", endOfDate)
-          .where("date", ">=", startOfDate).as('Attendance'),
-        'Attendance.studentId',
-        'Student.id'
+          .where("date", ">=", startOfDate)
+          .as("Attendance"),
+        "Attendance.studentId",
+        "Student.id"
       )
       .select([
         "Student.id",
@@ -183,16 +192,24 @@ class AttendanceService {
         "Attendance.status",
         "Attendance.checkinNote"
       ])
-      .where("Class.id", "=", classId)
+      .where("Class.id", "=", classId);
 
-    console.log(`getStudentList query: ${query.compile().sql}`)
-    console.log(`getStudentList query params: ${JSON.stringify({
-      startOfDate: startOfDate,
-      endOfDate: endOfDate
-    })}`)
+    console.log(`getStudentList query: ${query.compile().sql}`);
+    console.log(
+      `getStudentList query params: ${JSON.stringify({
+        startOfDate: startOfDate,
+        endOfDate: endOfDate
+      })}`
+    );
 
-    const rawStudents = await query.execute()
-      .then((resp) => resp.flat());
+    const rawStudents = await query.execute().then((resp) => resp.flat());
+
+    rawStudents.map((item) => {
+      if (!item.status) {
+        item.status = "NotCheckedIn";
+      }
+      return item;
+    });
 
     console.log(`Student lists from db: ${JSON.stringify(rawStudents)}`);
 
@@ -203,16 +220,9 @@ class AttendanceService {
         avatarUrl: student.avatarUrl as string,
         className: student.className as string,
         attendanceStatus: student.status,
-        attendanceCheckinNote: student.checkinNote,
-      }
-    })
-
-      rawStudents.map((item) => {
-      if (!item.attendanceStatus) {
-        item.attendanceStatus = 'NotCheckedIn' as never;
-      }
-      return item;
-    })
+        attendanceCheckinNote: student.checkinNote
+      };
+    });
 
     return {
       students: refinedStudents,
@@ -254,7 +264,7 @@ class AttendanceService {
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows);
 
-    if (count && count <= 0) return {message: "Insertion fail."};
+    if (count && count <= 0) return { message: "Insertion fail." };
 
     return {
       message: null
@@ -289,6 +299,7 @@ class AttendanceService {
     const query = this.mysqlDB
       .updateTable("Attendance")
       .set({
+        status: "CheckedOut",
         checkoutTime: time,
         checkoutNote: note,
         checkoutTeacherId: teacherId,
@@ -311,7 +322,7 @@ class AttendanceService {
       .executeTakeFirstOrThrow()
       .then((res) => res.numUpdatedRows);
 
-    if (count && count <= 0) return {message: "Update fail."};
+    if (count && count <= 0) return { message: "Update fail." };
 
     return {
       message: null

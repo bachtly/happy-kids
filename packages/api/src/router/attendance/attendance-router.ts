@@ -1,5 +1,5 @@
-import {attendanceService} from "../../service/common-services";
-import {createTRPCRouter, publicProcedure} from "../../trpc";
+import { attendanceService } from "../../service/common-services";
+import { createTRPCRouter, publicProcedure } from "../../trpc";
 import {
   CheckInRequest,
   CheckInResponse,
@@ -20,7 +20,7 @@ const attendanceRouter = createTRPCRouter({
     .input(GetAttendanceListRequest)
     .output(GetAttendanceListResponse)
     .mutation(
-      async ({input}) =>
+      async ({ input }) =>
         await attendanceService.getAttendanceList(
           input.timeStart,
           input.timeEnd,
@@ -32,7 +32,7 @@ const attendanceRouter = createTRPCRouter({
     .input(GetAttendanceItemDetailRequest)
     .output(GetAttendanceItemDetailResponse)
     .mutation(
-      async ({input}) =>
+      async ({ input }) =>
         await attendanceService.getAttendanceItemDetail(input.id)
     ),
 
@@ -40,7 +40,7 @@ const attendanceRouter = createTRPCRouter({
     .input(GetAttendanceStatisticsRequest)
     .output(GetAttendanceStatisticsResponse)
     .mutation(
-      async ({input}) =>
+      async ({ input }) =>
         await attendanceService.getAttendanceStatistics(
           input.timeStart,
           input.timeEnd,
@@ -52,14 +52,14 @@ const attendanceRouter = createTRPCRouter({
     .input(GetStudentListRequest)
     .output(GetStudentListResponse)
     .mutation(
-      async ({input}) => await attendanceService.getStudentList(input.classId)
+      async ({ input }) => await attendanceService.getStudentList(input.classId)
     ),
 
   checkin: publicProcedure
     .input(CheckInRequest)
     .output(CheckInResponse)
     .mutation(
-      async ({input}) =>
+      async ({ input }) =>
         await attendanceService.checkin(
           input.studentId,
           input.status,
@@ -74,7 +74,7 @@ const attendanceRouter = createTRPCRouter({
     .input(CheckOutRequest)
     .output(CheckOutResponse)
     .mutation(
-      async ({input}) =>
+      async ({ input }) =>
         await attendanceService.checkout(
           input.studentId,
           input.note ?? "",
@@ -86,4 +86,4 @@ const attendanceRouter = createTRPCRouter({
     )
 });
 
-export {attendanceRouter};
+export { attendanceRouter };

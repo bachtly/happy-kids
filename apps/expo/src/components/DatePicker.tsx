@@ -75,8 +75,7 @@ const DatePicker = (props: DatePickerProps) => {
         <View className={" m-auto flex-row"}>
           <View>
             <Text className={"m-auto"}>
-              {props.initTime?.format("DD/MM/YYYY").toString() ??
-                "__/__/____"}
+              {props.initTime?.format("DD/MM/YYYY").toString() ?? "__/__/____"}
             </Text>
           </View>
         </View>

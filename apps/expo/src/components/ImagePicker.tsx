@@ -31,7 +31,11 @@ const MyImagePicker = (props: MyImagePickerProps) => {
 
   return (
     <View className="w-full h-full items-center">
-      <TouchableOpacity className={"w-full h-full"} onPress={pickImage} disabled={props.disabled ?? false}>
+      <TouchableOpacity
+        className={"w-full h-full"}
+        onPress={pickImage}
+        disabled={props.disabled ?? false}
+      >
         {imageData !== "" ? (
           <Image source={{ uri: imageData }} className={"h-full w-full"} />
         ) : (

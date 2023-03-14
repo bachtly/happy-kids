@@ -31,4 +31,17 @@ interface AttendanceStudentModel {
   attendanceCheckinNote: string | null;
 }
 
-export type {AttendanceItemModel, AttendanceStatisticsModel, AttendanceStudentModel};
+const STATUS_ENUM_TO_VERBOSE = new Map([
+  ["CheckedOut", "Đã điểm danh"],
+  ["NotCheckedIn", "Chưa điểm danh"],
+  ["CheckedIn", "Đi học"],
+  ["AbsenseWithPermission", "Có phép"],
+  ["AbsenseWithoutPermission", "Không phép"]
+]);
+
+export type {
+  AttendanceItemModel,
+  AttendanceStatisticsModel,
+  AttendanceStudentModel
+};
+export { STATUS_ENUM_TO_VERBOSE };

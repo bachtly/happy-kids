@@ -1,10 +1,20 @@
 import moment from "moment";
-import {useEffect, useState} from "react";
-import {View} from "react-native";
-import {Avatar, Button, Card, RadioButton, Text, TextInput} from "react-native-paper";
-import {AttendanceStudentModel} from "../../models/AttendanceModels";
-import {api} from "../../utils/api";
-import {useAuthContext} from "../../utils/auth-context-provider";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
+import {
+  Avatar,
+  Button,
+  Card,
+  RadioButton,
+  Text,
+  TextInput
+} from "react-native-paper";
+import {
+  AttendanceStudentModel,
+  STATUS_ENUM_TO_VERBOSE
+} from "../../models/AttendanceModels";
+import { api } from "../../utils/api";
+import { useAuthContext } from "../../utils/auth-context-provider";
 import MyImagePicker from "../ImagePicker";
 
 enum Status {
@@ -14,13 +24,6 @@ enum Status {
   AbsenseWithoutPermission = "AbsenseWithoutPermission"
 }
 
-const STATUS_ENUM_TO_VERBOSE = new Map([
-  ["NotCheckedIn", "Chưa điểm danh"],
-  ["CheckedIn", "Đi học"],
-  ["AbsenseWithPermission", "Có phép"],
-  ["AbsenseWithoutPermission", "Không phép"]
-]);
-
 interface CheckinItemProps {
   attendanceStudentModel: AttendanceStudentModel;
   refresh: () => void;
@@ -28,9 +31,10 @@ interface CheckinItemProps {
 
 const CheckinItem = (props: CheckinItemProps) => {
   const [image, setImage] = useState("");
-  const [status, setStatus] = useState(props.attendanceStudentModel.attendanceStatus || Status.NotCheckedIn);
+  const [status, setStatus] = useState(
+    props.attendanceStudentModel.attendanceStatus || Status.NotCheckedIn
+  );
   const [note, setNote] = useState("");
-
   const [isFilled, setIsFilled] = useState(false);
 
   const authContext = useAuthContext();
@@ -40,8 +44,12 @@ const CheckinItem = (props: CheckinItemProps) => {
   });
 
   useEffect(() => {
-    setIsFilled(props.attendanceStudentModel.attendanceStatus != null && props.attendanceStudentModel.attendanceStatus != Status.NotCheckedIn.toString());
-  })
+    setIsFilled(
+      props.attendanceStudentModel.attendanceStatus != null &&
+        props.attendanceStudentModel.attendanceStatus !=
+          Status.NotCheckedIn.toString()
+    );
+  });
 
   return (
     <View className={"mb-3"}>
@@ -51,16 +59,25 @@ const CheckinItem = (props: CheckinItemProps) => {
             <Avatar.Image
               className={"my-auto"}
               size={42}
-              source={{uri: props.attendanceStudentModel.avatarUrl ?? ""}}
+              source={{ uri: props.attendanceStudentModel.avatarUrl ?? "" }}
             />
             <View>
-              <Text className={""} variant={"titleSmall"}>{props.attendanceStudentModel.fullname}</Text>
-              <Text className={"italic"}
-                    variant={"bodyMedium"}>{props.attendanceStudentModel.attendanceStatus && STATUS_ENUM_TO_VERBOSE.get(props.attendanceStudentModel.attendanceStatus)}</Text>
+              <Text className={""} variant={"titleSmall"}>
+                {props.attendanceStudentModel.fullname}
+              </Text>
+              <Text className={"italic"} variant={"bodyMedium"}>
+                {props.attendanceStudentModel.attendanceStatus &&
+                  STATUS_ENUM_TO_VERBOSE.get(
+                    props.attendanceStudentModel.attendanceStatus
+                  )}
+              </Text>
             </View>
           </View>
 
-          <View className={"flex-row mb-3 justify-between"} style={{left: -8}}>
+          <View
+            className={"flex-row mb-3 justify-between"}
+            style={{ left: -8 }}
+          >
             {[
               Status.CheckedIn,
               Status.AbsenseWithPermission,
@@ -84,17 +101,18 @@ const CheckinItem = (props: CheckinItemProps) => {
             <TextInput
               className={"flex-1"}
               onChangeText={(text) => setNote(text.toString())}
-              outlineStyle={{padding: 0}}
-              contentStyle={{margin: 0, padding: 1}}
-              placeholder={props.attendanceStudentModel.attendanceCheckinNote || "Ghi chú ..."}
-              // style={{ top: -6, height: 78,  }}
+              outlineStyle={{ padding: 0 }}
+              contentStyle={{ margin: 0, padding: 1 }}
+              placeholder={
+                props.attendanceStudentModel.attendanceCheckinNote ||
+                "Ghi chú ..."
+              }
               multiline={true}
-              // mode={"outlined"}
               disabled={isFilled}
             />
           </View>
 
-          <View className={'w-20 h-20 mb-3'}>
+          <View className={"w-20 h-20 mb-3"}>
             <MyImagePicker
               imageData={image}
               setImageData={setImage}
@@ -103,7 +121,7 @@ const CheckinItem = (props: CheckinItemProps) => {
           </View>
 
           <Button
-            mode={'outlined'}
+            mode={"outlined"}
             disabled={isFilled}
             onPress={() => {
               const time = moment(moment.now());
@@ -111,14 +129,14 @@ const CheckinItem = (props: CheckinItemProps) => {
               const teacherId = authContext.userId;
 
               teacherId &&
-              attMutation.mutate({
-                studentId: studentId,
-                status: status,
-                note: note,
-                time: time.toDate(),
-                photoUrl: props.attendanceStudentModel.avatarUrl,
-                teacherId: teacherId
-              });
+                attMutation.mutate({
+                  studentId: studentId,
+                  status: status,
+                  note: note,
+                  time: time.toDate(),
+                  photoUrl: props.attendanceStudentModel.avatarUrl,
+                  teacherId: teacherId
+                });
             }}
           >
             Điểm danh
