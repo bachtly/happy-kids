@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import CheckoutItem from "../../../src/components/attendance/CheckoutItem";
-import { StudentModel } from "../../../src/models/AttendanceModels";
+import { AttendanceStudentModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 
@@ -17,7 +17,7 @@ const AttendanceCheckout = () => {
   });
 
   // data
-  const [studentList, setStudentList] = useState<StudentModel[]>([]);
+  const [studentList, setStudentList] = useState<AttendanceStudentModel[]>([]);
   const attMutation = api.attendance.getStudentList.useMutation({
     onSuccess: (resp) => setStudentList(resp.students)
   });

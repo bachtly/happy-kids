@@ -1,10 +1,10 @@
-import { Stack } from "expo-router";
-import { useTheme } from "react-native-paper";
+import {Stack} from "expo-router";
+import {useTheme} from "react-native-paper";
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 const RootLayout = () => {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
 
   return (
     <Stack
@@ -17,11 +17,11 @@ const RootLayout = () => {
     >
       <Stack.Screen
         name={"attendanceTab"}
-        options={{ title: "Điểm danh" }}
+        options={{title: "Điểm danh", headerShown: true}}
       ></Stack.Screen>
       <Stack.Screen
         name={"[id]"}
-        options={{ title: "Chi tiết điểm danh" }}
+        options={{title: "Chi tiết điểm danh"}}
       ></Stack.Screen>
     </Stack>
   );

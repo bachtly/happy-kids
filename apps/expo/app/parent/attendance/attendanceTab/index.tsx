@@ -6,7 +6,7 @@ import { Pressable, ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AttendanceItem from "../../../../src/components/attendance/AttendanceItem";
-import DatePicker from "../../../../src/components/DatePicker";
+import DateRangePicker from "../../../../src/components/DateRangePicker";
 import { AttendanceItemModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
 import { useAuthContext } from "../../../../src/utils/auth-context-provider";
@@ -18,8 +18,6 @@ const AttendanceHistory = () => {
   // properties
   const { colors } = useTheme();
   const { studentId } = useAuthContext();
-  const vis = NavigationBar.useVisibility();
-  const router = useRouter();
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
@@ -51,22 +49,15 @@ const AttendanceHistory = () => {
     <View className={"flex-1 bg-white px-2"}>
       <View className={"fixed my-4 flex-row justify-between"}>
         <View className={""}>
-          <DatePicker
+          <DateRangePicker
             initTimeStart={timeStart}
             initTimeEnd={(() => timeEnd)()}
             setTimeStart={setTimeStart}
             setTimeEnd={setTimeEnd}
-            useRange={true}
           />
         </View>
 
         <View className={"flex-row justify-between space-x-4"}>
-          <Pressable className={""}>
-            <View className={"m-auto"}>
-              <AntDesign name={"search1"} size={25}></AntDesign>
-            </View>
-          </Pressable>
-
           <Pressable className={""}>
             <View className={"m-auto"}>
               <AntDesign name={"filter"} size={25}></AntDesign>
