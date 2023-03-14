@@ -1,5 +1,3 @@
-import * as NavigationBar from "expo-navigation-bar";
-import { useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";

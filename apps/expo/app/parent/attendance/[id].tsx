@@ -79,7 +79,10 @@ const AttendanceDetail = () => {
 
           <View className={"mb-2"}>
             <Text className={"mb-2"}>Ghi chú của giáo viên: </Text>
-            <TextInput disabled={true} style={{fontSize: theme.fonts.bodyMedium.fontSize}}>
+            <TextInput
+              disabled={true}
+              style={{ fontSize: theme.fonts.bodyMedium.fontSize }}
+            >
               {attendance?.checkinNote ?? "Không có ghi chú"}
             </TextInput>
           </View>
@@ -119,7 +122,10 @@ const AttendanceDetail = () => {
 
           <View className={"mb-2"}>
             <Text className={"mb-2"}>Ghi chú của giáo viên: </Text>
-            <TextInput disabled={true} style={{fontSize: theme.fonts.bodyMedium.fontSize}}>
+            <TextInput
+              disabled={true}
+              style={{ fontSize: theme.fonts.bodyMedium.fontSize }}
+            >
               {attendance?.checkinNote ?? "Không có ghi chú"}
             </TextInput>
           </View>
