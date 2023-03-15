@@ -1,17 +1,23 @@
 import { useFocusEffect } from "expo-router";
+import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import CheckoutItem from "../../../src/components/attendance/CheckoutItem";
+import DatePicker from "../../../src/components/DatePicker";
 import { AttendanceStudentModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
+
+const DEFAULT_TIME = moment(moment.now());
 
 const AttendanceCheckout = () => {
   // properties
   const { colors } = useTheme();
   const { classId } = useAuthContext();
 
+  const [time, setTime] = useState<Moment>(DEFAULT_TIME);
   const [filter, setFilter] = useState({
     searchStr: "",
     status: ""
@@ -25,11 +31,8 @@ const AttendanceCheckout = () => {
 
   // update list when search criterias change
   useEffect(() => {
-    classId &&
-      attMutation.mutate({
-        classId: classId
-      });
-  }, [classId]);
+    refresh();
+  }, [classId, time]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,14 +43,29 @@ const AttendanceCheckout = () => {
   const refresh = () => {
     classId &&
       attMutation.mutate({
-        classId: classId
+        classId: classId,
+        date: time.toDate()
       });
   };
 
   return (
     <View className={"flex-1 bg-white px-2"}>
+      <View className={"fixed my-4 flex-row justify-between"}>
+        <View className={""}>
+          <DatePicker initTime={time} setTime={setTime} />
+        </View>
+
+        <View className={"flex-row justify-between space-x-4"}>
+          <Pressable className={""}>
+            <View className={"m-auto"}>
+              <AntDesign name={"filter"} size={25}></AntDesign>
+            </View>
+          </Pressable>
+        </View>
+      </View>
+
       <ScrollView>
-        <View className={"flex mt-4 mb-1"}>
+        <View className={"flex mb-1"}>
           <Text variant={"titleLarge"}>
             Lớp: {studentList[0]?.className ?? ""}
           </Text>
@@ -60,6 +78,7 @@ const AttendanceCheckout = () => {
                 key={key}
                 attendanceStudentModel={item}
                 refresh={() => refresh()}
+                date={time.toDate()}
               />
             ))
           ) : (

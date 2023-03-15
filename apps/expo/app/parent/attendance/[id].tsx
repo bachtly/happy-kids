@@ -126,7 +126,7 @@ const AttendanceDetail = () => {
               disabled={true}
               style={{ fontSize: theme.fonts.bodyMedium.fontSize }}
             >
-              {attendance?.checkinNote ?? "Không có ghi chú"}
+              {attendance?.checkoutNote ?? "Không có ghi chú"}
             </TextInput>
           </View>
           <Divider className={"mb-2"} />
