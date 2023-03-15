@@ -15,10 +15,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "noUncheckedIndexedAccess": true
     "noUncheckedIndexedAccess": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": [".eslintrc.js"],
-  "extends": "expo/tsconfig.base"
+  "include": [".eslintrc.js"]
 }
+

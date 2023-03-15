@@ -1,25 +1,20 @@
-import * as NavigationBar from "expo-navigation-bar";
-import { useRouter } from "expo-router";
-import moment, { Moment } from "moment";
-import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
-import { List, useTheme } from "react-native-paper";
+import moment, {Moment} from "moment";
+import React, {useEffect, useState} from "react";
+import {Pressable, ScrollView, View} from "react-native";
+import {List} from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import DateRangePicker from "../../../../src/components/DateRangePicker";
-import { AttendanceStatisticsModel } from "../../../../src/models/AttendanceModels";
-import { api } from "../../../../src/utils/api";
-import { useAuthContext } from "../../../../src/utils/auth-context-provider";
+import {AttendanceStatisticsModel} from "../../../../src/models/AttendanceModels";
+import {api} from "../../../../src/utils/api";
+import {useAuthContext} from "../../../../src/utils/auth-context-provider";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
 const AttendanceStatistics = () => {
   // properties
-  const { colors } = useTheme();
-  const { studentId } = useAuthContext();
-  const vis = NavigationBar.useVisibility();
-  const router = useRouter();
+  const {studentId} = useAuthContext();
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
@@ -59,12 +54,6 @@ const AttendanceStatistics = () => {
         </View>
 
         <View className={"flex-row justify-between space-x-4"}>
-          {/*<Pressable className={""}>*/}
-          {/*  <View className={"m-auto"}>*/}
-          {/*    <AntDesign name={"search1"} size={25}></AntDesign>*/}
-          {/*  </View>*/}
-          {/*</Pressable>*/}
-
           <Pressable className={""}>
             <View className={"m-auto"}>
               <AntDesign name={"filter"} size={25}></AntDesign>
