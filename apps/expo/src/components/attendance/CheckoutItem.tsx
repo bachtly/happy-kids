@@ -1,4 +1,3 @@
-import moment from "moment";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Avatar, Button, Card, Text, TextInput } from "react-native-paper";
@@ -20,6 +19,7 @@ enum Status {
 interface CheckoutItemProps {
   attendanceStudentModel: AttendanceStudentModel;
   refresh: () => void;
+  date: Date;
 }
 
 const CheckoutItem = (props: CheckoutItemProps) => {
@@ -86,7 +86,6 @@ const CheckoutItem = (props: CheckoutItemProps) => {
 
           <Button
             onPress={() => {
-              const time = moment(moment.now());
               const studentId = props.attendanceStudentModel.id;
               const teacherId = authContext.userId;
 
@@ -94,7 +93,7 @@ const CheckoutItem = (props: CheckoutItemProps) => {
                 attMutation.mutate({
                   studentId: studentId,
                   note: note,
-                  time: time.toDate(),
+                  time: props.date,
                   photoUrl: props.attendanceStudentModel.avatarUrl,
                   teacherId: teacherId,
                   pickerRelativeId: null

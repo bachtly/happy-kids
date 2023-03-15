@@ -91,7 +91,8 @@ const Student = z.object({
 });
 
 const GetStudentListRequest = z.object({
-  classId: z.string()
+  classId: z.string(),
+  date: z.date()
 });
 
 const GetStudentListResponse = z.object({

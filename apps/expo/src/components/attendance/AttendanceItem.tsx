@@ -2,7 +2,10 @@ import { useRouter } from "expo-router";
 import moment from "moment";
 import { View } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
-import { AttendanceItemModel } from "../../models/AttendanceModels";
+import {
+  AttendanceItemModel,
+  STATUS_ENUM_TO_VERBOSE
+} from "../../models/AttendanceModels";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -15,13 +18,6 @@ const DATE_OF_WEEK = [
 ];
 const DATE_FORMAT = "DD/MM/YYYY";
 const TIME_FORMAT = "hh:mm";
-
-const STATUS_ENUM_TO_VERBOSE = new Map([
-  ["NotCheckedIn", "Chưa điểm danh"],
-  ["CheckedIn", "Đã điểm danh"],
-  ["AbsenseWithPermission", "Vắng có phép"],
-  ["AbsenseWithoutPermission", "Vắng không phép"]
-]);
 
 const AttendanceItem = (props: AttendanceItemModel) => {
   const router = useRouter();

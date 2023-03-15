@@ -1,3 +1,4 @@
+import { useFocusEffect } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
@@ -9,7 +10,7 @@ import { AttendanceStudentModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 
-const DEFAULT_TIME = moment(moment.now()).subtract(7, "days");
+const DEFAULT_TIME = moment(moment.now());
 
 const AttendanceCheckin = () => {
   // properties
@@ -33,16 +34,20 @@ const AttendanceCheckin = () => {
 
   // update list when search criterias change
   useEffect(() => {
-    classId &&
-      attMutation.mutate({
-        classId: classId
-      });
+    refresh();
   }, [classId, time]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refresh();
+    }, [])
+  );
 
   const refresh = () => {
     classId &&
       attMutation.mutate({
-        classId: classId
+        classId: classId,
+        date: time.toDate()
       });
   };
 
@@ -76,6 +81,7 @@ const AttendanceCheckin = () => {
                 key={key}
                 attendanceStudentModel={item}
                 refresh={refresh}
+                date={time.toDate()}
               />
             ))
           ) : (

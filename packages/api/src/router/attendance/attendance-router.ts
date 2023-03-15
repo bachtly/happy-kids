@@ -52,7 +52,8 @@ const attendanceRouter = createTRPCRouter({
     .input(GetStudentListRequest)
     .output(GetStudentListResponse)
     .mutation(
-      async ({ input }) => await attendanceService.getStudentList(input.classId)
+      async ({ input }) =>
+        await attendanceService.getStudentList(input.classId, input.date)
     ),
 
   checkin: publicProcedure

@@ -152,17 +152,15 @@ class AttendanceService {
     };
   };
 
-  getStudentList = async (classId: string) => {
+  getStudentList = async (classId: string, date: Date) => {
     console.log(
       `getStudentList receive request ${JSON.stringify({
         classId: classId
       })}`
     );
 
-    const startOfDate = moment(
-      moment(moment.now()).format("MM/DD/YYYY")
-    ).toDate();
-    const endOfDate = moment(moment(moment.now()).format("MM/DD/YYYY"))
+    const startOfDate = moment(moment(date).format("MM/DD/YYYY")).toDate();
+    const endOfDate = moment(moment(date).format("MM/DD/YYYY"))
       .add(1, "day")
       .toDate();
 

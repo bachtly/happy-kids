@@ -1,4 +1,3 @@
-import moment from "moment";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import {
@@ -27,6 +26,7 @@ enum Status {
 interface CheckinItemProps {
   attendanceStudentModel: AttendanceStudentModel;
   refresh: () => void;
+  date: Date;
 }
 
 const CheckinItem = (props: CheckinItemProps) => {
@@ -124,7 +124,6 @@ const CheckinItem = (props: CheckinItemProps) => {
             mode={"outlined"}
             disabled={isFilled}
             onPress={() => {
-              const time = moment(moment.now());
               const studentId = props.attendanceStudentModel.id;
               const teacherId = authContext.userId;
 
@@ -133,7 +132,7 @@ const CheckinItem = (props: CheckinItemProps) => {
                   studentId: studentId,
                   status: status,
                   note: note,
-                  time: time.toDate(),
+                  time: props.date,
                   photoUrl: props.attendanceStudentModel.avatarUrl,
                   teacherId: teacherId
                 });
