@@ -26,7 +26,7 @@ const config = {
       rules: {
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-unused-vars": [
-          "warn", // or "error"
+          "error", // or "warn"
           {
             argsIgnorePattern: "^_",
             varsIgnorePattern: "^_",

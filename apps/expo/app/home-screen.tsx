@@ -1,12 +1,15 @@
-import { Stack } from "expo-router";
 import { Text, View } from "react-native";
 import { useAuthContext } from "../src/utils/auth-context-provider";
-export default function Index() {
+import { Stack } from "expo-router";
+
+const HomeScreen = () => {
   const { onLogout } = useAuthContext();
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View>
       <Stack.Screen options={{ title: "Trang chủ" }} />
-      <Text onPress={() => onLogout()}>Sign Out</Text>
+      <Text onPress={() => onLogout()}>Home screen</Text>
     </View>
   );
-}
+};
+
+export default HomeScreen;

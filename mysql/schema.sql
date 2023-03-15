@@ -24,13 +24,13 @@ CREATE TABLE `KindergartenSchema`.`StudentClassRelationship` (
 );
 
 CREATE TABLE `KindergartenSchema`.`User` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `id` varchar(36) PRIMARY KEY NOT NULL,
   `username` varchar(255) UNIQUE NOT NULL,
-  `password` varchar(255),
+  `password` varchar(255) NOT NULL,
   `fullname` varchar(255),
   `birthdate` datetime,
-  `email` varchar(255) UNIQUE,
-  `phone` bigint UNIQUE NOT NULL,
+  `email` varchar(255) UNIQUE NOT NULL,
+  `phone` varchar(16),
   `schoolId` varchar(36),
   `employeeRole` varchar(255),
   `userGroup` ENUM ('Manager', 'Teacher', 'Parent')

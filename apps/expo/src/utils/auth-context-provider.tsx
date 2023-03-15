@@ -1,13 +1,17 @@
+import * as SecureStore from "expo-secure-store";
 import { useRouter, useSegments } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 
+export const userIdKey = "userId";
 export type AuthContextType = {
+  isLoading: boolean;
   userId: string | null;
   onLogin: (userId: string) => void;
   onLogout: () => void;
 };
 
 export const AuthContext = React.createContext<AuthContextType>({
+  isLoading: false,
   userId: null,
   onLogin: (_) => {},
   onLogout: () => {}
@@ -16,31 +20,8 @@ export const AuthContext = React.createContext<AuthContextType>({
 type ProviderProps = {
   children: React.ReactNode;
 };
-export const AuthContextProvider = ({ children }: ProviderProps) => {
-  const [userId, setUserId] = React.useState<string | null>(null);
 
-  useProtectedRoute(userId);
-
-  return (
-    <AuthContext.Provider
-      value={{
-        userId: userId,
-        onLogin: (userId) => setUserId(userId),
-        onLogout: () => setUserId(null)
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-// This hook can be used to access the user info.
-export function useAuthContext() {
-  return React.useContext(AuthContext);
-}
-
-// This hook will protect the route access based on user authentication.
-function useProtectedRoute(userId: string | null) {
+const useProtectedRoute = (userId: string | null) => {
   const segments = useSegments();
   const router = useRouter();
 
@@ -53,10 +34,52 @@ function useProtectedRoute(userId: string | null) {
       !inAuthGroup
     ) {
       // Redirect to the sign-in page.
-      router.replace("/login-screen");
+      router.replace("/login/login-screen");
     } else if (userId && inAuthGroup) {
       // Redirect away from the sign-in page.
-      router.replace("/");
+      router.replace("/home-screen");
     }
   }, [userId, segments]);
+};
+
+export const AuthContextProvider = ({ children }: ProviderProps) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [userId, setUserId] = React.useState<string | null>(null);
+
+  useProtectedRoute(userId);
+
+  useEffect(() => {
+    void SecureStore.getItemAsync(userIdKey)
+      .then((userId) => {
+        setUserId(userId);
+        setIsLoading(false);
+      })
+      .catch((_) => setIsLoading(false));
+  }, []);
+
+  const setAndSaveUserToStore = (userId: string | null) => {
+    setUserId(userId);
+    if (userId) {
+      void SecureStore.setItemAsync(userIdKey, userId);
+    } else {
+      void SecureStore.deleteItemAsync(userIdKey);
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoading: isLoading,
+        userId: userId,
+        onLogin: (userId) => setAndSaveUserToStore(userId),
+        onLogout: () => setAndSaveUserToStore(null)
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export function useAuthContext() {
+  return React.useContext(AuthContext);
 }

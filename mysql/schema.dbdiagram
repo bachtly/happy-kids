@@ -26,13 +26,13 @@ Enum KindergartenSchema.UserGroup {
 }
 
 Table KindergartenSchema.User {
-  id varchar(36) [pk, default: `UUID()`]
+  id varchar(36) [pk, not null]
   username varchar [not null, unique]
-  password varchar
+  password varchar [not null]
   fullname varchar
   birthdate datetime
-  email varchar [null, unique]
-  phone bigint [not null, unique]
+  email varchar [not null, unique]
+  phone varchar(16)
 
   schoolId varchar(36) [ref: - KindergartenSchema.School.id]
   employeeRole varchar

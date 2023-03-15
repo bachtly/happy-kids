@@ -25,7 +25,8 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
       foregroundImage: "./assets/images/happy-kids-logo.png",
       backgroundColor: "#1750c9"
     },
-    package: "com.hcmut.happykids"
+    package: "com.hcmut.happykids",
+    softwareKeyboardLayoutMode: "pan"
   },
   extra: {
     eas: {
