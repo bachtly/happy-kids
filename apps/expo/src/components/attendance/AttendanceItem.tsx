@@ -54,8 +54,10 @@ const AttendanceItem = (props: AttendanceItemModel) => {
                 className={"my-auto"}
                 onPress={() => {
                   if (props.date) {
-                    router.setParams({ date: props.date.toString() });
-                    router.push(`/parent/attendance/${props.id}`);
+                    router.push({
+                      pathname: `/parent/attendance/detail-screen`,
+                      params: { date: props.date.toString(), id: props.id }
+                    });
                   }
                 }}
               >

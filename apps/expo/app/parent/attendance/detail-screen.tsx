@@ -19,7 +19,7 @@ const DATE_OF_WEEK = [
 const DATE_FORMAT = "DD/MM/YYYY";
 const TIME_FORMAT = "hh:mm";
 
-const AttendanceDetail = () => {
+const DetailScreen = () => {
   const { id } = useSearchParams();
   const theme = useTheme();
 
@@ -152,4 +152,4 @@ const AttendanceDetail = () => {
   );
 };
 
-export default AttendanceDetail;
+export default DetailScreen;

@@ -10,7 +10,9 @@ export default function Index() {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Trang chủ" }} />
       <Text onPress={() => onLogout()}>Sign Out</Text>
-      <Button onPress={() => router.push("/parent/attendance/history-screen")}>
+      <Button
+        onPress={() => router.push("/parent/attendance/tab/history-screen")}
+      >
         Phụ huynh
       </Button>
       <Button onPress={() => router.push("/teacher/attendance")}>
