@@ -191,14 +191,6 @@ class AttendanceService {
       ])
       .where("Class.id", "=", classId);
 
-    console.log(`getStudentList query: ${query.compile().sql}`);
-    console.log(
-      `getStudentList query params: ${JSON.stringify({
-        startOfDate: startOfDate,
-        endOfDate: endOfDate
-      })}`
-    );
-
     const rawStudents = await query.execute().then((resp) => resp.flat());
 
     rawStudents.map((item) => {
@@ -280,7 +272,7 @@ class AttendanceService {
       `checkOut receive request ${JSON.stringify({
         date: time,
         checkOutTime: time,
-        checkInNote: note,
+        checkOutNote: note,
         studentId: studentId,
         teacherId: teacherId,
         checkOutPhotoUrl: photoUrl,
@@ -306,14 +298,6 @@ class AttendanceService {
       .where("studentId", "=", studentId)
       .where("date", "<=", endOfDate)
       .where("date", ">=", startOfDate);
-
-    console.log(`Query executed: ${query.compile().sql}`);
-    console.log(
-      `Query params: ${JSON.stringify({
-        endOfDate: endOfDate,
-        startOfDate: startOfDate
-      })}`
-    );
 
     const count = await query
       .executeTakeFirstOrThrow()

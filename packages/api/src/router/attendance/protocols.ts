@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+const AttendanceStatus = z.custom<
+  | "AbsenseWithoutPermission"
+  | "AbsenseWithPermission"
+  | "CheckedIn"
+  | "CheckedOut"
+  | "NotCheckedIn"
+  | null
+>();
 const GetAttendanceListRequest = z.object({
   timeStart: z.date(),
   timeEnd: z.date(),
@@ -9,7 +17,7 @@ const GetAttendanceListRequest = z.object({
 const AttendanceItem = z.object({
   id: z.string(),
   date: z.nullable(z.date()),
-  status: z.nullable(z.string()),
+  status: z.nullable(AttendanceStatus),
   checkinTime: z.nullable(z.date()),
   checkoutTime: z.nullable(z.date()),
   checkinNote: z.nullable(z.string()),
@@ -43,7 +51,7 @@ const GetAttendanceItemDetailRequest = z.object({
 const AttendanceItemDetail = z.object({
   id: z.string(),
   date: z.nullable(z.date()),
-  status: z.nullable(z.string()),
+  status: z.nullable(AttendanceStatus),
   checkinTime: z.nullable(z.date()),
   checkoutTime: z.nullable(z.date()),
   checkinNote: z.nullable(z.string()),
@@ -86,7 +94,7 @@ const Student = z.object({
   avatarUrl: z.nullable(z.string()),
   className: z.nullable(z.string()),
 
-  attendanceStatus: z.nullable(z.string()),
+  attendanceStatus: z.nullable(AttendanceStatus),
   attendanceCheckinNote: z.nullable(z.string())
 });
 
@@ -102,7 +110,7 @@ const GetStudentListResponse = z.object({
 
 const CheckInRequest = z.object({
   studentId: z.string(),
-  status: z.string(),
+  status: AttendanceStatus,
   note: z.nullable(z.string()),
   time: z.date(),
   teacherId: z.string(),
