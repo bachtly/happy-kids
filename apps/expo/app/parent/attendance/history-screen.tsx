@@ -1,18 +1,21 @@
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import AttendanceItem from "../../../../src/components/attendance/AttendanceItem";
-import DateRangePicker from "../../../../src/components/DateRangePicker";
-import { AttendanceItemModel } from "../../../../src/models/AttendanceModels";
-import { api } from "../../../../src/utils/api";
-import { useAuthContext } from "../../../../src/utils/auth-context-provider";
+import AttendanceItem from "../../../src/components/attendance/AttendanceItem";
+import DateRangePicker from "../../../src/components/DateRangePicker";
+import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
+import { api } from "../../../src/utils/api";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+
+const Tab = createMaterialTopTabNavigator();
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
-const AttendanceHistory = () => {
+const HistoryScreen = () => {
   // properties
   const { colors } = useTheme();
   const { studentId } = useAuthContext();
@@ -49,7 +52,7 @@ const AttendanceHistory = () => {
         <View className={""}>
           <DateRangePicker
             initTimeStart={timeStart}
-            initTimeEnd={(() => timeEnd)()}
+            initTimeEnd={timeEnd}
             setTimeStart={setTimeStart}
             setTimeEnd={setTimeEnd}
           />
@@ -85,4 +88,4 @@ const AttendanceHistory = () => {
   );
 };
 
-export default AttendanceHistory;
+export default HistoryScreen;
