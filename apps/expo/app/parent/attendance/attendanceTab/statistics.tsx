@@ -1,20 +1,20 @@
-import moment, {Moment} from "moment";
-import React, {useEffect, useState} from "react";
-import {Pressable, ScrollView, View} from "react-native";
-import {List} from "react-native-paper";
+import moment, { Moment } from "moment";
+import React, { useEffect, useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
+import { List } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import DateRangePicker from "../../../../src/components/DateRangePicker";
-import {AttendanceStatisticsModel} from "../../../../src/models/AttendanceModels";
-import {api} from "../../../../src/utils/api";
-import {useAuthContext} from "../../../../src/utils/auth-context-provider";
+import { AttendanceStatisticsModel } from "../../../../src/models/AttendanceModels";
+import { api } from "../../../../src/utils/api";
+import { useAuthContext } from "../../../../src/utils/auth-context-provider";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
 const AttendanceStatistics = () => {
   // properties
-  const {studentId} = useAuthContext();
+  const { studentId } = useAuthContext();
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
