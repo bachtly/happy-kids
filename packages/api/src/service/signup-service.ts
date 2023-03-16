@@ -33,11 +33,11 @@ class SignupService {
         this.mysqlDB
           .insertInto("User")
           .values({
+            username: email,
             id: userId,
             fullname: fullName,
             email: email,
-            password: hashedPassword,
-            email: email
+            password: hashedPassword
           })
           .executeTakeFirst()
       )
