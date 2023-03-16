@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { Stack, useFocusEffect } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
@@ -12,7 +12,7 @@ import { useAuthContext } from "../../../src/utils/auth-context-provider";
 
 const DEFAULT_TIME = moment(moment.now());
 
-const AttendanceCheckin = () => {
+const CheckinScreen = () => {
   // properties
   const { colors } = useTheme();
   const { classId } = useAuthContext();
@@ -53,6 +53,8 @@ const AttendanceCheckin = () => {
 
   return (
     <View className={"flex-1 bg-white px-2"}>
+      <Stack.Screen options={{ title: "Điểm danh" }} />
+
       <View className={"fixed my-4 flex-row justify-between"}>
         <View className={""}>
           <DatePicker initTime={time} setTime={setTime} />
@@ -101,4 +103,4 @@ const AttendanceCheckin = () => {
   );
 };
 
-export default AttendanceCheckin;
+export default CheckinScreen;

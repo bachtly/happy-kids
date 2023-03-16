@@ -1,30 +1,37 @@
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Stack } from "expo-router";
+import React from "react";
 import { useTheme } from "react-native-paper";
+import HistoryScreen from "./history-screen";
+import StatisticsScreen from "./statistics-screen";
+
+const Tab = createMaterialTopTabNavigator();
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
-const RootLayout = () => {
+const AttendanceLayout = () => {
   const { colors } = useTheme();
 
   return (
-    <Stack
-      screenOptions={{
-        headerTintColor: colors.background,
-        headerStyle: {
-          backgroundColor: colors.primary
-        }
-      }}
-    >
-      <Stack.Screen
-        name={"attendanceTab"}
-        options={{ title: "Điểm danh", headerShown: true }}
-      ></Stack.Screen>
-      <Stack.Screen
-        name={"[id]"}
-        options={{ title: "Chi tiết điểm danh" }}
-      ></Stack.Screen>
-    </Stack>
+    <>
+      <Stack.Screen options={{ title: "Điểm danh" }} />
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: colors.primary },
+          tabBarActiveTintColor: colors.white,
+          tabBarLabelStyle: {
+            textTransform: "capitalize"
+          },
+          tabBarIndicatorStyle: {
+            backgroundColor: colors.white
+          }
+        }}
+      >
+        <Tab.Screen name={"Lịch sử"} component={HistoryScreen} />
+        <Tab.Screen name={"Thống kê"} component={StatisticsScreen} />
+      </Tab.Navigator>
+    </>
   );
 };
 
-export default RootLayout;
+export default AttendanceLayout;

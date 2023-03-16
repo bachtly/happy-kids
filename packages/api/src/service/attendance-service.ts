@@ -82,8 +82,7 @@ class AttendanceService {
         "Relative.fullname as pickerRelativeFullname"
       ])
       .where("Attendance.id", "=", id)
-      .executeTakeFirst()
-      .then((resp) => resp);
+      .executeTakeFirst();
 
     if (attendance == null) {
       return {
@@ -262,7 +261,7 @@ class AttendanceService {
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows);
 
-    if (count && count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) return { message: "Insertion fail." };
 
     return {
       message: null

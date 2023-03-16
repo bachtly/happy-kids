@@ -1,38 +1,43 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { Stack } from "expo-router";
+import React from "react";
 import { useTheme } from "react-native-paper";
-import AttendanceCheckout from "./checkout";
-import AttendanceCheckin from "./index";
+import CheckinScreen from "./checkin-screen";
+import CheckoutScreen from "./checkout-screen";
 
 const Tab = createMaterialTopTabNavigator();
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
-const RootLayout = () => {
+const AttendanceLayout = () => {
   const { colors } = useTheme();
 
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: { backgroundColor: colors.primary },
-        tabBarActiveTintColor: colors.white,
-        tabBarLabelStyle: {
-          textTransform: "capitalize"
-        },
-        tabBarIndicatorStyle: {
-          backgroundColor: colors.white
-        }
-      }}
-    >
-      <Tab.Screen
-        name={"Điểm danh đến"}
-        component={AttendanceCheckin}
-      ></Tab.Screen>
-      <Tab.Screen
-        name={"Điểm danh về"}
-        component={AttendanceCheckout}
-      ></Tab.Screen>
-    </Tab.Navigator>
+    <>
+      <Stack.Screen options={{ title: "Điểm danh" }} />
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: colors.primary },
+          tabBarActiveTintColor: colors.white,
+          tabBarLabelStyle: {
+            textTransform: "capitalize"
+          },
+          tabBarIndicatorStyle: {
+            backgroundColor: colors.white
+          }
+        }}
+      >
+        <Tab.Screen
+          name={"Điểm danh đến"}
+          component={CheckinScreen}
+        ></Tab.Screen>
+        <Tab.Screen
+          name={"Điểm danh về"}
+          component={CheckoutScreen}
+        ></Tab.Screen>
+      </Tab.Navigator>
+    </>
   );
 };
 
-export default RootLayout;
+export default AttendanceLayout;

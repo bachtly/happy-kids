@@ -12,7 +12,7 @@ import { useAuthContext } from "../../../src/utils/auth-context-provider";
 
 const DEFAULT_TIME = moment(moment.now());
 
-const AttendanceCheckout = () => {
+const CheckoutScreen = () => {
   // properties
   const { colors } = useTheme();
   const { classId } = useAuthContext();
@@ -98,4 +98,4 @@ const AttendanceCheckout = () => {
   );
 };
 
-export default AttendanceCheckout;
+export default CheckoutScreen;
