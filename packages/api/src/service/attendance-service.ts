@@ -2,6 +2,7 @@ import { Kysely, sql } from "kysely";
 import { DB } from "kysely-codegen";
 import moment from "moment";
 import { injectable } from "tsyringe";
+import { AttendanceStatus } from "../router/attendance/protocols";
 
 @injectable()
 class AttendanceService {
@@ -221,7 +222,7 @@ class AttendanceService {
 
   checkin = async (
     studentId: string,
-    status: string,
+    status: typeof AttendanceStatus,
     note: string,
     time: Date,
     teacherId: string,

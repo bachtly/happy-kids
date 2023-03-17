@@ -8,6 +8,7 @@ const AttendanceStatus = z.custom<
   | "NotCheckedIn"
   | null
 >();
+
 const GetAttendanceListRequest = z.object({
   timeStart: z.date(),
   timeEnd: z.date(),
@@ -29,7 +30,12 @@ const GetAttendanceListResponse = z.object({
   message: z.nullable(z.string())
 });
 
-export { AttendanceItem, GetAttendanceListRequest, GetAttendanceListResponse };
+export {
+  AttendanceStatus,
+  AttendanceItem,
+  GetAttendanceListRequest,
+  GetAttendanceListResponse
+};
 export {
   GetAttendanceItemDetailRequest,
   GetAttendanceItemDetailResponse,
