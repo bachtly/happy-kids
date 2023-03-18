@@ -66,14 +66,13 @@ const DetailScreen = () => {
           <View className={"mb-5"}>
             <Text variant={"titleMedium"}>Điểm danh đến</Text>
           </View>
-
-          <View className={"flex-row justify-between mb-2"}>
+          <View className={"mb-2 flex-row justify-between"}>
             <Text>Giáo viên: </Text>
             <Text>{attendance?.checkinTeacherFullname ?? ""}</Text>
           </View>
           <Divider className={"mb-2"} />
 
-          <View className={"flex-row justify-between mb-2"}>
+          <View className={"mb-2 flex-row justify-between"}>
             <Text>Thời gian: </Text>
             <Text>{getTimeString(attendance?.checkinTime, TIME_FORMAT)}</Text>
           </View>
@@ -110,13 +109,13 @@ const DetailScreen = () => {
             <Text variant={"titleMedium"}>Điểm danh về</Text>
           </View>
 
-          <View className={"flex-row justify-between mb-2"}>
+          <View className={"mb-2 flex-row justify-between"}>
             <Text>Giáo viên: </Text>
             <Text>{attendance?.checkoutTeacherFullname ?? ""}</Text>
           </View>
           <Divider className={"mb-2"} />
 
-          <View className={"flex-row justify-between mb-2"}>
+          <View className={"mb-2 flex-row justify-between"}>
             <Text>Thời gian: </Text>
             <Text>{getTimeString(attendance?.checkoutTime, TIME_FORMAT)}</Text>
           </View>

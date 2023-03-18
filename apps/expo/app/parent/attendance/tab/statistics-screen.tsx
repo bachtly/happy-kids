@@ -7,23 +7,20 @@ import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import DateRangePicker from "../../../../src/components/DateRangePicker";
 import { AttendanceStatisticsModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
-import { useAuthContext } from "../../../../src/utils/auth-context-provider";
+import { ParentAttendanceContext } from "../../../../src/utils/parent-attendance-context";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
 const StatisticsScreen = () => {
   // properties
-  const { studentId } = useAuthContext();
+  const { studentId } = React.useContext(ParentAttendanceContext) ?? {
+    studentId: null
+  };
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
   const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
-
-  const [filter, setFilter] = useState({
-    searchStr: "",
-    status: ""
-  });
 
   // data
   const [statistics, setStatistics] =
@@ -39,7 +36,7 @@ const StatisticsScreen = () => {
       timeEnd: timeEnd.toDate(),
       studentId: studentId ?? ""
     });
-  }, [timeStart, timeEnd, filter]);
+  }, [timeStart, timeEnd]);
 
   return (
     <View className={"flex-1 bg-white px-2"}>

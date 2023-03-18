@@ -1,4 +1,3 @@
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
@@ -8,9 +7,7 @@ import AttendanceItem from "../../../../src/components/attendance/AttendanceItem
 import DateRangePicker from "../../../../src/components/DateRangePicker";
 import { AttendanceItemModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
-import { useAuthContext } from "../../../../src/utils/auth-context-provider";
-
-const Tab = createMaterialTopTabNavigator();
+import { ParentAttendanceContext } from "../../../../src/utils/parent-attendance-context";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -18,16 +15,13 @@ const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 const HistoryScreen = () => {
   // properties
   const { colors } = useTheme();
-  const { studentId } = useAuthContext();
+  const { studentId } = React.useContext(ParentAttendanceContext) ?? {
+    studentId: null
+  };
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
   const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
-
-  const [filter, setFilter] = useState({
-    searchStr: "",
-    status: ""
-  });
 
   // data
   const [attendanceList, setAttendanceList] = useState<AttendanceItemModel[]>(
@@ -44,7 +38,7 @@ const HistoryScreen = () => {
       timeEnd: timeEnd.toDate(),
       studentId: studentId ?? ""
     });
-  }, [timeStart, timeEnd, filter]);
+  }, [studentId, timeStart, timeEnd]);
 
   return (
     <View className={"flex-1 bg-white px-2"}>
@@ -77,7 +71,7 @@ const HistoryScreen = () => {
             <Text
               className={"text-center"}
               variant={"titleLarge"}
-              style={{ color: colors.gray }}
+              style={{ color: colors.onSurfaceDisabled }}
             >
               Không có dữ liệu để hiển thị
             </Text>

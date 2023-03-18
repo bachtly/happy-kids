@@ -1,6 +1,6 @@
 import { useFocusEffect } from "expo-router";
 import moment, { Moment } from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -8,20 +8,16 @@ import CheckoutItem from "../../../src/components/attendance/CheckoutItem";
 import DatePicker from "../../../src/components/DatePicker";
 import { AttendanceStudentModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
-import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import { TeacherAttendanceContext } from "../../../src/utils/parent-attendance-context";
 
 const DEFAULT_TIME = moment(moment.now());
 
 const CheckoutScreen = () => {
   // properties
   const { colors } = useTheme();
-  const { classId } = useAuthContext();
+  const { classId } = useContext(TeacherAttendanceContext) ?? { classId: null };
 
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
-  const [filter, setFilter] = useState({
-    searchStr: "",
-    status: ""
-  });
 
   // data
   const [studentList, setStudentList] = useState<AttendanceStudentModel[]>([]);
@@ -65,7 +61,7 @@ const CheckoutScreen = () => {
       </View>
 
       <ScrollView>
-        <View className={"flex mb-1"}>
+        <View className={"mb-1 flex"}>
           <Text variant={"titleLarge"}>
             Lớp: {studentList[0]?.className ?? ""}
           </Text>
@@ -86,7 +82,7 @@ const CheckoutScreen = () => {
               <Text
                 className={"text-center"}
                 variant={"titleLarge"}
-                style={{ color: colors.gray }}
+                style={{ color: colors.onSurfaceDisabled }}
               >
                 Không có dữ liệu để hiển thị
               </Text>
