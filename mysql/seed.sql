@@ -6,18 +6,18 @@ USE KindergartenSchema;
 SET @avatar = 'https://nationaltoday.com/wp-content/uploads/2022/08/18-National-Welsh-Corgi-Day.jpg';
 
 -- Insert schools
-SET @sid1 = uuid();
-SET @sid2 = uuid();
+SET @sid1 = 'sid10000-0000-0000-0000-000000000000';
+SET @sid2 = 'sid20000-0000-0000-0000-000000000000';
 INSERT INTO School (id, name, address)
 VALUES
     (@sid1, 'King\'s Landing', '107/2B Wall\'s Treet, Seven Kingdoms, Game Of Thrones'),
     (@sid2, 'Sơn Ca', '144 Trần Hưng Đạo, phường Mỹ Bình, thành phố Long Xuyên, tỉnh An Giang');
 
 -- Insert Managers to school 1
-SET @mgrid1 = uuid();
-SET @mgrid2 = uuid();
-SET @mgrid3 = uuid();
-SET @mgrid4 = uuid();
+SET @mgrid1 = 'mgrid100-0000-0000-0000-000000000000';
+SET @mgrid2 = 'mgrid200-0000-0000-0000-000000000000';
+SET @mgrid3 = 'mgrid300-0000-0000-0000-000000000000';
+SET @mgrid4 = 'mgrid400-0000-0000-0000-000000000000';
 INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole)
 VALUES
     (
@@ -70,9 +70,9 @@ VALUES
     );
 
 -- Insert Teachers to school 1
-SET @tid1 = uuid();
-SET @tid2 = uuid();
-SET @tid3 = uuid();
+SET @tid1 = 'tid10000-0000-0000-0000-000000000000';
+SET @tid2 = 'tid20000-0000-0000-0000-000000000000';
+SET @tid3 = 'tid30000-0000-0000-0000-000000000000';
 INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole)
 VALUES
     (
@@ -114,9 +114,9 @@ VALUES
 ;
 
 -- Insert Classes to school 1
-SET @clid1 = uuid();
-SET @clid2 = uuid();
-SET @clid3 = uuid();
+SET @clid1 = 'clid1000-0000-0000-0000-000000000000';
+SET @clid2 = 'clid2000-0000-0000-0000-000000000000';
+SET @clid3 = 'clid3000-0000-0000-0000-000000000000';
 INSERT INTO Class (id, name, schoolYear, schoolId)
 VALUES
     (@clid1, 'Stark A', 2022, @sid1),
@@ -134,10 +134,10 @@ VALUES
 ;
 
 -- INSERT Parent
-SET @prid1 = uuid(); -- normal parent 1 child
-SET @prid2 = uuid(); -- parent 2 children same class
-SET @prid3 = uuid(); -- parent 2 children different class
-SET @prid4 = uuid(); -- parent 2 children different school
+SET @prid1 = 'prid1000-0000-0000-0000-000000000000'; -- normal parent 1 child
+SET @prid2 = 'prid2000-0000-0000-0000-000000000000'; -- parent 2 children same class
+SET @prid3 = 'prid3000-0000-0000-0000-000000000000'; -- parent 2 children different class
+SET @prid4 = 'prid4000-0000-0000-0000-000000000000'; -- parent 2 children different school
 INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole)
 VALUES
     (
@@ -191,12 +191,12 @@ VALUES
 ;
 
 -- INSERT Stdudent to school 1
-SET @stid1 = uuid();
-SET @stid2 = uuid();
-SET @stid3 = uuid();
-SET @stid4 = uuid();
-SET @stid5 = uuid();
-SET @stid6 = uuid();
+SET @stid1 = 'stid1000-0000-0000-0000-000000000000';
+SET @stid2 = 'stid2000-0000-0000-0000-000000000000';
+SET @stid3 = 'stid3000-0000-0000-0000-000000000000';
+SET @stid4 = 'stid4000-0000-0000-0000-000000000000';
+SET @stid5 = 'stid5000-0000-0000-0000-000000000000';
+SET @stid6 = 'stid6000-0000-0000-0000-000000000000';
 INSERT INTO Student (id, fullname, birthdate, parentId, avatarUrl)
 VALUES
     (@stid1, 'Lý Thanh Bách Student1', '2001-04-14', @prid1, @avatar),
@@ -222,7 +222,7 @@ VALUES
 ;
 
 -- Relative
-SET @rlid1 = uuid();
+SET @rlid1 = 'rlid1000-0000-0000-0000-000000000000';
 INSERT INTO Relative (id, fullname, phone, note, parentId, avatarUrl)
 VALUES
     (@rlid1, 'Lý Thanh Bách Relative1', '0900000012', 'Chú tư của bé.', @prid3, @avatar)
@@ -237,7 +237,7 @@ VALUES
 ;
 
 -- Medicine
-SET @medletid1 = uuid();
+SET @medletid1 = 'medletid-1000-0000-0000-000000000000';
 INSERT INTO MedicineLetter (id, createdAt, status, isUsed, note, updatedByTeacherId, studentId)
 VALUES (@medletid1, '2023-01-03', 'Confirmed', true, 'Bé bị sốt', @tid2, @stid1);
 
@@ -253,7 +253,7 @@ VALUES ('Chiều nay mẹ bé bận, nhờ chú Tư rước bé', '2023-01-05T17
         'Confirmed', @rlid1, @tid1, @stid4);
 
 -- NoteLetter
-SET @notletid1 = uuid();
+SET @notletid1 = 'notletid-1000-0000-0000-000000000000';
 INSERT INTO NoteLetter (id, createdAt, status, content, updatedByTeacherId, studentId)
 VALUES (@notletid1, '2023-01-05', 'Confirmed', 'Hôm nay bé bị cảm nhẹ, nhờ cô để mắt tới bé nhiều hơn', @tid1, @stid1);
 
@@ -264,7 +264,7 @@ VALUES
 ;
 
 -- Post1
-SET @postid1 = uuid();
+SET @postid1 = 'postid10-0000-0000-0000-000000000000';
 INSERT INTO Post (id, createdAt, title, employeeId, content)
 VALUES (@postid1, '2023-01-06', 'THÔNG BÁO: Nghỉ học tránh bão số 1000', @mgrid4, 'Dựa vào dự báo thời tiết của VTV, bão số 1000 dự kiến sẽ đổ bộ vào khu vực tỉnh chúng ta vào ngày thứ 2 tới." Để tránh những ảnh hưởng đáng tiếc xảy ra, nhà trường xin thông báo cho các phụ huynh về việc tạm ngưng việc học của bé vào T2 tới và sẽ tiếp tục việc học vào T3');
 
@@ -281,7 +281,7 @@ VALUES (@mgrid1, @postid1), (@mgrid2, @postid1), (@mgrid3, @postid1),
 ;
 
 -- Post2
-SET @postid2 = uuid();
+SET @postid2 = 'postid20-0000-0000-0000-000000000000';
 INSERT INTO Post (id, createdAt, employeeId, title, content)
 VALUES (@postid2, '2023-01-10', @tid2,'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', 'Ngày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời');
 
@@ -295,7 +295,7 @@ VALUES (@mgrid1, @postid2), (@mgrid2, @postid2), (@mgrid3, @postid2),
 ;
 
 -- Album
-SET @albumid1 = uuid();
+SET @albumid1 = 'albumid1-0000-0000-0000-000000000000';
 INSERT INTO Album (id, title, description)
 VALUES (@albumid1, 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa',  'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa');
 
@@ -349,7 +349,7 @@ VALUES
 ;
 
 -- Timetable
-SET @ttabid1 = uuid();
+SET @ttabid1 = 'ttabid10-0000-0000-0000-000000000000';
 INSERT INTO Timetable (id, startDate, weekNumber, fileUrl, classId)
 VALUES (@ttabid1, '2023-01-02', 1, 'week1.csv', @clid1);
 
@@ -371,13 +371,13 @@ VALUES
 ;
 
 -- Menu
-SET @menuid1 = uuid();
+SET @menuid1 = 'menuid10-0000-0000-0000-000000000000';
 INSERT INTO Menu (id, date)
 VALUES (@menuid1, '2023-01-03');
 
-SET @mealid1 = uuid();
-SET @mealid2 = uuid();
-SET @mealid3 = uuid();
+SET @mealid1 = 'mealid10-0000-0000-0000-000000000000';
+SET @mealid2 = 'mealid20-0000-0000-0000-000000000000';
+SET @mealid3 = 'mealid30-0000-0000-0000-000000000000';
 INSERT INTO Meal (id, time, menuId)
 VALUES
     (@mealid1, '2023-01-06T07:00:00', @menuid1),
