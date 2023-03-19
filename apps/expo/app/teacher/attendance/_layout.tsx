@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "react-native-paper";
 import CheckinScreen from "./checkin-screen";
 import CheckoutScreen from "./checkout-screen";
-import { TeacherAttendanceContext } from "../../../src/utils/parent-attendance-context";
+import { TeacherAttendanceContext } from "../../../src/utils/attendance-context";
 
 const Tab = createMaterialTopTabNavigator();
 

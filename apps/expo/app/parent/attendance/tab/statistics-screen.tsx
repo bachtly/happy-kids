@@ -7,14 +7,14 @@ import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import DateRangePicker from "../../../../src/components/DateRangePicker";
 import { AttendanceStatisticsModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
-import { ParentAttendanceContext } from "../../../../src/utils/parent-attendance-context";
+import { AttendanceContext } from "../../../../src/utils/attendance-context";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
 const StatisticsScreen = () => {
   // properties
-  const { studentId } = React.useContext(ParentAttendanceContext) ?? {
+  const { studentId } = React.useContext(AttendanceContext) ?? {
     studentId: null
   };
 

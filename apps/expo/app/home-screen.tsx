@@ -11,13 +11,30 @@ const HomeScreen = () => {
     <View>
       <Stack.Screen options={{ title: "Trang chủ" }} />
       <Text onPress={() => onLogout()}>Home screen</Text>
-      <Button onPress={() => router.push("parent/attendance")}>
-        Điểm danh phụ huynh
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "/parent/attendance/tab/history-screen",
+            params: {
+              studentId: "stid1000-0000-0000-0000-000000000000"
+            }
+          })
+        }
+      >
+        Điểm danh Phụ huynh
       </Button>
-      <Button onPress={() => router.push("teacher/attendance")}>
-        Điểm danh giáo viên
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "/teacher/attendance",
+            params: {
+              classId: "clid1000-0000-0000-0000-000000000000"
+            }
+          })
+        }
+      >
+        Điểm danh Giáo viên
       </Button>
-      <Button onPress={() => router.push("attendance")}>Điểm danh</Button>
     </View>
   );
 };

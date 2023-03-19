@@ -4,7 +4,7 @@ import { useTheme } from "react-native-paper";
 import HistoryScreen from "./history-screen";
 import StatisticsScreen from "./statistics-screen";
 import { Stack, useSearchParams } from "expo-router";
-import { ParentAttendanceContext } from "../../../../src/utils/parent-attendance-context";
+import { AttendanceContext } from "../../../../src/utils/attendance-context";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -21,7 +21,7 @@ const AttendanceLayout = () => {
   }, [studentId]);
 
   return (
-    <ParentAttendanceContext.Provider value={{ studentId: studentIdSaved }}>
+    <AttendanceContext.Provider value={{ studentId: studentIdSaved }}>
       <Stack.Screen options={{ title: "Điểm danh" }} />
       <Tab.Navigator
         screenOptions={{
@@ -38,7 +38,7 @@ const AttendanceLayout = () => {
         <Tab.Screen name={"Lịch sử"} component={HistoryScreen} />
         <Tab.Screen name={"Thống kê"} component={StatisticsScreen} />
       </Tab.Navigator>
-    </ParentAttendanceContext.Provider>
+    </AttendanceContext.Provider>
   );
 };
 

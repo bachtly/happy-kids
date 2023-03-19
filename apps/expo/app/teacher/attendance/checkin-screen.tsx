@@ -8,7 +8,7 @@ import CheckinItem from "../../../src/components/attendance/CheckinItem";
 import DatePicker from "../../../src/components/DatePicker";
 import { AttendanceStudentModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
-import { TeacherAttendanceContext } from "../../../src/utils/parent-attendance-context";
+import { TeacherAttendanceContext } from "../../../src/utils/attendance-context";
 
 const DEFAULT_TIME = moment(moment.now());
 

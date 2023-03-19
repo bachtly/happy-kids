@@ -7,7 +7,7 @@ import AttendanceItem from "../../../../src/components/attendance/AttendanceItem
 import DateRangePicker from "../../../../src/components/DateRangePicker";
 import { AttendanceItemModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
-import { ParentAttendanceContext } from "../../../../src/utils/parent-attendance-context";
+import { AttendanceContext } from "../../../../src/utils/attendance-context";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -15,7 +15,7 @@ const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 const HistoryScreen = () => {
   // properties
   const { colors } = useTheme();
-  const { studentId } = React.useContext(ParentAttendanceContext) ?? {
+  const { studentId } = React.useContext(AttendanceContext) ?? {
     studentId: null
   };
 

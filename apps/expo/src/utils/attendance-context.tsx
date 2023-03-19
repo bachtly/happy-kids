@@ -4,7 +4,7 @@ interface ParentAttendanceContextProps {
   studentId: string;
 }
 
-const ParentAttendanceContext =
+const AttendanceContext =
   React.createContext<ParentAttendanceContextProps | null>(null);
 
 interface TeacherAttendanceContextProps {
@@ -13,4 +13,4 @@ interface TeacherAttendanceContextProps {
 const TeacherAttendanceContext =
   React.createContext<TeacherAttendanceContextProps | null>(null);
 
-export { ParentAttendanceContext, TeacherAttendanceContext };
+export { AttendanceContext, TeacherAttendanceContext };

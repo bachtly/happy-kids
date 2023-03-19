@@ -121,25 +121,26 @@ class AttendanceService {
       .execute()
       .then((resp) => resp.flat());
 
-    let statistics = {
+    const statistics = {
       CheckedIn: 0,
       NotCheckedIn: 0,
       AbsenseWithPermission: 0,
       AbsenseWithoutPermission: 0
     };
-    records.map((record) => {
+
+    records.map((record: { count: number; status: string }) => {
       switch (record.status) {
         case "CheckedIn":
-          statistics.CheckedIn = record.count as number;
+          statistics.CheckedIn = record.count;
           break;
         case "NotCheckedIn":
-          statistics.NotCheckedIn = record.count as number;
+          statistics.NotCheckedIn = record.count;
           break;
         case "AbsenseWithPermission":
-          statistics.AbsenseWithPermission = record.count as number;
+          statistics.AbsenseWithPermission = record.count;
           break;
         case "AbsenseWithoutPermission":
-          statistics.AbsenseWithoutPermission = record.count as number;
+          statistics.AbsenseWithoutPermission = record.count;
           break;
         default:
           console.log("The attendance status is not handled");
@@ -164,7 +165,7 @@ class AttendanceService {
       .add(1, "day")
       .toDate();
 
-    const query = this.mysqlDB
+    const rawStudents = await this.mysqlDB
       .selectFrom("Student")
       .innerJoin(
         "StudentClassRelationship",
@@ -190,27 +191,27 @@ class AttendanceService {
         "Attendance.status",
         "Attendance.checkinNote"
       ])
-      .where("Class.id", "=", classId);
+      .where("Class.id", "=", classId)
+      .execute()
+      .then((resp) => {
+        const rawStudents = resp.map((item) => {
+          if (!item.status) {
+            item.status = "NotCheckedIn";
+          }
+          return item;
+        });
 
-    const rawStudents = await query.execute().then((resp) => resp.flat());
-
-    rawStudents.map((item) => {
-      if (!item.status) {
-        item.status = "NotCheckedIn";
-      }
-      return item;
-    });
-
-    console.log(`Student lists from db: ${JSON.stringify(rawStudents)}`);
+        return rawStudents;
+      });
 
     const refinedStudents = rawStudents.map((student) => {
       return {
-        id: student.id as string,
+        id: student.id,
         fullname: student.fullname as string,
         avatarUrl: student.avatarUrl as string,
         className: student.className as string,
-        attendanceStatus: student.status,
-        attendanceCheckinNote: student.checkinNote
+        attendanceStatus: student.status as string,
+        attendanceCheckinNote: student.checkinNote as string
       };
     });
 
@@ -245,11 +246,11 @@ class AttendanceService {
       .values({
         status: status,
         date: time,
-        checkInTime: time,
-        checkInNote: note,
+        checkinTime: time,
+        checkinNote: note,
         studentId: studentId,
-        checkInTeacherId: teacherId,
-        checkInPhotoUrl: photoUrl
+        checkinTeacherId: teacherId,
+        checkinPhotoUrl: photoUrl
       })
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows);
@@ -272,11 +273,11 @@ class AttendanceService {
     console.log(
       `checkOut receive request ${JSON.stringify({
         date: time,
-        checkOutTime: time,
-        checkOutNote: note,
+        checkoutTime: time,
+        checkoutNote: note,
         studentId: studentId,
         teacherId: teacherId,
-        checkOutPhotoUrl: photoUrl,
+        checkoutPhotoUrl: photoUrl,
         pickerRelativeId: pickerRelativeId
       })}`
     );
