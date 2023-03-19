@@ -3,7 +3,7 @@ import { DB } from "kysely-codegen";
 import { injectable } from "tsyringe";
 import { z } from "zod";
 import { LoginResponse, LoginStatus } from "../router/authentication/protocols";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 
 @injectable()
 class LoginService {

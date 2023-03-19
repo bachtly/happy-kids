@@ -4,7 +4,7 @@ import { z } from "zod";
 import { injectable } from "tsyringe";
 import { CheckEmailExistenceResp } from "../router/authentication/protocols";
 import { v4 as uuidv4 } from "uuid";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 
 @injectable()
 class SignupService {
