@@ -3,6 +3,7 @@ import { DB } from "kysely-codegen";
 import moment from "moment";
 import { injectable } from "tsyringe";
 import { AttendanceStatus } from "../router/attendance/protocols";
+import { z } from "zod";
 
 @injectable()
 class AttendanceService {
@@ -223,7 +224,7 @@ class AttendanceService {
 
   checkin = async (
     studentId: string,
-    status: typeof AttendanceStatus,
+    status: z.infer<typeof AttendanceStatus>,
     note: string,
     time: Date,
     teacherId: string,
