@@ -1,13 +1,12 @@
 import { z } from "zod";
 
-const AttendanceStatus = z.custom<
-  | "AbsenseWithoutPermission"
-  | "AbsenseWithPermission"
-  | "CheckedIn"
-  | "CheckedOut"
-  | "NotCheckedIn"
-  | null
->();
+const AttendanceStatus = z.enum([
+  "AbsenseWithoutPermission",
+  "AbsenseWithPermission",
+  "CheckedIn",
+  "CheckedOut",
+  "NotCheckedIn"
+]);
 
 const GetAttendanceListRequest = z.object({
   timeStart: z.date(),
