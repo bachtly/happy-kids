@@ -114,7 +114,7 @@ class AttendanceService {
 
     const records = await this.mysqlDB
       .selectFrom("Attendance")
-      .select(["status", sql`count(status)`.as("count")])
+      .select(["status", sql<number>`count(status)`.as("count")])
       .groupBy("status")
       .where("date", ">=", timeStart)
       .where("date", "<=", timeEnd)
@@ -129,7 +129,7 @@ class AttendanceService {
       AbsenseWithoutPermission: 0
     };
 
-    records.map((record: { count: number; status: string }) => {
+    records.map((record) => {
       switch (record.status) {
         case "CheckedIn":
           statistics.CheckedIn = record.count;
