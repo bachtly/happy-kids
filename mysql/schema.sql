@@ -99,27 +99,25 @@ CREATE TABLE `KindergartenSchema`.`LeaveLetter` (
 );
 
 CREATE TABLE `KindergartenSchema`.`MedicineLetter` (
-                                                       `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                       `createdAt` datetime,
-                                                       `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
-                                                       `isUsed` bool,
-                                                       `note` text,
-                                                       `updatedByTeacherId` varchar(36),
-                                                       `studentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `createdAt` datetime,
+  `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
+  `isUsed` bool,
+  `note` text,
+  `time` int,
+  `startDate` date,
+  `endDate` date,
+  `updatedByTeacherId` varchar(36),
+  `createdByParentId` varchar(36),
+  `studentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Medicine` (
-                                                 `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                 `name` varchar(255),
-                                                 `photoUrl` text,
-                                                 `amount` varchar(255),
-                                                 `medicineLetterId` varchar(36)
-);
-
-CREATE TABLE `KindergartenSchema`.`MedicineUseTime` (
-                                                        `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                        `time` datetime,
-                                                        `medicineLetterId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `name` varchar(255),
+  `photo` text,
+  `amount` varchar(255),
+  `medicineLetterId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`PickupLetter` (
@@ -288,11 +286,11 @@ ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`studentId`) REF
 
 ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`updatedByTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`createdByParentId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Medicine` ADD FOREIGN KEY (`medicineLetterId`) REFERENCES `KindergartenSchema`.`MedicineLetter` (`id`);
-
-ALTER TABLE `KindergartenSchema`.`MedicineUseTime` ADD FOREIGN KEY (`medicineLetterId`) REFERENCES `KindergartenSchema`.`MedicineLetter` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`PickupLetter` ADD FOREIGN KEY (`pickerRelativeId`) REFERENCES `KindergartenSchema`.`Relative` (`id`);
 

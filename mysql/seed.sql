@@ -237,15 +237,12 @@ VALUES
 ;
 
 -- Medicine
-SET @medletid1 = 'medletid-1000-0000-0000-000000000000';
-INSERT INTO MedicineLetter (id, createdAt, status, isUsed, note, updatedByTeacherId, studentId)
-VALUES (@medletid1, '2023-01-03', 'Confirmed', true, 'Bé bị sốt', @tid2, @stid1);
+SET @medletid1 = uuid();
+INSERT INTO MedicineLetter (id, startDate, endDate, createdAt, time, status, isUsed, note, updatedByTeacherId, createdByParentId, studentId)
+VALUES (@medletid1,'2023-01-04','2023-01-14', '2023-01-03', 450, 'Confirmed', true, 'Bé bị sốt', @tid2, @prid1, @stid1);
 
-INSERT INTO Medicine (name, amount, medicineLetterId, photoUrl)
+INSERT INTO Medicine (name, amount, medicineLetterId, photo)
 VALUES ("Paracetamol", '1 vien', @medletid1, 'https://nhathuocanphuoc.vn/wp-content/uploads/2020/10/Tottri.webp');
-
-INSERT INTO MedicineUseTime (time, medicineLetterId)
-VALUES ('2023-01-04T09:00:00', @medletid1), ('2023-01-04T14:00:00', @medletid1);
 
 -- PickupLetter
 INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)

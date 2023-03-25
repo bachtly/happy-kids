@@ -6,6 +6,8 @@ import { useAuthContext } from "../src/utils/auth-context-provider";
 const HomeScreen = () => {
   const { onLogout } = useAuthContext();
   const router = useRouter();
+  const studentId = "stid1000-0000-0000-0000-000000000000";
+  const classId = "clid1000-0000-0000-0000-000000000000";
 
   return (
     <View>
@@ -16,7 +18,7 @@ const HomeScreen = () => {
           router.push({
             pathname: "/parent/attendance/tab/history-screen",
             params: {
-              studentId: "stid1000-0000-0000-0000-000000000000"
+              studentId
             }
           })
         }
@@ -28,12 +30,32 @@ const HomeScreen = () => {
           router.push({
             pathname: "/teacher/attendance",
             params: {
-              classId: "clid1000-0000-0000-0000-000000000000"
+              classId
             }
           })
         }
       >
         Điểm danh Giáo viên
+      </Button>
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "parent/medicine/medicine-home-screen",
+            params: { studentId }
+          })
+        }
+      >
+        Go to parent Medicine
+      </Button>
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "teacher/medicine/medicine-home-screen",
+            params: { classId }
+          })
+        }
+      >
+        Go to teacher Medicine
       </Button>
     </View>
   );

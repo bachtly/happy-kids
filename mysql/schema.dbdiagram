@@ -8,13 +8,13 @@ Table KindergartenSchema.Class {
   id varchar(36) [pk, default: `UUID()`]
   name varchar
   schoolYear int
-
+  
   schoolId varchar(36) [ref: - KindergartenSchema.School.id]
 }
 
 Table KindergartenSchema.StudentClassRelationship {
   id varchar(36) [pk, default: `UUID()`]
-
+  
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
@@ -36,13 +36,13 @@ Table KindergartenSchema.User {
 
   schoolId varchar(36) [ref: - KindergartenSchema.School.id]
   employeeRole varchar
-
+  
   userGroup KindergartenSchema.UserGroup [null]
 }
 
 Table KindergartenSchema.TeacherClassRelationship{
   id varchar(36) [pk, default: `UUID()`]
-
+  
   teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
@@ -53,7 +53,7 @@ Table KindergartenSchema.Relative {
   phone bigint
   avatarUrl varchar
   note varchar
-
+  
   parentId varchar(36) [ref: - KindergartenSchema.User.id]
 }
 
@@ -62,7 +62,7 @@ Table KindergartenSchema.Student {
   fullname varchar
   avatarUrl varchar
   birthdate datetime
-
+  
   parentId varchar(36) [ref: - KindergartenSchema.User.id]
 }
 
@@ -71,7 +71,7 @@ Table KindergartenSchema.Post {
   createdAt datetime
   title varchar
   content text
-
+  
   employeeId varchar(36) [ref: - KindergartenSchema.User.id]
 }
 
@@ -79,7 +79,7 @@ Table KindergartenSchema.UserCommentPostRelationship {
   id varchar(36) [pk, default: `UUID()`]
   content varchar
   time datetime
-
+  
   userId varchar(36) [ref: - KindergartenSchema.User.id]
   postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
@@ -87,14 +87,14 @@ Table KindergartenSchema.UserCommentPostRelationship {
 Table KindergartenSchema.UserReactPostRelationship {
   id varchar(36) [pk, default: `UUID()`]
   time datetime
-
+  
   userId varchar(36) [ref: - KindergartenSchema.User.id]
   postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
 
 Table KindergartenSchema.UserCanViewPostRelationship {
   id varchar(36) [pk, default: `UUID()`]
-
+  
   userId varchar(36) [ref: - KindergartenSchema.User.id]
   postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
@@ -110,40 +110,38 @@ Table KindergartenSchema.LeaveLetter {
 
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
-
+  
   fromTime datetime
   toTime datetime
   reason text
-
+  
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Table KindergartenSchema.MedicineLetter {
   id varchar(36) [pk, default: `UUID()`]
-
+  
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
-
+  
   isUsed bool
   note text
 
+  time int
+  startDate date
+  endDate date
+
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  createdByParentId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
 Table KindergartenSchema.Medicine {
   id varchar(36) [pk, default: `UUID()`]
   name varchar
-  photoUrl text
+  photo text
   amount varchar
-
-  medicineLetterId varchar(36) [ref: - KindergartenSchema.MedicineLetter.id]
-}
-
-Table KindergartenSchema.MedicineUseTime {
-  id varchar(36) [pk, default: `UUID()`]
-  time datetime
 
   medicineLetterId varchar(36) [ref: - KindergartenSchema.MedicineLetter.id]
 }
@@ -152,10 +150,10 @@ Table KindergartenSchema.PickupLetter {
   id varchar(36) [pk, default: `UUID()`]
   note varchar
   pickupTime datetime
-
+  
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
-
+  
   pickerRelativeId varchar(36) [ref: - KindergartenSchema.Relative.id]
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
@@ -163,12 +161,12 @@ Table KindergartenSchema.PickupLetter {
 
 Table KindergartenSchema.NoteLetter {
   id varchar(36) [pk]
-
+  
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
-
+  
   content text
-
+  
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
@@ -176,9 +174,9 @@ Table KindergartenSchema.NoteLetter {
 Table KindergartenSchema.NoteLetterReply {
   id varchar(36) [pk, default: `UUID()`]
   createdAt datetime
-
+  
   content text
-
+  
   userId varchar(36) [ref: - KindergartenSchema.User.id]
   noteLetterId varchar(36) [ref: - KindergartenSchema.NoteLetter.id]
 }
@@ -201,7 +199,7 @@ Table KindergartenSchema.Attendance {
   checkinPhotoUrl varchar
   checkoutPhotoUrl varchar
   status KindergartenSchema.CheckInStatusEnum
-
+  
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
   checkinTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   checkoutTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
@@ -213,16 +211,16 @@ Table KindergartenSchema.Timetable {
   startDate datetime
   weekNumber int
   fileUrl varchar
-
+  
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
 
 Table KindergartenSchema.Lecture {
   id varchar(36) [pk, default: `UUID()`]
-  startTime datetime
+  startTime datetime 
   endTime datetime
   name varchar
-
+  
   timetableId varchar(36) [ref: - KindergartenSchema.Timetable.id]
 }
 
@@ -233,7 +231,7 @@ Table KindergartenSchema.Menu {
 
 Table KindergartenSchema.MenuClassRelationship {
   id varchar(36) [pk, default: `UUID()`]
-
+  
   menuId varchar(36) [ref: - KindergartenSchema.Menu.id]
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
@@ -241,14 +239,14 @@ Table KindergartenSchema.MenuClassRelationship {
 Table KindergartenSchema.Meal {
   id varchar(36) [pk, default: `UUID()`]
   time datetime
-
+  
   menuId varchar(36) [ref: - KindergartenSchema.Menu.id]
 }
 
 Table KindergartenSchema.Dish {
   id varchar(36) [pk, default: `UUID()`]
   name  varchar
-
+  
   mealId varchar(36) [ref: - KindergartenSchema.Meal.id]
 }
 
@@ -265,7 +263,7 @@ Table KindergartenSchema.DailyRemark {
   date datetime
   activity KindergartenSchema.ActivityEnum
   content text
-
+  
   teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
@@ -283,7 +281,7 @@ Table KindergartenSchema.PeriodRemark {
   content text
   startTime datetime
   endTime datetime
-
+  
   teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
@@ -300,7 +298,7 @@ Table KindergartenSchema.TuitionFee {
   endTime datetime
   billUrl varchar
   amount bigint
-
+  
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
@@ -312,7 +310,7 @@ Table KindergartenSchema.Album {
 
 Table KindergartenSchema.AlbumStudentRelationship {
   id varchar(36) [pk, default: `UUID()`]
-
+  
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
   albumId varchar(36) [ref: - KindergartenSchema.Album.id]
 }
@@ -320,6 +318,6 @@ Table KindergartenSchema.AlbumStudentRelationship {
 Table KindergartenSchema.AlbumPhoto {
   id varchar(36) [pk, default: `UUID()`]
   photoUrl text
-
+  
   albumId varchar(36) [ref: - KindergartenSchema.Album.id]
 }
