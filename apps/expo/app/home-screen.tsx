@@ -57,6 +57,29 @@ const HomeScreen = () => {
       >
         Go to teacher Medicine
       </Button>
+
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "parent/leaveletter/leaveletter-home-screen",
+            params: { studentId }
+          })
+        }
+      >
+        Xin nghỉ Phụ huynh
+      </Button>
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "teacher/leaveletter/leaveletter-home-screen",
+            params: { classId }
+          })
+        }
+      >
+        Xin nghỉ Giáo viên
+      </Button>
+
+      <Button onPress={onLogout}>Logout</Button>
     </View>
   );
 };

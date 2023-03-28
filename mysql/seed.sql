@@ -229,11 +229,11 @@ VALUES
 ;
 
 -- LeaveLetter
-INSERT INTO LeaveLetter (createdAt, status, fromTime, toTime, reason, updatedByTeacherId, studentId)
+INSERT INTO LeaveLetter (createdAt, status, startDate, endDate, reason, updatedByTeacherId, studentId, createdByParentId)
 VALUES
-    ('2023-01-01', 'Confirmed', '2023-01-02', '2023-01-02', 'Bé bị sốt', @tid1, @stid1),
-    ('2023-01-03', 'Rejected', '2023-01-03', '2023-01-03', 'Bé đi du lịch với cả nhà', @tid1, @stid4),
-    ('2023-01-13', 'NotConfirmed', '2023-01-16', '2023-01-16', "Du lich", null, @stid2)
+    ('2023-01-01', 'Confirmed', '2023-01-02', '2023-01-02', 'Bé bị sốt', @tid1, @stid1, @prid1),
+    ('2023-01-03', 'Rejected', '2023-01-03', '2023-01-03', 'Bé đi du lịch với cả nhà', @tid1, @stid4,@prid1),
+    ('2023-01-13', 'NotConfirmed', '2023-01-16', '2023-01-16', "Du lich", null, @stid2,@prid1)
 ;
 
 -- Medicine

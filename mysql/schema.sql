@@ -4,22 +4,22 @@ START TRANSACTION;
 CREATE SCHEMA `KindergartenSchema`;
 
 CREATE TABLE `KindergartenSchema`.`School` (
-                                               `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                               `name` varchar(255),
-                                               `address` varchar(255)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `name` varchar(255),
+  `address` varchar(255)
 );
 
 CREATE TABLE `KindergartenSchema`.`Class` (
-                                              `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                              `name` varchar(255),
-                                              `schoolYear` int,
-                                              `schoolId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `name` varchar(255),
+  `schoolYear` int,
+  `schoolId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`StudentClassRelationship` (
-                                                                 `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                                 `studentId` varchar(36),
-                                                                 `classId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `studentId` varchar(36),
+  `classId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`User` (
@@ -36,66 +36,73 @@ CREATE TABLE `KindergartenSchema`.`User` (
 );
 
 CREATE TABLE `KindergartenSchema`.`TeacherClassRelationship` (
-                                                                 `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                                 `teacherId` varchar(36),
-                                                                 `classId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `teacherId` varchar(36),
+  `classId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Relative` (
-                                                 `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                 `fullname` varchar(255),
-                                                 `phone` bigint,
-                                                 `avatarUrl` varchar(255),
-                                                 `note` varchar(255),
-                                                 `parentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `fullname` varchar(255),
+  `phone` bigint,
+  `avatarUrl` varchar(255),
+  `note` varchar(255),
+  `parentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Student` (
-                                                `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                `fullname` varchar(255),
-                                                `avatarUrl` varchar(255),
-                                                `birthdate` datetime,
-                                                `parentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `fullname` varchar(255),
+  `avatarUrl` varchar(255),
+  `birthdate` datetime,
+  `parentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Post` (
-                                             `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                             `createdAt` datetime,
-                                             `title` varchar(255),
-                                             `content` text,
-                                             `employeeId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `createdAt` datetime,
+  `title` varchar(255),
+  `content` text,
+  `employeeId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`UserCommentPostRelationship` (
-                                                                    `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                                    `content` varchar(255),
-                                                                    `time` datetime,
-                                                                    `userId` varchar(36),
-                                                                    `postId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `content` varchar(255),
+  `time` datetime,
+  `userId` varchar(36),
+  `postId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`UserReactPostRelationship` (
-                                                                  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                                  `time` datetime,
-                                                                  `userId` varchar(36),
-                                                                  `postId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `time` datetime,
+  `userId` varchar(36),
+  `postId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`UserCanViewPostRelationship` (
-                                                                    `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                                    `userId` varchar(36),
-                                                                    `postId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `userId` varchar(36),
+  `postId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`LeaveLetter` (
-                                                    `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                    `createdAt` datetime,
-                                                    `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
-                                                    `fromTime` datetime,
-                                                    `toTime` datetime,
-                                                    `reason` text,
-                                                    `updatedByTeacherId` varchar(36),
-                                                    `studentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `createdAt` datetime,
+  `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
+  `startDate` date,
+  `endDate` date,
+  `reason` text,
+  `updatedByTeacherId` varchar(36),
+  `createdByParentId` varchar(36),
+  `studentId` varchar(36)
+);
+
+CREATE TABLE `KindergartenSchema`.`LeaveLetterPhoto` (
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `photo` text,
+  `leaveLetterId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`MedicineLetter` (
@@ -121,133 +128,133 @@ CREATE TABLE `KindergartenSchema`.`Medicine` (
 );
 
 CREATE TABLE `KindergartenSchema`.`PickupLetter` (
-                                                     `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                     `note` varchar(255),
-                                                     `pickupTime` datetime,
-                                                     `createdAt` datetime,
-                                                     `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
-                                                     `pickerRelativeId` varchar(36),
-                                                     `updatedByTeacherId` varchar(36),
-                                                     `studentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `note` varchar(255),
+  `pickupTime` datetime,
+  `createdAt` datetime,
+  `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
+  `pickerRelativeId` varchar(36),
+  `updatedByTeacherId` varchar(36),
+  `studentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`NoteLetter` (
-                                                   `id` varchar(36) PRIMARY KEY,
-                                                   `createdAt` datetime,
-                                                   `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
-                                                   `content` text,
-                                                   `updatedByTeacherId` varchar(36),
-                                                   `studentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY,
+  `createdAt` datetime,
+  `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
+  `content` text,
+  `updatedByTeacherId` varchar(36),
+  `studentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`NoteLetterReply` (
-                                                        `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                        `createdAt` datetime,
-                                                        `content` text,
-                                                        `userId` varchar(36),
-                                                        `noteLetterId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `createdAt` datetime,
+  `content` text,
+  `userId` varchar(36),
+  `noteLetterId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Attendance` (
-                                                   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                   `date` datetime,
-                                                   `checkinTime` datetime,
-                                                   `checkoutTime` datetime,
-                                                   `checkinNote` varchar(255),
-                                                   `checkoutNote` varchar(255),
-                                                   `checkinPhotoUrl` varchar(255),
-                                                   `checkoutPhotoUrl` varchar(255),
-                                                   `status` ENUM ('CheckedOut', 'CheckedIn', 'NotCheckedIn', 'AbsenseWithPermission', 'AbsenseWithoutPermission'),
-                                                   `studentId` varchar(36),
-                                                   `checkinTeacherId` varchar(36),
-                                                   `checkoutTeacherId` varchar(36),
-                                                   `pickerRelativeId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `date` datetime,
+  `checkinTime` datetime,
+  `checkoutTime` datetime,
+  `checkinNote` varchar(255),
+  `checkoutNote` varchar(255),
+  `checkinPhotoUrl` varchar(255),
+  `checkoutPhotoUrl` varchar(255),
+  `status` ENUM ('CheckedOut', 'CheckedIn', 'NotCheckedIn', 'AbsenseWithPermission', 'AbsenseWithoutPermission'),
+  `studentId` varchar(36),
+  `checkinTeacherId` varchar(36),
+  `checkoutTeacherId` varchar(36),
+  `pickerRelativeId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Timetable` (
-                                                  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                  `startDate` datetime,
-                                                  `weekNumber` int,
-                                                  `fileUrl` varchar(255),
-                                                  `classId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `startDate` datetime,
+  `weekNumber` int,
+  `fileUrl` varchar(255),
+  `classId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Lecture` (
-                                                `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                `startTime` datetime,
-                                                `endTime` datetime,
-                                                `name` varchar(255),
-                                                `timetableId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `startTime` datetime,
+  `endTime` datetime,
+  `name` varchar(255),
+  `timetableId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Menu` (
-                                             `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                             `date` datetime
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `date` datetime
 );
 
 CREATE TABLE `KindergartenSchema`.`MenuClassRelationship` (
-                                                              `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                              `menuId` varchar(36),
-                                                              `classId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `menuId` varchar(36),
+  `classId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Meal` (
-                                             `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                             `time` datetime,
-                                             `menuId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `time` datetime,
+  `menuId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Dish` (
-                                             `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                             `name` varchar(255),
-                                             `mealId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `name` varchar(255),
+  `mealId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`DailyRemark` (
-                                                    `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                    `date` datetime,
-                                                    `activity` ENUM ('Study', 'Eat', 'Sleep', 'Wc', 'Other'),
-                                                    `content` text,
-                                                    `teacherId` varchar(36),
-                                                    `studentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `date` datetime,
+  `activity` ENUM ('Study', 'Eat', 'Sleep', 'Wc', 'Other'),
+  `content` text,
+  `teacherId` varchar(36),
+  `studentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`PeriodRemark` (
-                                                     `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                     `period` ENUM ('Week', 'Month', 'Quarter', 'Year'),
-                                                     `content` text,
-                                                     `startTime` datetime,
-                                                     `endTime` datetime,
-                                                     `teacherId` varchar(36),
-                                                     `studentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `period` ENUM ('Week', 'Month', 'Quarter', 'Year'),
+  `content` text,
+  `startTime` datetime,
+  `endTime` datetime,
+  `teacherId` varchar(36),
+  `studentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`TuitionFee` (
-                                                   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                   `status` ENUM ('Paid', 'Unpaid'),
-                                                   `startTime` datetime,
-                                                   `endTime` datetime,
-                                                   `billUrl` varchar(255),
-                                                   `amount` bigint,
-                                                   `studentId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `status` ENUM ('Paid', 'Unpaid'),
+  `startTime` datetime,
+  `endTime` datetime,
+  `billUrl` varchar(255),
+  `amount` bigint,
+  `studentId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Album` (
-                                              `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                              `title` varchar(255),
-                                              `description` text
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `title` varchar(255),
+  `description` text
 );
 
 CREATE TABLE `KindergartenSchema`.`AlbumStudentRelationship` (
-                                                                 `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                                 `studentId` varchar(36),
-                                                                 `albumId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `studentId` varchar(36),
+  `albumId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`AlbumPhoto` (
-                                                   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-                                                   `photoUrl` text,
-                                                   `albumId` varchar(36)
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `photoUrl` text,
+  `albumId` varchar(36)
 );
 
 ALTER TABLE `KindergartenSchema`.`Class` ADD FOREIGN KEY (`schoolId`) REFERENCES `KindergartenSchema`.`School` (`id`);
@@ -282,7 +289,11 @@ ALTER TABLE `KindergartenSchema`.`UserCanViewPostRelationship` ADD FOREIGN KEY (
 
 ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`updatedByTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`createdByParentId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`LeaveLetterPhoto` ADD FOREIGN KEY (`leaveLetterId`) REFERENCES `KindergartenSchema`.`LeaveLetter` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`updatedByTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 

@@ -111,12 +111,19 @@ Table KindergartenSchema.LeaveLetter {
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
   
-  fromTime datetime
-  toTime datetime
+  startDate date
+  endDate date
   reason text
   
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  createdByParentId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+}
+
+Table KindergartenSchema.LeaveLetterPhoto {
+  id varchar(36) [pk, default: `UUID()`]
+  photo text
+  leaveLetterId varchar(36) [ref: - KindergartenSchema.LeaveLetter.id]
 }
 
 Table KindergartenSchema.MedicineLetter {
