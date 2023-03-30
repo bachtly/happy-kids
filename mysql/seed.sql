@@ -223,9 +223,13 @@ VALUES
 
 -- Relative
 SET @rlid1 = 'rlid1000-0000-0000-0000-000000000000';
+SET @rlid2 = 'rlid2000-0000-0000-0000-000000000000';
+SET @rlid3 = 'rlid3000-0000-0000-0000-000000000000';
 INSERT INTO Relative (id, fullname, phone, note, parentId, avatarUrl)
 VALUES
-    (@rlid1, 'Lý Thanh Bách Relative1', '0900000012', 'Chú tư của bé.', @prid3, @avatar)
+    (@rlid1, 'Lý Thanh Bách Relative1', '0900000012', 'Chú tư của bé.', @prid3, @avatar),
+	(@rlid2, 'Lý Thanh Bách Relative2', '0900000100', 'Chú ba của bé.', @prid1, @avatar),
+	(@rlid3, 'Lý Thanh Bách Relative3', '0900000200', 'Chú năm của bé.', @prid1, @avatar)
 ;
 
 -- LeaveLetter
@@ -248,6 +252,15 @@ VALUES ("Paracetamol", '1 vien', @medletid1, 'https://nhathuocanphuoc.vn/wp-cont
 INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
 VALUES ('Chiều nay mẹ bé bận, nhờ chú Tư rước bé', '2023-01-05T17:00:00', '2023-01-04',
         'Confirmed', @rlid1, @tid1, @stid4);
+
+INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
+VALUES 
+	('Chiều nay mẹ bé bận', '2023-03-22T17:00:00', '2023-03-21', 'Confirmed', @rlid2, @tid1, @stid1),
+    ('Chiều nay mẹ bé bận', '2023-03-23T17:00:00', '2023-03-22', 'Confirmed', @rlid2, @tid1, @stid1),
+    ('Chiều nay mẹ bé bận', '2023-03-24T17:00:00', '2023-03-23', 'Confirmed', @rlid2, @tid1, @stid1),
+    ('Chiều nay mẹ bé bận', '2023-03-25T17:00:00', '2023-03-24', 'Confirmed', @rlid2, @tid1, @stid1),
+    ('Chiều nay mẹ bé bận', '2023-03-26T17:00:00', '2023-03-25', 'Confirmed', @rlid2, @tid1, @stid1)
+;
 
 -- NoteLetter
 SET @notletid1 = 'notletid-1000-0000-0000-000000000000';

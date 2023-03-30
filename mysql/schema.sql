@@ -43,9 +43,9 @@ CREATE TABLE `KindergartenSchema`.`TeacherClassRelationship` (
 
 CREATE TABLE `KindergartenSchema`.`Relative` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `fullname` varchar(255),
-  `phone` bigint,
-  `avatarUrl` varchar(255),
+  `fullname` varchar(255) NOT NULL,
+  `phone` varchar(16) UNIQUE NOT NULL,
+  `avatarUrl` text,
   `note` varchar(255),
   `parentId` varchar(36)
 );

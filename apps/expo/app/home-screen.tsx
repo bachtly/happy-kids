@@ -61,6 +61,32 @@ const HomeScreen = () => {
       <Button
         onPress={() =>
           router.push({
+            pathname: "parent/pickup/history-screen",
+            params: {
+              studentId: "stid1000-0000-0000-0000-000000000000"
+            }
+          })
+        }
+      >
+        Đón về phụ huynh
+      </Button>
+
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "teacher/pickup/history-screen",
+            params: {
+              classId: "clid1000-0000-0000-0000-000000000000"
+            }
+          })
+        }
+      >
+        Đón về giáo viên
+      </Button>
+
+      <Button
+        onPress={() =>
+          router.push({
             pathname: "parent/leaveletter/leaveletter-home-screen",
             params: { studentId }
           })
