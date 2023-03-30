@@ -34,7 +34,6 @@ export function LeaveLetterList({
     const diffDate = endDate.diff(startDate, "days");
     return (
       <Card
-        mode={"outlined"}
         style={{ backgroundColor: theme.colors.background, borderRadius: 2 }}
         onPress={() => {
           router.push({
@@ -76,7 +75,7 @@ export function LeaveLetterList({
 
   return (
     <FlatList
-      contentContainerStyle={{ gap: 8 }}
+      contentContainerStyle={{ gap: 8, paddingBottom: 16 }}
       data={items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}

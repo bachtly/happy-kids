@@ -12,9 +12,12 @@ import {
 import { api } from "../../../utils/api";
 
 import Icons from "react-native-vector-icons/AntDesign";
-import Filter, { FilterType } from "../../medicine/segmentButtons/Filter";
+import { FilterType } from "../../medicine/Filter";
 import type { LeaveLetterItem } from "./LeaveLetterList";
 import { LeaveLetterList } from "./LeaveLetterList";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+
+const Tab = createMaterialTopTabNavigator();
 
 const CheckOverlapMoment = (
   xFrom: Moment,
@@ -38,8 +41,7 @@ const LeaveLetterHomeView = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
-  const [filterValue, setFilterValue] = useState<FilterType>("All");
-  const [medLetterList, setMedLetterList] = useState<LeaveLetterItem[]>([]);
+  const [letterList, setLetterList] = useState<LeaveLetterItem[]>([]);
 
   const { refetch, isFetching } = api.leaveletter.getLeaveLetterList.useQuery(
     isTeacher
@@ -54,7 +56,7 @@ const LeaveLetterHomeView = ({
         if (resp.status !== "Success") {
           console.log(resp.message);
         } else {
-          setMedLetterList(
+          setLetterList(
             resp.leaveLetterList
               .map((item) => ({
                 id: item.id,
@@ -87,63 +89,42 @@ const LeaveLetterHomeView = ({
   }, []);
 
   // update list on filter change
-  const filteredMedLetList = medLetterList.filter((item) => {
-    if (filterValue == "All") return true;
-    const itemStartMoment = moment(item.startDate);
-    const itemEndMoment = moment(item.endDate);
-    if (filterValue == "Today")
+  const getFilteredLetList = (filterValue: FilterType) =>
+    letterList.filter((item) => {
+      if (filterValue == "All") return true;
+      const itemStartMoment = moment(item.startDate);
+      const itemEndMoment = moment(item.endDate);
+      if (filterValue == "Today")
+        return CheckOverlapMoment(
+          moment().startOf("day"),
+          moment().startOf("day"),
+          itemStartMoment,
+          itemEndMoment
+        );
       return CheckOverlapMoment(
         moment().startOf("day"),
-        moment().startOf("day"),
+        moment().startOf("day").add(7, "d"),
         itemStartMoment,
         itemEndMoment
       );
-    return CheckOverlapMoment(
-      moment().startOf("day"),
-      moment().startOf("day").add(7, "d"),
-      itemStartMoment,
-      itemEndMoment
-    );
-  });
+    });
 
-  return (
+  const ListComponent = ({
+    filteredLetList
+  }: {
+    filteredLetList: LeaveLetterItem[];
+  }) => (
     <View className="flex-1">
       {isFetching && <ProgressBar indeterminate visible={true} />}
-      <View className="items-center">
-        <Filter value={filterValue} setValue={setFilterValue} />
-      </View>
       <ScrollView
         className="flex-1"
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={fetchData} />
         }
       >
-        <Stack.Screen
-          options={{
-            title: "Xin nghỉ",
-            animation: "slide_from_right",
-            headerRight: !isTeacher
-              ? () => {
-                  return (
-                    <TouchableRipple
-                      borderless
-                      onPress={() => {
-                        router.push({
-                          pathname: "parent/leaveletter/add-letter-screen",
-                          params: { studentId }
-                        });
-                      }}
-                    >
-                      <Icons name="plus" size={24} color="white" />
-                    </TouchableRipple>
-                  );
-                }
-              : undefined
-          }}
-        />
-        <View className="px-4 pb-4">
-          {filteredMedLetList.length > 0 ? (
-            <LeaveLetterList isTeacher={isTeacher} items={filteredMedLetList} />
+        <View className="px-4 pt-4">
+          {filteredLetList.length > 0 ? (
+            <LeaveLetterList isTeacher={isTeacher} items={filteredLetList} />
           ) : (
             <View
               className="rounded-sm border p-4"
@@ -156,6 +137,65 @@ const LeaveLetterHomeView = ({
           )}
         </View>
       </ScrollView>
+    </View>
+  );
+
+  return (
+    <View className="flex-1">
+      <Stack.Screen
+        options={{
+          title: "Xin nghỉ",
+          animation: "slide_from_right",
+          headerRight: !isTeacher
+            ? () => {
+                return (
+                  <TouchableRipple
+                    borderless
+                    onPress={() => {
+                      router.push({
+                        pathname: "parent/leaveletter/add-letter-screen",
+                        params: { studentId }
+                      });
+                    }}
+                  >
+                    <Icons name="plus" size={24} color="white" />
+                  </TouchableRipple>
+                );
+              }
+            : undefined
+        }}
+      />
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: theme.colors.primary },
+          tabBarActiveTintColor: theme.colors.onPrimary,
+          tabBarLabelStyle: {
+            textTransform: "capitalize"
+          },
+          tabBarIndicatorStyle: {
+            backgroundColor: theme.colors.onPrimary
+          }
+        }}
+      >
+        <Tab.Screen
+          name={"Tất cả"}
+          children={() => (
+            <ListComponent filteredLetList={getFilteredLetList("All")} />
+          )}
+        />
+        <Tab.Screen
+          name={"Hôm nay"}
+          children={() => (
+            <ListComponent filteredLetList={getFilteredLetList("Today")} />
+          )}
+        />
+        <Tab.Screen
+          name={"7 ngày tới"}
+          children={() => (
+            <ListComponent filteredLetList={getFilteredLetList("7days")} />
+          )}
+        />
+      </Tab.Navigator>
     </View>
   );
 };
