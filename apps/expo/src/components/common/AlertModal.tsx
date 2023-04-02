@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Button, Dialog, Portal, Text } from "react-native-paper";
 
-type AlertModalProps = {
+export type AlertModalProps = {
   visible: boolean;
   title: string;
   message: string;

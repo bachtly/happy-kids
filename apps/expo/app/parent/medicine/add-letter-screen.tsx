@@ -4,10 +4,11 @@ import moment, { Moment } from "moment";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import AlertError, { FormError } from "../../../src/components/AlertError";
 import DateRangePicker from "../../../src/components/DateRangePicker";
 import type { Item } from "../../../src/components/medicine/addLetter/MedicineList";
 import MedicineList from "../../../src/components/medicine/addLetter/MedicineList";
-import AlertModal from "../../../src/components/medicine/modals/AlertModal";
+import AlertModal from "../../../src/components/common/AlertModal";
 import { ConfirmModal } from "../../../src/components/medicine/modals/ConfirmModal";
 import MedicineModal from "../../../src/components/medicine/modals/MedicineModal";
 import UnderlineButton from "../../../src/components/medicine/UnderlineButton";
@@ -60,7 +61,7 @@ const AddLetter = () => {
   const [curMedPhoto, setCurMedPhoto] = useState("");
   const [note, setNote] = useState("");
 
-  const [submitError, setSubmitError] = useState<Array<string>>([]);
+  const [submitError, setSubmitError] = useState<FormError[]>([]);
 
   const router = useRouter();
   const postMedicineLetterMutation =
@@ -70,17 +71,12 @@ const AddLetter = () => {
           setSubmitError([]);
         } else {
           console.log(data.message);
-          setSubmitError([data.message]);
+          setSubmitError(["other"]);
         }
         setAlertModalVisible(true);
       }
     });
 
-  const submitErrorValues = {
-    datetime: "missing datetime",
-    emptyMedList: "empty medicine list",
-    emptyNote: "emptyNote"
-  };
   const onSubmit = () => {
     setSubmitError([]);
     if (
@@ -91,11 +87,11 @@ const AddLetter = () => {
       note === ""
     ) {
       if (!dateStart || !dateEnd || !time)
-        setSubmitError((prev) => [...prev, submitErrorValues.datetime]);
+        setSubmitError((prev) => [...prev, "medicine_missing_datetime"]);
       if (medicineList.length == 0)
-        setSubmitError((prev) => [...prev, submitErrorValues.emptyMedList]);
+        setSubmitError((prev) => [...prev, "medicine_missing_medicine"]);
       if (note === "")
-        setSubmitError((prev) => [...prev, submitErrorValues.emptyNote]);
+        setSubmitError((prev) => [...prev, "medicine_empty_note"]);
 
       setAlertModalVisible(true);
       return;
@@ -115,34 +111,28 @@ const AddLetter = () => {
       note: note
     });
   };
-  const getErrorMess = (error: string) => {
-    if (error == submitErrorValues.datetime)
-      return "Chưa chọn ngày/giờ uống thuốc";
-    if (error == submitErrorValues.emptyMedList) return "Thêm ít nhất 1 thuốc";
-    if (error == submitErrorValues.emptyNote) return "Chưa nhập ghi chú";
-    return error;
-  };
-  const AlertComponent = () => (
-    <AlertModal
-      title={
-        submitError.length == 0 ? "Tạo đơn thành công" : "Tạo đơn thất bại"
-      }
-      visible={alertModalVisible}
-      onClose={() => {
-        setAlertModalVisible(false);
-        if (submitError.length == 0) {
+
+  const AlertComponent = () =>
+    submitError.length == 0 ? (
+      <AlertModal
+        title={"Tạo đơn thành công"}
+        visible={alertModalVisible}
+        onClose={() => {
+          setAlertModalVisible(false);
           router.back();
+        }}
+        message={
+          "Bạn đã tạo đơn thành công, vui lòng chờ đơn được giáo viên xử lý"
         }
-      }}
-      message={
-        submitError.length == 0
-          ? "Bạn đã tạo đơn thành công, vui lòng chờ đơn được giáo viên xử lý"
-          : `Lỗi:\n${submitError
-              .map((mess) => `\t${getErrorMess(mess)}`)
-              .join("\n")}`
-      }
-    />
-  );
+      />
+    ) : (
+      <AlertError
+        title="Tạo đơn thất bại"
+        visible={alertModalVisible}
+        onClose={() => setAlertModalVisible(false)}
+        submitError={submitError}
+      />
+    );
   const SubmitComponent = () => {
     if (postMedicineLetterMutation.isSuccess && submitError.length == 0)
       return (
@@ -193,7 +183,7 @@ const AddLetter = () => {
             style={{
               backgroundColor: theme.colors.background,
               borderColor:
-                submitError.includes(submitErrorValues.datetime) &&
+                submitError.includes("medicine_missing_datetime") &&
                 (!dateStart || !dateEnd || !time)
                   ? "red"
                   : theme.colors.outline
@@ -236,7 +226,7 @@ const AddLetter = () => {
               style={{
                 backgroundColor: theme.colors.background,
                 borderColor:
-                  submitError.includes(submitErrorValues.emptyMedList) &&
+                  submitError.includes("medicine_missing_medicine") &&
                   medicineList.length == 0
                     ? "red"
                     : theme.colors.outline
@@ -259,7 +249,7 @@ const AddLetter = () => {
             onChangeText={(input) => setNote(input)}
             value={note}
             outlineStyle={
-              submitError.includes(submitErrorValues.emptyNote) && note === ""
+              submitError.includes("medicine_empty_note") && note === ""
                 ? {
                     borderColor: "red"
                   }

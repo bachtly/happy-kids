@@ -4,9 +4,10 @@ import moment, { Moment } from "moment";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import AlertError, { FormError } from "../../../src/components/AlertError";
 import DateRangePicker from "../../../src/components/DateRangePicker";
 import MyImagePicker from "../../../src/components/ImagePicker";
-import AlertModal from "../../../src/components/medicine/modals/AlertModal";
+import AlertModal from "../../../src/components/common/AlertModal";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 
@@ -46,28 +47,24 @@ const AddLetter = () => {
     });
   };
 
-  const [submitError, setSubmitError] = useState<Array<string>>([]);
+  const [submitError, setSubmitError] = useState<FormError[]>([]);
 
   const router = useRouter();
   const postLeaveLetterMutation = api.leaveletter.postLeaveLetter.useMutation({
     onSuccess: (data) => {
       if (data.leaveLetterId === "") {
         console.log(data.message);
-        setSubmitError([data.message]);
+        setSubmitError(["other"]);
       }
       setAlertModalVisible(true);
     }
   });
 
-  const submitErrorValues = {
-    datetime: "missing datetime",
-    emptyReason: "empty reason"
-  };
   const onSubmit = () => {
     setSubmitError([]);
     if (!dateStart || !dateEnd || reason === "") {
       if (reason === "")
-        setSubmitError((prev) => [...prev, submitErrorValues.emptyReason]);
+        setSubmitError((prev) => [...prev, "leave_letter_empty_reason"]);
 
       setAlertModalVisible(true);
       return;
@@ -81,32 +78,29 @@ const AddLetter = () => {
       photos: images.map((item) => item.photo).filter((item) => item !== "")
     });
   };
-  const getErrorMess = (error: string) => {
-    if (error == submitErrorValues.datetime) return "Chưa chọn ngày nghỉ";
-    if (error == submitErrorValues.emptyReason) return "Chưa nhập lý do";
-    return "Có lỗi xảy ra, vui lòng thử lại";
-  };
-  const AlertComponent = () => (
-    <AlertModal
-      title={
-        submitError.length == 0 ? "Tạo đơn thành công" : "Tạo đơn thất bại"
-      }
-      visible={alertModalVisible}
-      onClose={() => {
-        setAlertModalVisible(false);
-        if (submitError.length == 0) {
+
+  const AlertComponent = () => {
+    return submitError.length == 0 ? (
+      <AlertModal
+        title={"Tạo đơn thành công"}
+        visible={alertModalVisible}
+        onClose={() => {
+          setAlertModalVisible(false);
           router.back();
+        }}
+        message={
+          "Bạn đã tạo đơn thành công, vui lòng chờ đơn được giáo viên xử lý"
         }
-      }}
-      message={
-        submitError.length == 0
-          ? "Bạn đã tạo đơn thành công, vui lòng chờ đơn được giáo viên xử lý"
-          : `Lỗi:\n${submitError
-              .map((mess) => `\t${getErrorMess(mess)}`)
-              .join("\n")}`
-      }
-    />
-  );
+      />
+    ) : (
+      <AlertError
+        title="Tạo đơn thất bại"
+        visible={alertModalVisible}
+        onClose={() => setAlertModalVisible(false)}
+        submitError={submitError}
+      />
+    );
+  };
   const SubmitComponent = () => {
     if (postLeaveLetterMutation.isSuccess && submitError.length == 0)
       return (
@@ -157,7 +151,7 @@ const AddLetter = () => {
             style={{
               backgroundColor: theme.colors.background,
               borderColor:
-                submitError.includes(submitErrorValues.datetime) &&
+                submitError.includes("leave_letter_missing_date") &&
                 (!dateStart || !dateEnd)
                   ? "red"
                   : theme.colors.outline
@@ -185,8 +179,7 @@ const AddLetter = () => {
             onChangeText={(input) => setReason(input)}
             value={reason}
             outlineStyle={
-              submitError.includes(submitErrorValues.emptyReason) &&
-              reason === ""
+              submitError.includes("leave_letter_empty_reason") && reason === ""
                 ? {
                     borderColor: "red"
                   }
