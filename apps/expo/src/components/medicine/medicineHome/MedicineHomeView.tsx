@@ -6,22 +6,19 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import { ProgressBar, Text, useTheme } from "react-native-paper";
 import { api } from "../../../utils/api";
 
-import { FilterType } from "../Filter";
 import type { MedLetterItem } from "./MedicineLetterList";
 import { MedicineLetterList } from "./MedicineLetterList";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import CustomStackScreen from "../../CustomStackScreen";
+import DateRangeFilterBar from "../../date-picker/DateRangeFilterBar";
 
-const Tab = createMaterialTopTabNavigator();
-
-const CheckOverlapMoment = (
+const CheckOverlapDate = (
   xFrom: Moment,
   xTo: Moment,
   yFrom: Moment,
   yTo: Moment
 ) => {
-  const mxFrom = moment.max(xFrom, yFrom);
-  const mnTo = moment.min(xTo, yTo);
+  const mxFrom = moment.max(xFrom.startOf("day"), yFrom.startOf("day"));
+  const mnTo = moment.min(xTo.startOf("day"), yTo.startOf("day"));
   return mxFrom.isSameOrBefore(mnTo);
 };
 
@@ -37,6 +34,12 @@ const MedicineHomeView = ({
   const theme = useTheme();
   const router = useRouter();
   const [letterList, setLetterList] = useState<MedLetterItem[]>([]);
+
+  const DEFAULT_TIME_END = moment().startOf("day");
+  const DEFAULT_TIME_START = moment().startOf("day").add(7, "d");
+
+  const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
+  const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
 
   const { refetch, isFetching } = api.medicine.getMedicineLetterList.useQuery(
     isTeacher
@@ -85,25 +88,18 @@ const MedicineHomeView = ({
   }, []);
 
   // update list on filter change
-  const getFilteredLetList = (filterValue: FilterType) =>
+  const getFilteredLetList = () =>
     letterList.filter((item) => {
-      if (filterValue == "All") return true;
       const itemStartMoment = moment(item.startDate);
       const itemEndMoment = moment(item.endDate);
-      if (filterValue == "Today")
-        return CheckOverlapMoment(
-          moment().startOf("day"),
-          moment().startOf("day"),
-          itemStartMoment,
-          itemEndMoment
-        );
-      return CheckOverlapMoment(
-        moment().startOf("day"),
-        moment().startOf("day").add(7, "d"),
+      return CheckOverlapDate(
+        timeStart,
+        timeEnd,
         itemStartMoment,
         itemEndMoment
       );
     });
+
   const ListComponent = ({
     filteredLetList
   }: {
@@ -150,38 +146,13 @@ const MedicineHomeView = ({
               }
         }
       />
-
-      <Tab.Navigator
-        screenOptions={{
-          tabBarStyle: { backgroundColor: theme.colors.primary },
-          tabBarActiveTintColor: theme.colors.onPrimary,
-          tabBarLabelStyle: {
-            textTransform: "capitalize"
-          },
-          tabBarIndicatorStyle: {
-            backgroundColor: theme.colors.onPrimary
-          }
-        }}
-      >
-        <Tab.Screen
-          name={"Tất cả"}
-          children={() => (
-            <ListComponent filteredLetList={getFilteredLetList("All")} />
-          )}
-        />
-        <Tab.Screen
-          name={"Hôm nay"}
-          children={() => (
-            <ListComponent filteredLetList={getFilteredLetList("Today")} />
-          )}
-        />
-        <Tab.Screen
-          name={"7 ngày tới"}
-          children={() => (
-            <ListComponent filteredLetList={getFilteredLetList("7days")} />
-          )}
-        />
-      </Tab.Navigator>
+      <DateRangeFilterBar
+        timeStart={timeStart}
+        timeEnd={timeEnd}
+        setTimeStart={setTimeStart}
+        setTimeEnd={setTimeEnd}
+      />
+      <ListComponent filteredLetList={getFilteredLetList()} />
     </View>
   );
 };
