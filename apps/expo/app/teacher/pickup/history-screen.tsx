@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, useTheme } from "react-native-paper";
+import { Text, useTheme, ProgressBar } from "react-native-paper";
 import { Stack, useSearchParams } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
@@ -49,6 +49,7 @@ const HistoryScreen = () => {
           animation: "slide_from_right"
         }}
       />
+      {pickupMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 
       <View className={"flex-1 bg-white px-2"}>
         <View className={"fixed my-4 flex-row justify-between"}>

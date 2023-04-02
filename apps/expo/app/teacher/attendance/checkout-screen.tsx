@@ -2,7 +2,7 @@ import { useFocusEffect } from "expo-router";
 import moment, { Moment } from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { Text, useTheme, ProgressBar } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import CheckoutItem from "../../../src/components/attendance/CheckoutItem";
 import DatePicker from "../../../src/components/DatePicker";
@@ -46,6 +46,7 @@ const CheckoutScreen = () => {
 
   return (
     <View className={"flex-1 bg-white px-2"}>
+      {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
       <View className={"fixed my-4 flex-row justify-between"}>
         <View className={""}>
           <DatePicker initTime={time} setTime={setTime} />

@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { List } from "react-native-paper";
+import { List, ProgressBar } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import DateRangePicker from "../../../../src/components/DateRangePicker";
@@ -40,6 +40,7 @@ const StatisticsScreen = () => {
 
   return (
     <View className={"flex-1 bg-white px-2"}>
+      {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
       <View className={"fixed my-4 flex-row justify-between"}>
         <View className={""}>
           <DateRangePicker

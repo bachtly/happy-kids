@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { TouchableRipple, Text, useTheme } from "react-native-paper";
+import {
+  TouchableRipple,
+  Text,
+  useTheme,
+  ProgressBar
+} from "react-native-paper";
 import { Stack, useSearchParams, useRouter } from "expo-router";
 import Icons from "react-native-vector-icons/AntDesign";
 import moment, { Moment } from "moment/moment";
@@ -69,6 +74,7 @@ const HistoryScreen = () => {
           }
         }}
       />
+      {pickupMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 
       <View className={"flex-1 bg-white px-2"}>
         <View className={"fixed my-4 flex-row justify-between"}>
