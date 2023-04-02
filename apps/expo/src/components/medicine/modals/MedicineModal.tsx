@@ -49,32 +49,38 @@ const MedicineModal: FC<MedicineModalProps> = (props) => {
 
   return (
     <Portal>
-      <Dialog visible={visible} dismissable={false} style={{ maxHeight: 400 }}>
+      <Dialog visible={visible} dismissable={false} style={{ maxHeight: 600 }}>
         <Dialog.Title>{title}</Dialog.Title>
         <Dialog.ScrollArea className={"px-0"}>
-          <ScrollView className={"px-6"}>
-            <TextInput
-              className="mb-4"
-              mode="outlined"
-              label={"Tên thuốc"}
-              placeholder={"Nhập tên thuốc"}
-              onChangeText={setMedicineName}
-              value={medicineName}
-              error={submitFailed && medicineName === ""}
-            />
-            <TextInput
-              className="mb-4"
-              mode="outlined"
-              label={"Liều dùng"}
-              placeholder={"Nhập liều dùng/ hướng dẫn sử dụng của thuốc"}
-              multiline
-              onChangeText={setMedicineAmount}
-              value={medicineAmount}
-              error={submitFailed && medicineAmount === ""}
-            />
-            <View className="mb-4 flex flex-row items-center justify-around">
-              <Text variant={"bodyLarge"}>Ảnh thuốc</Text>
-              <View className={"h-32 w-32"}>
+          <ScrollView className={"px-6 pt-1"}>
+            <View className="mb-2">
+              <Text variant={"labelLarge"}>Tên thuốc</Text>
+              <TextInput
+                className={"text-sm"}
+                mode="outlined"
+                placeholder={"Nhập tên thuốc"}
+                onChangeText={setMedicineName}
+                value={medicineName}
+                error={submitFailed && medicineName === ""}
+              />
+            </View>
+
+            <View className="mb-2">
+              <Text variant={"labelLarge"}>Liều dùng</Text>
+              <TextInput
+                className="text-sm"
+                mode="outlined"
+                placeholder={"Nhập liều dùng/ hướng dẫn sử dụng của thuốc"}
+                multiline
+                onChangeText={setMedicineAmount}
+                value={medicineAmount}
+                error={submitFailed && medicineAmount === ""}
+              />
+            </View>
+
+            <View className="mb-2">
+              <Text variant={"labelLarge"}>Ảnh thuốc</Text>
+              <View className={"mt-2 h-32 w-32"}>
                 <MyImagePicker
                   imageData={medicinePhoto}
                   setImageData={setMedicinePhoto}
