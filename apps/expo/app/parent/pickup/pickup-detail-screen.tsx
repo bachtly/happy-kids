@@ -14,6 +14,7 @@ import {
   PickupItemModel,
   STATUS_ENUM_TO_VERBOSE
 } from "../../../src/models/PickupModels";
+import Body from "../../../src/components/Body";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -56,11 +57,11 @@ const PickupDetailScreen = () => {
   };
 
   return (
-    <ScrollView>
+    <Body>
       <Stack.Screen options={{ title: "Chi tiết đón về" }} />
       {pickupMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 
-      <View className={"flex-1 bg-white p-5"}>
+      <ScrollView className={"bg-white p-5"}>
         <View className={"mb-5"}>
           {pickup && pickup.time && (
             <Text variant={"titleLarge"}>
@@ -107,8 +108,8 @@ const PickupDetailScreen = () => {
           </View>
           <Divider className={"mb-2"} />
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </Body>
   );
 };
 

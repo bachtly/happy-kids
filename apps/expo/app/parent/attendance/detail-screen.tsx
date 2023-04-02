@@ -2,7 +2,13 @@ import { Stack, useSearchParams } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Divider, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  Divider,
+  Text,
+  TextInput,
+  useTheme,
+  ProgressBar
+} from "react-native-paper";
 import MyImagePicker from "../../../src/components/ImagePicker";
 import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
@@ -52,6 +58,8 @@ const DetailScreen = () => {
   return (
     <ScrollView>
       <Stack.Screen options={{ title: "Chi tiết diểm danh" }} />
+
+      {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 
       <View className={"flex-1 bg-white p-5"}>
         <View className={"mb-5"}>

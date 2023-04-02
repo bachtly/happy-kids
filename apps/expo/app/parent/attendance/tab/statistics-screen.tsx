@@ -1,13 +1,13 @@
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { List, ProgressBar } from "react-native-paper";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
-import DateRangePicker from "../../../../src/components/DateRangePicker";
 import { AttendanceStatisticsModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
 import { AttendanceContext } from "../../../../src/utils/attendance-context";
+import DateRangeFilterBar from "../../../../src/components/date-picker/DateRangeFilterBar";
+import Body from "../../../../src/components/Body";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -39,26 +39,14 @@ const StatisticsScreen = () => {
   }, [timeStart, timeEnd]);
 
   return (
-    <View className={"flex-1 bg-white px-2"}>
+    <Body>
       {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
-      <View className={"fixed my-4 flex-row justify-between"}>
-        <View className={""}>
-          <DateRangePicker
-            initTimeStart={timeStart}
-            initTimeEnd={(() => timeEnd)()}
-            setTimeStart={setTimeStart}
-            setTimeEnd={setTimeEnd}
-          />
-        </View>
-
-        <View className={"flex-row justify-between space-x-4"}>
-          <Pressable className={""}>
-            <View className={"m-auto"}>
-              <AntDesign name={"filter"} size={25}></AntDesign>
-            </View>
-          </Pressable>
-        </View>
-      </View>
+      <DateRangeFilterBar
+        timeStart={timeStart}
+        setTimeStart={setTimeStart}
+        timeEnd={timeEnd}
+        setTimeEnd={setTimeEnd}
+      />
 
       <ScrollView>
         <List.Item
@@ -95,7 +83,7 @@ const StatisticsScreen = () => {
           )}
         />
       </ScrollView>
-    </View>
+    </Body>
   );
 };
 

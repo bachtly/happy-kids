@@ -6,7 +6,7 @@ import { ScrollView, View } from "react-native";
 import { Avatar, Button, Text, TextInput } from "react-native-paper";
 import TimePicker from "../../../src/components/TimePicker";
 import { api } from "../../../src/utils/api";
-import DatePicker from "../../../src/components/DatePicker";
+import DatePicker from "../../../src/components/date-picker/DatePicker";
 import SelectPickerModal from "../../../src/components/pickup/SelectPickerModal";
 import { RelativeModel } from "../../../src/models/PickupModels";
 
