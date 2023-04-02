@@ -37,7 +37,7 @@ const useProtectedRoute = (userId: string | null) => {
       router.replace("/login/login-screen");
     } else if (userId && inAuthGroup) {
       // Redirect away from the sign-in page.
-      router.replace("/home-screen");
+      router.replace("/temporary-dashboard");
     }
   }, [userId, segments]);
 };

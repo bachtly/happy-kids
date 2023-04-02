@@ -10,7 +10,7 @@ import {
   TextInput,
   useTheme
 } from "react-native-paper";
-import { api } from "../../../src/utils/api";
+// import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
@@ -22,21 +22,22 @@ const LoginScreen = () => {
     React.useState<boolean>(false);
   const [showFailLogin, setShowFailLogin] = React.useState<boolean>(false);
   const { colors } = useTheme();
-  const loginMutation = api.auth.userLogin.useMutation({
-    onSuccess: (data) => {
-      if (data.userId !== null) {
-        onLogin(data.userId);
-      } else {
-        setShowFailLogin(true);
-      }
-    }
-  });
+  // const loginMutation = api.auth.userLogin.useMutation({
+  //   onSuccess: (data) => {
+  //     if (data.userId !== null) {
+  //       onLogin(data.userId);
+  //     } else {
+  //       setShowFailLogin(true);
+  //     }
+  //   }
+  // });
 
   const router = useRouter();
   const passwordRef = useRef<RNTextInput>(null);
 
   const onPressLogin = () => {
-    loginMutation.mutate({ email: email, password });
+    // loginMutation.mutate({ email: email, password });
+    onLogin("prid1000-0000-0000-0000-000000000000");
   };
   return (
     <>

@@ -46,7 +46,7 @@ const RootLayout = () => {
                   backgroundColor: theme.colors.primary
                 }
               }}
-              initialRouteName="home-screen"
+              initialRouteName="temporary-dashboard"
             />
           </PaperProvider>
         </SafeAreaProvider>
