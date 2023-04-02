@@ -3,7 +3,7 @@ START TRANSACTION;
 USE KindergartenSchema;
 
 -- Common attributes
-SET @avatar = 'https://nationaltoday.com/wp-content/uploads/2022/08/18-National-Welsh-Corgi-Day.jpg';
+SET @avatar = './seed/avatar';
 
 -- Insert schools
 SET @sid1 = 'sid10000-0000-0000-0000-000000000000';
