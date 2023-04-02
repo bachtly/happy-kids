@@ -1,12 +1,13 @@
 import { useRouter } from "expo-router";
 import { View, Image } from "react-native";
-import { Card, Text, useTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import {
   PickupItemModel,
   STATUS_ENUM_TO_VERBOSE
 } from "../../models/PickupModels";
 import pickupIcon from "../../../assets/images/pickup-icon.png";
 import moment from "moment/moment";
+import CustomCard from "../CustomCard";
 
 const DATE_FORMAT = "DD/MM/YYYY";
 const TIME_FORMAT = "hh:mm";
@@ -19,13 +20,10 @@ const PickupItem = ({
   isTeacher: boolean;
 }) => {
   const router = useRouter();
-  const { colors } = useTheme();
 
   return (
     <View className={"mb-3"}>
-      <Card
-        mode={"elevated"}
-        style={{ backgroundColor: colors.background, borderRadius: 2 }}
+      <CustomCard
         onPress={() => {
           router.push({
             pathname: `${
@@ -35,7 +33,7 @@ const PickupItem = ({
           });
         }}
       >
-        <Card.Content className={"flex-row space-x-2"}>
+        <View className={"flex-row space-x-2"}>
           <Image className={"my-auto aspect-square w-16"} source={pickupIcon} />
 
           <View className={"flex-1 space-y-1"}>
@@ -59,8 +57,8 @@ const PickupItem = ({
               {item.status && STATUS_ENUM_TO_VERBOSE.get(item.status)}
             </Text>
           </View>
-        </Card.Content>
-      </Card>
+        </View>
+      </CustomCard>
     </View>
   );
 };

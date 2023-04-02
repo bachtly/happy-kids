@@ -2,9 +2,10 @@ import { useRouter } from "expo-router";
 import moment from "moment";
 import React from "react";
 import { FlatList, Image, View } from "react-native";
-import { Card, Text, useTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import leaveletterIcon from "../../../../assets/images/leave-letter-icon.png";
 import LetterStatusText, { LetterStatus } from "../../medicine/StatusText";
+import CustomCard from "../../CustomCard";
 
 export type LeaveLetterItem = {
   id: string;
@@ -26,15 +27,13 @@ export function LeaveLetterList({
   isTeacher
 }: ItemListProps): React.ReactElement {
   const router = useRouter();
-  const theme = useTheme();
   const renderItem = ({ item }: { item: LeaveLetterItem }) => {
     const startDate = moment(item.startDate);
     const endDate = moment(item.endDate);
     const createdAt = moment(item.createdAt);
     const diffDate = endDate.diff(startDate, "days");
     return (
-      <Card
-        style={{ backgroundColor: theme.colors.background, borderRadius: 2 }}
+      <CustomCard
         onPress={() => {
           router.push({
             pathname: `${
@@ -44,32 +43,30 @@ export function LeaveLetterList({
           });
         }}
       >
-        <Card.Content>
-          <Text variant={"labelLarge"} className={"mb-2"}>
-            Xin nghỉ {`cho bé ${item.studentName} `}
-            <Text className={"italic"}>
-              ({startDate.format("DD/MM/YYYY")}
-              {diffDate == 0 ? "" : ` đến ${endDate.format("DD/MM/YYYY")}`})
-            </Text>{" "}
-          </Text>
-          <View className={"flex flex-row justify-between gap-x-4 "}>
-            <Image className={"aspect-square w-1/6"} source={leaveletterIcon} />
-            <View className={"flex-grow flex-col gap-y-1 whitespace-nowrap"}>
-              <Text
-                variant={"bodyMedium"}
-                numberOfLines={1}
-                className="overflow-hidden"
-              >
-                {item.reason}{" "}
-              </Text>
-              <Text variant={"bodyMedium"} className={"italic"}>
-                Ngày tạo: {createdAt.format("DD/MM/YYYY")}
-              </Text>
-              <LetterStatusText status={item.status} />
-            </View>
+        <Text variant={"labelLarge"} className={"mb-2"}>
+          Xin nghỉ {`cho bé ${item.studentName} `}
+          <Text className={"italic"}>
+            ({startDate.format("DD/MM/YYYY")}
+            {diffDate == 0 ? "" : ` đến ${endDate.format("DD/MM/YYYY")}`})
+          </Text>{" "}
+        </Text>
+        <View className={"flex flex-row justify-between gap-x-4 "}>
+          <Image className={"aspect-square w-1/6"} source={leaveletterIcon} />
+          <View className={"flex-grow flex-col gap-y-1 whitespace-nowrap"}>
+            <Text
+              variant={"bodyMedium"}
+              numberOfLines={1}
+              className="overflow-hidden"
+            >
+              {item.reason}{" "}
+            </Text>
+            <Text variant={"bodyMedium"} className={"italic"}>
+              Ngày tạo: {createdAt.format("DD/MM/YYYY")}
+            </Text>
+            <LetterStatusText status={item.status} />
           </View>
-        </Card.Content>
-      </Card>
+        </View>
+      </CustomCard>
     );
   };
 

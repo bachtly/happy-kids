@@ -1,7 +1,8 @@
 import React from "react";
 import { FlatList, Image, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import medicineIcon from "../../../../assets/images/medicine-icon.png";
+import CustomCard from "../../CustomCard";
 
 type Item = {
   id: string;
@@ -18,30 +19,26 @@ export default function DetailMedicineList({
   items
 }: ItemListProps): React.ReactElement {
   const renderItem = ({ item }: { item: Item }) => (
-    <Card mode={"outlined"} style={{ borderRadius: 2 }}>
-      <Card.Content>
-        <View className={"flex-row justify-between"}>
-          {item.photo !== "" ? (
-            <Image
-              className={"aspect-square w-1/3"}
-              source={{ uri: `data:image/jpeg;base64,${item.photo}` }}
-            />
-          ) : (
-            <View
-              className={"aspect-square w-1/3 items-center justify-center "}
-            >
-              <Image className={"h-16 w-16"} source={medicineIcon} />
-            </View>
-          )}
-          <View className={"w-2/3 flex-col justify-between "}>
-            <View className={"gap-y-1 pl-3"}>
-              <Text variant={"bodyMedium"}>Thuốc {item.name} </Text>
-              <Text variant={"bodyMedium"}>{item.amount} </Text>
-            </View>
+    <CustomCard mode={"outlined"}>
+      <View className={"flex-row justify-between"}>
+        {item.photo !== "" ? (
+          <Image
+            className={"aspect-square w-1/3"}
+            source={{ uri: `data:image/jpeg;base64,${item.photo}` }}
+          />
+        ) : (
+          <View className={"aspect-square w-1/3 items-center justify-center "}>
+            <Image className={"h-16 w-16"} source={medicineIcon} />
+          </View>
+        )}
+        <View className={"w-2/3 flex-col justify-between "}>
+          <View className={"gap-y-1 pl-3"}>
+            <Text variant={"bodyMedium"}>Thuốc {item.name} </Text>
+            <Text variant={"bodyMedium"}>{item.amount} </Text>
           </View>
         </View>
-      </Card.Content>
-    </Card>
+      </View>
+    </CustomCard>
   );
 
   return (

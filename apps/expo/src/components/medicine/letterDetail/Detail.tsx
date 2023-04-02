@@ -3,7 +3,7 @@ import { useNavigation } from "expo-router";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
-import { Card, ProgressBar, Text, useTheme } from "react-native-paper";
+import { ProgressBar, Text, useTheme, TextInput } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import MuiIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -137,11 +137,12 @@ const Detail = ({
             <Text className="mb-3" variant={"labelLarge"}>
               Ghi chú
             </Text>
-            <Card mode={"outlined"} style={{ borderRadius: 2 }}>
-              <Card.Content>
-                <Text> {data.medicineLetter.note}</Text>
-              </Card.Content>
-            </Card>
+            <TextInput
+              disabled={true}
+              style={{ fontSize: theme.fonts.bodyMedium.fontSize }}
+            >
+              {data.medicineLetter.note ?? "Không có ghi chú"}
+            </TextInput>
 
             <View className="my-3 flex flex-row items-end justify-between">
               <Text variant={"labelLarge"}>Đơn thuốc</Text>
