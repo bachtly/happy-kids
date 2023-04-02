@@ -1,21 +1,16 @@
-import { Stack, useNavigation, useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 
 import React, { useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
-import {
-  ProgressBar,
-  Text,
-  TouchableRipple,
-  useTheme
-} from "react-native-paper";
+import { ProgressBar, Text, useTheme } from "react-native-paper";
 import { api } from "../../../utils/api";
 
-import Icons from "react-native-vector-icons/AntDesign";
 import { FilterType } from "../Filter";
 import type { MedLetterItem } from "./MedicineLetterList";
 import { MedicineLetterList } from "./MedicineLetterList";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import CustomStackScreen from "../../CustomStackScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -142,29 +137,20 @@ const MedicineHomeView = ({
 
   return (
     <View className="flex-1">
-      <Stack.Screen
-        options={{
-          title: "Dặn thuốc",
-          animation: "slide_from_right",
-          headerRight: !isTeacher
-            ? () => {
-                return (
-                  <TouchableRipple
-                    borderless
-                    onPress={() => {
-                      router.push({
-                        pathname: "parent/medicine/add-letter-screen",
-                        params: { studentId }
-                      });
-                    }}
-                  >
-                    <Icons name="plus" size={24} color="white" />
-                  </TouchableRipple>
-                );
+      <CustomStackScreen
+        title={"Dặn thuốc"}
+        addButtonHandler={
+          isTeacher
+            ? undefined
+            : () => {
+                router.push({
+                  pathname: "parent/medicine/add-letter-screen",
+                  params: { studentId }
+                });
               }
-            : undefined
-        }}
+        }
       />
+
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: { backgroundColor: theme.colors.primary },

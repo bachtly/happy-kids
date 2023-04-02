@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  TouchableRipple,
-  Text,
-  useTheme,
-  ProgressBar
-} from "react-native-paper";
-import { Stack, useSearchParams, useRouter } from "expo-router";
-import Icons from "react-native-vector-icons/AntDesign";
+import { Text, useTheme, ProgressBar } from "react-native-paper";
+import { useSearchParams, useRouter } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
 import { ScrollView, View } from "react-native";
@@ -15,6 +9,7 @@ import { PickupItemModel } from "../../../src/models/PickupModels";
 import { useIsFocused } from "@react-navigation/native";
 import DateRangeFilterBar from "../../../src/components/date-picker/DateRangeFilterBar";
 import Body from "../../../src/components/Body";
+import CustomStack from "../../../src/components/CustomStackScreen";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -54,27 +49,16 @@ const HistoryScreen = () => {
   return (
     <>
       <Body>
-        <Stack.Screen
-          options={{
-            title: "Đón về",
-            animation: "slide_from_right",
-            headerRight: () => {
-              return (
-                <TouchableRipple
-                  borderless
-                  onPress={() => {
-                    router.push({
-                      pathname: "parent/pickup/add-pickup-screen",
-                      params: { studentId: studentIdSaved }
-                    });
-                  }}
-                >
-                  <Icons name="plus" size={24} color="white" />
-                </TouchableRipple>
-              );
-            }
+        <CustomStack
+          title={"Đón về"}
+          addButtonHandler={() => {
+            router.push({
+              pathname: "parent/pickup/add-pickup-screen",
+              params: { studentId: studentIdSaved }
+            });
           }}
         />
+
         {pickupMutation.isLoading && (
           <ProgressBar indeterminate visible={true} />
         )}

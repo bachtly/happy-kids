@@ -1,21 +1,16 @@
-import { Stack, useNavigation, useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 
 import React, { useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
-import {
-  ProgressBar,
-  Text,
-  TouchableRipple,
-  useTheme
-} from "react-native-paper";
+import { ProgressBar, Text, useTheme } from "react-native-paper";
 import { api } from "../../../utils/api";
 
-import Icons from "react-native-vector-icons/AntDesign";
 import { FilterType } from "../../medicine/Filter";
 import type { LeaveLetterItem } from "./LeaveLetterList";
 import { LeaveLetterList } from "./LeaveLetterList";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import CustomStackScreen from "../../CustomStackScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -142,28 +137,18 @@ const LeaveLetterHomeView = ({
 
   return (
     <View className="flex-1">
-      <Stack.Screen
-        options={{
-          title: "Xin nghỉ",
-          animation: "slide_from_right",
-          headerRight: !isTeacher
-            ? () => {
-                return (
-                  <TouchableRipple
-                    borderless
-                    onPress={() => {
-                      router.push({
-                        pathname: "parent/leaveletter/add-letter-screen",
-                        params: { studentId }
-                      });
-                    }}
-                  >
-                    <Icons name="plus" size={24} color="white" />
-                  </TouchableRipple>
-                );
+      <CustomStackScreen
+        title={"Xin nghỉ"}
+        addButtonHandler={
+          isTeacher
+            ? undefined
+            : () => {
+                router.push({
+                  pathname: "parent/leaveletter/add-letter-screen",
+                  params: { studentId }
+                });
               }
-            : undefined
-        }}
+        }
       />
       <Tab.Navigator
         screenOptions={{

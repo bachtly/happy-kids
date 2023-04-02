@@ -1,4 +1,4 @@
-import { Stack, useRouter, useSearchParams } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import moment, { Moment } from "moment";
 
 import React, { useState } from "react";
@@ -9,6 +9,7 @@ import { api } from "../../../src/utils/api";
 import DatePicker from "../../../src/components/date-picker/DatePicker";
 import SelectPickerModal from "../../../src/components/pickup/SelectPickerModal";
 import { RelativeModel } from "../../../src/models/PickupModels";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -52,11 +53,7 @@ const AddPickupScreen = () => {
 
   return (
     <View className="flex-1">
-      <Stack.Screen
-        options={{
-          title: "Tạo đơn đón về"
-        }}
-      />
+      <CustomStackScreen title={"Tạo đơn đón về"} />
 
       <ScrollView className="flex-1 bg-white p-4">
         <View className="mb-4 h-12 flex-row justify-between">

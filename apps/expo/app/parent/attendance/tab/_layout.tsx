@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "react-native-paper";
 import HistoryScreen from "./history-screen";
 import StatisticsScreen from "./statistics-screen";
-import { Stack, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import { AttendanceContext } from "../../../../src/utils/attendance-context";
+import CustomStackScreen from "../../../../src/components/CustomStackScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -22,7 +23,7 @@ const AttendanceLayout = () => {
 
   return (
     <AttendanceContext.Provider value={{ studentId: studentIdSaved }}>
-      <Stack.Screen options={{ title: "Điểm danh" }} />
+      <CustomStackScreen title={"Điểm danh"} />
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: { backgroundColor: colors.primary },

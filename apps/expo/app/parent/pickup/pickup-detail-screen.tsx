@@ -1,4 +1,4 @@
-import { Stack, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -15,6 +15,7 @@ import {
   STATUS_ENUM_TO_VERBOSE
 } from "../../../src/models/PickupModels";
 import Body from "../../../src/components/Body";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -58,7 +59,7 @@ const PickupDetailScreen = () => {
 
   return (
     <Body>
-      <Stack.Screen options={{ title: "Chi tiết đón về" }} />
+      <CustomStackScreen title={"Chi tiết đón về"} />
       {pickupMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 
       <ScrollView className={"bg-white p-5"}>

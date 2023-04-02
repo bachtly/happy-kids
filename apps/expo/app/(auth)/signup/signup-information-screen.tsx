@@ -4,7 +4,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme, TextInput, Button } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import { Portal, Dialog } from "react-native-paper";
-import { useRouter, useSearchParams, Stack } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const SignupInformationScreen = () => {
   const [showEmptyNameError, setShowEmptyNameError] = useState<boolean>(false);
@@ -125,7 +126,7 @@ const SignupInformationScreen = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Thông tin cá nhân" }} />
+      <CustomStackScreen title={"Thông tin cá nhân"} />
       <View className={"h-full w-full flex-col bg-white p-4"}>
         <Text className={"text-lg font-semibold"}>Thông tin tài khoản</Text>
         <Text className={"mt-4"}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, useTheme, ProgressBar } from "react-native-paper";
-import { Stack, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
 import { ScrollView, View } from "react-native";
@@ -9,6 +9,7 @@ import { PickupItemModel } from "../../../src/models/PickupModels";
 import { useIsFocused } from "@react-navigation/native";
 import Body from "../../../src/components/Body";
 import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -43,12 +44,7 @@ const HistoryScreen = () => {
 
   return (
     <Body>
-      <Stack.Screen
-        options={{
-          title: "Đón về",
-          animation: "slide_from_right"
-        }}
-      />
+      <CustomStackScreen title={"Đón về"} />
       {pickupMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 
       <DateFilterBar time={time} setTime={setTime} />

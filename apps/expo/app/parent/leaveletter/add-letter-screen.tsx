@@ -1,15 +1,16 @@
-import { Stack, useRouter, useSearchParams } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import moment, { Moment } from "moment";
 
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import AlertError, { FormError } from "../../../src/components/AlertError";
-import DateRangePicker from "../../../src/components/DateRangePicker";
+import DateRangePicker from "../../../src/components/date-picker/DateRangePicker";
 import MyImagePicker from "../../../src/components/ImagePicker";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const AddLetter = () => {
   const now = moment();
@@ -133,12 +134,7 @@ const AddLetter = () => {
   };
   return (
     <View className="flex-1">
-      <Stack.Screen
-        options={{
-          title: "Tạo đơn xin nghỉ",
-          animation: "default"
-        }}
-      />
+      <CustomStackScreen title={"Tạo đơn xin nghỉ"} />
 
       <ScrollView className="flex-1">
         <View className="flex-1  p-4">

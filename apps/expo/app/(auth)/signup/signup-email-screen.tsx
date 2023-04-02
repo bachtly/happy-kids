@@ -9,7 +9,8 @@ import {
 } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import emailValidatorUtils from "../../../src/utils/email-validator-utils";
-import { useRouter, Stack } from "expo-router";
+import { useRouter } from "expo-router";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const SignupEmailScreen = () => {
   const { colors } = useTheme();
@@ -45,7 +46,7 @@ const SignupEmailScreen = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Đăng ký" }} />
+      <CustomStackScreen title={"Đăng ký"} />
       <Portal>
         <Dialog
           visible={showConfirmExitSignupModal}

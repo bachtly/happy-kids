@@ -1,10 +1,11 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Stack, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "react-native-paper";
 import CheckinScreen from "./checkin-screen";
 import CheckoutScreen from "./checkout-screen";
 import { TeacherAttendanceContext } from "../../../src/utils/attendance-context";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -21,7 +22,7 @@ const AttendanceLayout = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Điểm danh" }} />
+      <CustomStackScreen title={"Điểm danh"} />
       <TeacherAttendanceContext.Provider value={{ classId: classIdSaved }}>
         <Tab.Navigator
           screenOptions={{

@@ -1,4 +1,4 @@
-import { Stack, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -9,6 +9,7 @@ import { api } from "../../../src/utils/api";
 import { TeacherAttendanceContext } from "../../../src/utils/attendance-context";
 import Body from "../../../src/components/Body";
 import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -49,7 +50,7 @@ const CheckinScreen = () => {
 
   return (
     <Body>
-      <Stack.Screen options={{ title: "Điểm danh" }} />
+      <CustomStackScreen title={"Điểm danh"} />
 
       {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 

@@ -1,4 +1,4 @@
-import { Stack, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -12,6 +12,7 @@ import {
 import MyImagePicker from "../../../src/components/ImagePicker";
 import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -57,7 +58,7 @@ const DetailScreen = () => {
 
   return (
     <ScrollView>
-      <Stack.Screen options={{ title: "Chi tiết diểm danh" }} />
+      <CustomStackScreen title={"Chi tiết diểm danh"} />
 
       {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
 

@@ -1,7 +1,8 @@
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import { useAuthContext } from "../src/utils/auth-context-provider";
+import CustomStackScreen from "../src/components/CustomStackScreen";
 
 const HomeScreen = () => {
   const { onLogout } = useAuthContext();
@@ -11,7 +12,7 @@ const HomeScreen = () => {
 
   return (
     <View>
-      <Stack.Screen options={{ title: "Trang chủ" }} />
+      <CustomStackScreen title={"Trang chủ"} />
       <Text onPress={() => onLogout()}>Home screen</Text>
       <Button
         onPress={() =>

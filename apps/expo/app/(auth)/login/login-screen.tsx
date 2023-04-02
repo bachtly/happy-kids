@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useRef } from "react";
 import { Image, TextInput as RNTextInput, View } from "react-native";
 import {
@@ -12,6 +12,7 @@ import {
 } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const LoginScreen = () => {
   const { onLogin } = useAuthContext();
@@ -39,7 +40,7 @@ const LoginScreen = () => {
   };
   return (
     <>
-      <Stack.Screen options={{ title: "Đăng nhập" }} />
+      <CustomStackScreen title={"Đăng nhập"} />
       <Portal>
         <Dialog
           visible={showFailLogin}
