@@ -2,14 +2,14 @@ import { useNavigation, useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 
 import React, { useEffect, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
-import { ProgressBar, Text, useTheme } from "react-native-paper";
+import { View } from "react-native";
 import { api } from "../../../utils/api";
 
 import type { LeaveLetterItem } from "./LeaveLetterList";
 import { LeaveLetterList } from "./LeaveLetterList";
 import CustomStackScreen from "../../CustomStackScreen";
 import DateRangeFilterBar from "../../date-picker/DateRangeFilterBar";
+import ItemListWrapper from "../../common/ItemListWrapper";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -31,12 +31,11 @@ const LeaveLetterHomeView = ({
   classId: string;
   studentId: string;
 }) => {
-  const theme = useTheme();
   const router = useRouter();
   const [letterList, setLetterList] = useState<LeaveLetterItem[]>([]);
 
-  const DEFAULT_TIME_END = moment().startOf("day");
-  const DEFAULT_TIME_START = moment().startOf("day").add(7, "d");
+  const DEFAULT_TIME_START = moment().startOf("day");
+  const DEFAULT_TIME_END = moment().startOf("day").add(7, "d");
 
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
   const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
@@ -104,30 +103,14 @@ const LeaveLetterHomeView = ({
   }: {
     filteredLetList: LeaveLetterItem[];
   }) => (
-    <View className="flex-1">
-      {isFetching && <ProgressBar indeterminate visible={true} />}
-      <ScrollView
-        className="flex-1"
-        refreshControl={
-          <RefreshControl refreshing={false} onRefresh={fetchData} />
-        }
-      >
-        <View className="px-4 pt-4">
-          {filteredLetList.length > 0 ? (
-            <LeaveLetterList isTeacher={isTeacher} items={filteredLetList} />
-          ) : (
-            <View
-              className="rounded-sm border p-4"
-              style={{ borderColor: theme.colors.outline }}
-            >
-              <Text className={"text-center leading-6"}>
-                Danh sách đơn trống.
-              </Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-    </View>
+    <ItemListWrapper
+      fetchData={fetchData}
+      isEmpty={filteredLetList.length == 0}
+      isFetching={isFetching}
+      emptyPlaceHolderText="Danh sách đơn trống"
+    >
+      <LeaveLetterList isTeacher={isTeacher} items={filteredLetList} />
+    </ItemListWrapper>
   );
 
   return (

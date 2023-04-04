@@ -11,7 +11,7 @@ import MedicineList from "../../../src/components/medicine/addLetter/MedicineLis
 import AlertModal from "../../../src/components/common/AlertModal";
 import { ConfirmModal } from "../../../src/components/medicine/modals/ConfirmModal";
 import MedicineModal from "../../../src/components/medicine/modals/MedicineModal";
-import UnderlineButton from "../../../src/components/medicine/UnderlineButton";
+import UnderlineButton from "../../../src/components/common/UnderlineButton";
 import TimePicker from "../../../src/components/TimePicker";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
