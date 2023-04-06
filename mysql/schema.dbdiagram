@@ -128,14 +128,11 @@ Table KindergartenSchema.LeaveLetterPhoto {
 
 Table KindergartenSchema.MedicineLetter {
   id varchar(36) [pk, default: `UUID()`]
-
+  
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
-
-  isUsed bool
   note text
 
-  time int
   startDate date
   endDate date
 
@@ -149,6 +146,21 @@ Table KindergartenSchema.Medicine {
   name varchar
   photo text
   amount varchar
+  time int
+
+  medicineLetterId varchar(36) [ref: - KindergartenSchema.MedicineLetter.id]
+}
+
+Enum KindergartenSchema.MedicineUseStatusEnum {
+  NotUsed
+  Used
+}
+
+Table KindergartenSchema.MedicineLetterUseDiary {
+  id varchar(36) [pk, default: `UUID()`]
+  status KindergartenSchema.MedicineUseStatusEnum
+  date date
+  note text
 
   medicineLetterId varchar(36) [ref: - KindergartenSchema.MedicineLetter.id]
 }

@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Dialog, Portal, RadioButton } from "react-native-paper";
-import { LetterStatus } from "../StatusText";
+import {
+  Button,
+  Dialog,
+  Portal,
+  RadioButton,
+  TextInput,
+  Text
+} from "react-native-paper";
+import {
+  MedicineLetterStatus,
+  MedicineLetterUseStatus,
+  MedUseTime
+} from "../../../models/MedicineModels";
 
 type LetterStatusDialogProps = {
-  origValue: LetterStatus;
-  setOrigValue: (value: LetterStatus) => void;
+  origValue: MedicineLetterStatus;
+  setOrigValue: (value: MedicineLetterStatus) => void;
   visible: boolean;
   close: () => void;
 };
@@ -41,7 +52,7 @@ const LetterStatusDialog = ({
               <RadioButton.Group
                 value={value}
                 onValueChange={(value: string) =>
-                  setValue(value as LetterStatus)
+                  setValue(value as MedicineLetterStatus)
                 }
               >
                 <RadioButton.Item value={"Confirmed"} label={"Xác nhận"} />
@@ -62,8 +73,8 @@ const LetterStatusDialog = ({
 export default LetterStatusDialog;
 
 type IsUsedDialogProps = {
-  origValue: number;
-  setOrigValue: (value: number) => void;
+  origValue: MedUseTime;
+  setOrigValue: (value: MedicineLetterUseStatus, note: string) => void;
   visible: boolean;
   close: () => void;
 };
@@ -74,10 +85,10 @@ const IsUsedDialog = ({
   close,
   visible
 }: IsUsedDialogProps) => {
-  const [value, setValue] = useState(origValue.toString());
-
+  const [value, setValue] = useState(origValue.status);
+  const [note, setNote] = useState(origValue.note);
   const onConfirm = () => {
-    setOrigValue(parseInt(value));
+    setOrigValue(value, note);
     close();
   };
 
@@ -86,23 +97,36 @@ const IsUsedDialog = ({
   };
 
   useEffect(() => {
-    setValue(origValue.toString());
+    setValue(origValue.status);
+    setNote(origValue.note);
   }, [visible]);
 
   return (
     <Portal>
-      <Dialog onDismiss={onClose} visible={visible}>
+      <Dialog onDismiss={onClose} visible={visible} style={{ maxHeight: 600 }}>
         <Dialog.Title>Cập nhật trạng thái uống thuốc</Dialog.Title>
         <Dialog.ScrollArea className={"flex flex-row items-center px-0"}>
-          <ScrollView>
-            <View>
+          <ScrollView className={"px-6 pt-1 pb-1"}>
+            <View className="space-y-2">
+              <Text variant={"labelLarge"}>Trạng thái uống</Text>
               <RadioButton.Group
                 value={value}
-                onValueChange={(value: string) => setValue(value)}
+                onValueChange={(value: string) =>
+                  setValue(value as MedicineLetterUseStatus)
+                }
               >
-                <RadioButton.Item value={"0"} label={"Chưa uống"} />
-                <RadioButton.Item value={"1"} label={"Đã uống"} />
+                <RadioButton.Item value={"NotUsed"} label={"Không uống"} />
+                <RadioButton.Item value={"Used"} label={"Đã uống"} />
               </RadioButton.Group>
+              <Text variant={"labelLarge"}>Ghi chú</Text>
+
+              <TextInput
+                multiline
+                value={note}
+                onChangeText={(value) => {
+                  setNote(value);
+                }}
+              />
             </View>
           </ScrollView>
         </Dialog.ScrollArea>

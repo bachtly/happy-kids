@@ -4,7 +4,7 @@ import { Text } from "react-native-paper";
 import medicineIcon from "../../../../assets/images/medicine-icon.png";
 import CustomCard from "../../CustomCard";
 
-type Item = {
+export type Item = {
   id: string;
   name: string;
   amount: string;

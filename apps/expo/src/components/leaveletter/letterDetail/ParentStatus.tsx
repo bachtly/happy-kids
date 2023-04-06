@@ -1,13 +1,14 @@
 import React from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
-import LetterStatusText, { LetterStatus } from "../../medicine/StatusText";
+import { LeaveLetterStatus } from "../../../models/LeaveLetterModels";
+import LetterStatusText from "../../medicine/StatusText";
 
 const ParentStatus = ({
   status,
   updatedByTeacher
 }: {
-  status: LetterStatus;
+  status: LeaveLetterStatus;
   updatedByTeacher: string | null;
 }) => {
   return (

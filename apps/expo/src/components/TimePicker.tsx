@@ -50,7 +50,8 @@ const TimePicker = (props: TimePickerProps) => {
               }}
             >
               <Text className={"m-auto mb-1"}>
-                {(time && moment(time).format("HH:mm").toString()) ?? "__:__"}
+                {(props.time && props.time.format("HH:mm").toString()) ??
+                  "__:__"}
               </Text>
             </View>
           </View>

@@ -3,33 +3,42 @@ import { z } from "zod";
 const ResponseStatus = z.enum(["Success", "Fail"]);
 
 const LetterStatus = z.enum(["Confirmed", "NotConfirmed", "Rejected"]);
+const MedicineStatus = z.enum(["NotUsed", "Used"]);
+
+const MedicineUseTime = z.object({
+  status: MedicineStatus,
+  note: z.string(),
+  date: z.date()
+});
 
 const Medicine = z.object({
   id: z.string(),
   name: z.string(),
   amount: z.string(),
-  photo: z.string()
+  photo: z.string(),
+  time: z.number(),
+  batchNumber: z.number()
 });
 
 const MedicineLetter = z.object({
   id: z.string(),
   startDate: z.date(),
   endDate: z.date(),
-  time: z.number(),
+  status: LetterStatus,
   note: z.string(),
   createdAt: z.date(),
-  status: LetterStatus,
-  isUsed: z.number(),
+
   updatedByTeacher: z.string().nullable().default(null),
   createdByParent: z.string().nullable().default(null),
   studentName: z.string().default(""),
-  medicines: z.array(Medicine).default([])
+  medicines: z.array(Medicine).default([]),
+  batchList: z.array(z.number()).default([]),
+  useDiary: z.array(MedicineUseTime).default([])
 });
 
 const PostMedicineLetterParams = z.object({
   startDate: z.date(),
   endDate: z.date(),
-  time: z.number(), // h*60+m
 
   medicines: z.array(Medicine),
   note: z.string(),
@@ -58,7 +67,7 @@ const UpdateStatusMedicineLetterParams = z.object({
   teacherId: z.string(),
   medicineLetterId: z.string(),
   status: LetterStatus,
-  isUsed: z.number()
+  useDiary: z.array(MedicineUseTime).default([])
 });
 
 const UpdateStatusMedicineLetterResponse = z.object({
@@ -88,6 +97,7 @@ export {
   GetMedicineLetterResponse,
   UpdateStatusMedicineLetterParams,
   UpdateStatusMedicineLetterResponse,
+  MedicineUseTime,
   ResponseStatus,
   LetterStatus
 };

@@ -4,13 +4,14 @@ import React from "react";
 import { FlatList, Image, View } from "react-native";
 import { Text } from "react-native-paper";
 import leaveletterIcon from "../../../../assets/images/leave-letter-icon.png";
-import LetterStatusText, { LetterStatus } from "../../medicine/StatusText";
+import LetterStatusText from "../../medicine/StatusText";
 import CustomCard from "../../CustomCard";
+import { LeaveLetterStatus } from "../../../models/LeaveLetterModels";
 
 export type LeaveLetterItem = {
   id: string;
   reason: string;
-  status: LetterStatus;
+  status: LeaveLetterStatus;
   createdAt: Date;
   startDate: Date;
   endDate: Date;

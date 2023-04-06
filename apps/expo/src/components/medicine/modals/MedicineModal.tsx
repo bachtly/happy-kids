@@ -1,6 +1,7 @@
 import React, { FC, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
+import { MedicineModel } from "../../../models/MedicineModels";
 import MyImagePicker from "../../ImagePicker";
 
 type MedicineModalProps = {
@@ -9,32 +10,17 @@ type MedicineModalProps = {
   onClose: () => void;
   onConfirm: () => void;
   // need for parent's state
-  medicineName: string;
-  medicineAmount: string;
-  medicinePhoto: string;
-  setMedicineName: (name: string) => void;
-  setMedicineAmount: (amount: string) => void;
-  setMedicinePhoto: (photo: string) => void;
+  medicine: MedicineModel;
+  setMedicine: (medicine: (prev: MedicineModel) => MedicineModel) => void;
 };
 
 const MedicineModal: FC<MedicineModalProps> = (props) => {
-  const {
-    visible,
-    title,
-    onClose,
-    onConfirm,
-    medicineName,
-    medicineAmount,
-    medicinePhoto,
-    setMedicineName,
-    setMedicineAmount,
-    setMedicinePhoto
-  } = props;
+  const { visible, title, onClose, onConfirm, medicine, setMedicine } = props;
 
   const [submitFailed, setSubmitFailed] = useState(false);
 
   const submitMedicine = () => {
-    if (!(medicineName !== "") || !(medicineAmount !== "")) {
+    if (!(medicine.name !== "") || !(medicine.amount !== "")) {
       setSubmitFailed(true);
       return;
     }
@@ -59,9 +45,11 @@ const MedicineModal: FC<MedicineModalProps> = (props) => {
                 className={"text-sm"}
                 mode="outlined"
                 placeholder={"Nhập tên thuốc"}
-                onChangeText={setMedicineName}
-                value={medicineName}
-                error={submitFailed && medicineName === ""}
+                onChangeText={(name) =>
+                  setMedicine((prev) => ({ ...prev, name: name }))
+                }
+                value={medicine.name}
+                error={submitFailed && medicine.name === ""}
               />
             </View>
 
@@ -72,9 +60,11 @@ const MedicineModal: FC<MedicineModalProps> = (props) => {
                 mode="outlined"
                 placeholder={"Nhập liều dùng/ hướng dẫn sử dụng của thuốc"}
                 multiline
-                onChangeText={setMedicineAmount}
-                value={medicineAmount}
-                error={submitFailed && medicineAmount === ""}
+                onChangeText={(amount) =>
+                  setMedicine((prev) => ({ ...prev, amount: amount }))
+                }
+                value={medicine.amount}
+                error={submitFailed && medicine.amount === ""}
               />
             </View>
 
@@ -82,8 +72,10 @@ const MedicineModal: FC<MedicineModalProps> = (props) => {
               <Text variant={"labelLarge"}>Ảnh thuốc</Text>
               <View className={"mt-2 h-32 w-32"}>
                 <MyImagePicker
-                  imageData={medicinePhoto}
-                  setImageData={setMedicinePhoto}
+                  imageData={medicine.photo}
+                  setImageData={(photo) =>
+                    setMedicine((prev) => ({ ...prev, photo: photo }))
+                  }
                 />
               </View>
             </View>

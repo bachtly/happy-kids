@@ -1,40 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
+import {
+  MedicineLetterStatus,
+  MedUseTime
+} from "../../../models/MedicineModels";
 import { api } from "../../../utils/api";
-import LetterStatusDialog, { IsUsedDialog } from "../modals/OptionDialog";
-import LetterStatusText, {
-  IsUsedStatusText,
-  LetterStatus
-} from "../StatusText";
+import LetterStatusDialog from "../modals/OptionDialog";
+import LetterStatusText from "../StatusText";
+import MedicineUseTabTable from "./MedicineUseTabTable";
 
 const TeacherStatus = ({
   userId,
   status,
-  isUsed,
   refetch,
   isFetching,
-  medicineLetterId
+  medicineLetterId,
+  medUseTimes
 }: {
   userId: string;
-  status: LetterStatus;
-  isUsed: number;
+  status: MedicineLetterStatus;
   refetch: () => void;
   isFetching: boolean;
   medicineLetterId: string;
+  medUseTimes: MedUseTime[];
 }) => {
   const theme = useTheme();
 
   const [visibleStatusDialog, setVisibleStatusDialog] = useState(false);
   const [statusLetter, setStatusLetter] = useState(status);
-
-  const [visibleStatusDialog2, setVisibleStatusDialog2] = useState(false);
-  const [statusIsUsed, setStatusIsUsed] = useState(isUsed);
+  const [curMedUseTimes, setCurMedUseTimes] = useState(medUseTimes);
+  const [curBatchNumber, setCurBatchNumber] = useState(0);
 
   const isChangedLetterStatus = statusLetter != status;
-  const isChangedIsUsed = isUsed != statusIsUsed;
-  const isAnyChanged = isChangedLetterStatus || isChangedIsUsed;
-  const isUsedEnabled = statusLetter == "Confirmed";
+  const isChangedUseStatus =
+    JSON.stringify(curMedUseTimes) != JSON.stringify(medUseTimes);
+  const isAnyChanged = isChangedLetterStatus || isChangedUseStatus;
   const updateStatMedLetterMutation =
     api.medicine.updateMedicineLetter.useMutation({
       onSuccess: (data) => {
@@ -47,25 +48,26 @@ const TeacherStatus = ({
     });
 
   useEffect(() => {
-    if (!isUsedEnabled) setStatusIsUsed(0);
-  }, [isUsedEnabled]);
+    setCurMedUseTimes(medUseTimes);
+    setCurBatchNumber(0);
+  }, [medUseTimes]);
+  useEffect(() => setStatusLetter(statusLetter), [status]);
 
   return (
     <View>
       <View className="mt-2 flex-row items-center justify-between">
         <View className="flex-row items-center">
+          <Text variant={"labelLarge"}>Trạng thái đơn</Text>
           <IconButton
             icon={"pencil"}
             iconColor={theme.colors.primary}
+            containerColor={"rgba(0,0,0,0)"}
             size={16}
-            mode={"outlined"}
+            mode={"contained"}
             onPress={() => {
               setVisibleStatusDialog(true);
             }}
           />
-          <Text className="font-bold" variant={"bodyMedium"}>
-            Trạng thái đơn
-          </Text>
         </View>
         <View className={"flex-row items-center justify-end text-right"}>
           {isChangedLetterStatus && (
@@ -80,36 +82,31 @@ const TeacherStatus = ({
           <LetterStatusText status={statusLetter} />
         </View>
       </View>
-      {isUsedEnabled && (
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center">
+
+      <View className="mb-3">
+        <View className="flex-row items-baseline justify-between">
+          <Text className="mb-3" variant={"labelLarge"}>
+            Trạng thái uống thuốc
+          </Text>
+          {isChangedUseStatus && (
             <IconButton
-              icon={"pencil"}
-              iconColor={theme.colors.primary}
+              icon={"undo-variant"}
+              iconColor={theme.colors.backdrop}
               size={16}
-              mode={"outlined"}
               onPress={() => {
-                setVisibleStatusDialog2(true);
+                setCurMedUseTimes(medUseTimes);
+                setCurBatchNumber(0);
               }}
             />
-            <Text className="justify-center font-bold" variant={"bodyMedium"}>
-              Trạng thái uống thuốc
-            </Text>
-          </View>
-          <View className={"flex-row items-center justify-end text-right "}>
-            {isChangedIsUsed && (
-              <IconButton
-                icon={"undo-variant"}
-                iconColor={theme.colors.backdrop}
-                size={16}
-                className={"-mr-1"}
-                onPress={() => setStatusIsUsed(isUsed)}
-              />
-            )}
-            <IsUsedStatusText isUsed={statusIsUsed} />
-          </View>
+          )}
         </View>
-      )}
+        <MedicineUseTabTable
+          medUseTimes={curMedUseTimes}
+          setMedUseTimes={setCurMedUseTimes}
+          curBatchNumber={curBatchNumber}
+          setCurBatchNumber={setCurBatchNumber}
+        />
+      </View>
       <Button
         className={"my-3 w-36 self-center"}
         mode={"contained"}
@@ -117,7 +114,7 @@ const TeacherStatus = ({
           updateStatMedLetterMutation.mutate({
             teacherId: userId,
             status: statusLetter,
-            isUsed: isUsedEnabled ? statusIsUsed : 0,
+            useDiary: curMedUseTimes,
             medicineLetterId
           });
         }}
@@ -138,12 +135,6 @@ const TeacherStatus = ({
         setOrigValue={setStatusLetter}
         visible={visibleStatusDialog}
         close={() => setVisibleStatusDialog(false)}
-      />
-      <IsUsedDialog
-        origValue={statusIsUsed}
-        setOrigValue={setStatusIsUsed}
-        visible={visibleStatusDialog2}
-        close={() => setVisibleStatusDialog2(false)}
       />
     </View>
   );

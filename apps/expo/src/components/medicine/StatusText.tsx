@@ -1,8 +1,14 @@
 import { Text } from "react-native-paper";
+import {
+  MedicineLetterStatus,
+  MedicineLetterUseStatus
+} from "../../models/MedicineModels";
 
-export type LetterStatus = "NotConfirmed" | "Confirmed" | "Rejected";
-
-export default function LetterStatusText({ status }: { status: LetterStatus }) {
+export default function LetterStatusText({
+  status
+}: {
+  status: MedicineLetterStatus;
+}) {
   if (status === "NotConfirmed")
     return (
       <Text variant={"labelMedium"} className={"text-right text-red-500"}>
@@ -26,11 +32,15 @@ export default function LetterStatusText({ status }: { status: LetterStatus }) {
   return <Text>{status}</Text>;
 }
 
-export function IsUsedStatusText({ isUsed }: { isUsed: number }) {
-  if (isUsed === 0)
+export function IsUsedStatusText({
+  isUsed
+}: {
+  isUsed: MedicineLetterUseStatus;
+}) {
+  if (isUsed === "NotUsed")
     return (
       <Text variant={"labelMedium"} className={"text-right text-gray-500"}>
-        Chưa uống
+        Không uống
       </Text>
     );
   return (

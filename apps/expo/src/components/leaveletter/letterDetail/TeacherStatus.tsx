@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
+import { LeaveLetterStatus } from "../../../models/LeaveLetterModels";
 import { api } from "../../../utils/api";
 import LetterStatusDialog from "../../medicine/modals/OptionDialog";
-import LetterStatusText, { LetterStatus } from "../../medicine/StatusText";
+import LetterStatusText from "../../medicine/StatusText";
 
 const TeacherStatus = ({
   userId,
@@ -13,7 +14,7 @@ const TeacherStatus = ({
   leaveLetterId
 }: {
   userId: string;
-  status: LetterStatus;
+  status: LeaveLetterStatus;
   refetch: () => void;
   isFetching: boolean;
   leaveLetterId: string;

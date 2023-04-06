@@ -10,7 +10,7 @@ const UnderlineButton = (props: {
     <Pressable {...props}>
       {({ pressed }) => (
         <Text
-          className="text-right text-xs font-bold "
+          className="text-center text-xs font-bold"
           style={{
             ...(pressed ? { textDecorationLine: "underline" } : {}),
             color: theme.colors.primary

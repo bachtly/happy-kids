@@ -16,7 +16,6 @@ export const medicineRouter = createTRPCRouter({
         input.studentId,
         input.startDate,
         input.endDate,
-        input.time,
         input.note,
         input.medicines
       );
@@ -44,7 +43,7 @@ export const medicineRouter = createTRPCRouter({
         input.teacherId,
         input.medicineLetterId,
         input.status,
-        input.isUsed
+        input.useDiary
       );
     })
 });

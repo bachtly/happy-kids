@@ -5,11 +5,11 @@ import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { api } from "../../../utils/api";
 
-import type { MedLetterItem } from "./MedicineLetterList";
 import { MedicineLetterList } from "./MedicineLetterList";
 import CustomStackScreen from "../../CustomStackScreen";
 import DateRangeFilterBar from "../../date-picker/DateRangeFilterBar";
 import ItemListWrapper from "../../common/ItemListWrapper";
+import { MedLetterItem } from "../../../models/MedicineModels";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -59,7 +59,6 @@ const MedicineHomeView = ({
                 id: item.id,
                 createdAt: item.createdAt,
                 status: item.status,
-                isUsed: item.isUsed,
                 note: item.note,
                 startDate: item.startDate,
                 endDate: item.endDate,

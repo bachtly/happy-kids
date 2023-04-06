@@ -109,9 +109,7 @@ CREATE TABLE `KindergartenSchema`.`MedicineLetter` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `createdAt` datetime,
   `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
-  `isUsed` bool,
   `note` text,
-  `time` int,
   `startDate` date,
   `endDate` date,
   `updatedByTeacherId` varchar(36),
@@ -124,6 +122,15 @@ CREATE TABLE `KindergartenSchema`.`Medicine` (
   `name` varchar(255),
   `photo` text,
   `amount` varchar(255),
+  `time` int,
+  `medicineLetterId` varchar(36)
+);
+
+CREATE TABLE `KindergartenSchema`.`MedicineLetterUseDiary` (
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `status` ENUM ('NotUsed', 'Used'),
+  `date` date,
+  `note` text,
   `medicineLetterId` varchar(36)
 );
 
@@ -302,6 +309,8 @@ ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`createdByPar
 ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Medicine` ADD FOREIGN KEY (`medicineLetterId`) REFERENCES `KindergartenSchema`.`MedicineLetter` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`MedicineLetterUseDiary` ADD FOREIGN KEY (`medicineLetterId`) REFERENCES `KindergartenSchema`.`MedicineLetter` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`PickupLetter` ADD FOREIGN KEY (`pickerRelativeId`) REFERENCES `KindergartenSchema`.`Relative` (`id`);
 

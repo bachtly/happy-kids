@@ -4,22 +4,9 @@ import React from "react";
 import { FlatList, Image, View } from "react-native";
 import { Text } from "react-native-paper";
 import medicineIcon from "../../../../assets/images/medicine-icon.png";
-import LetterStatusText, {
-  IsUsedStatusText,
-  LetterStatus
-} from "../StatusText";
+import LetterStatusText from "../StatusText";
 import CustomCard from "../../CustomCard";
-
-export type MedLetterItem = {
-  id: string;
-  note: string;
-  status: LetterStatus;
-  isUsed: number;
-  createdAt: Date;
-  startDate: Date;
-  endDate: Date;
-  studentName: string;
-};
+import { MedLetterItem } from "../../../models/MedicineModels";
 
 type ItemListProps = {
   items: MedLetterItem[];
@@ -67,11 +54,7 @@ export function MedicineLetterList({
             <Text variant={"bodyMedium"} className={"italic"}>
               Ngày tạo: {createdAt.format("DD/MM/YYYY")}
             </Text>
-            {item.isUsed ? (
-              <IsUsedStatusText isUsed={item.isUsed} />
-            ) : (
-              <LetterStatusText status={item.status} />
-            )}
+            <LetterStatusText status={item.status} />
           </View>
         </View>
       </CustomCard>
