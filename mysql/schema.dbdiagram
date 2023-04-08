@@ -33,6 +33,7 @@ Table KindergartenSchema.User {
   birthdate datetime
   email varchar [not null, unique]
   phone varchar(16)
+  avatarUrl text
 
   schoolId varchar(36) [ref: - KindergartenSchema.School.id]
   employeeRole varchar
@@ -280,11 +281,17 @@ Enum KindergartenSchema.ActivityEnum {
 Table KindergartenSchema.DailyRemark {
   id varchar(36) [pk, default: `UUID()`]
   date datetime
-  activity KindergartenSchema.ActivityEnum
-  content text
 
   teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+}
+
+Table KindergartenSchema.DailyRemarkActivity {
+  id varchar(36) [pk, default: `UUID()`]
+  activity KindergartenSchema.ActivityEnum
+  content text
+
+  dailyRemarkId varchar(36) [ref: - KindergartenSchema.DailyRemark.id]
 }
 
 Enum KindergartenSchema.RemarkPeriodEnum {

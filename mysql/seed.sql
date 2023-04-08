@@ -18,7 +18,7 @@ SET @mgrid1 = 'mgrid100-0000-0000-0000-000000000000';
 SET @mgrid2 = 'mgrid200-0000-0000-0000-000000000000';
 SET @mgrid3 = 'mgrid300-0000-0000-0000-000000000000';
 SET @mgrid4 = 'mgrid400-0000-0000-0000-000000000000';
-INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole)
+INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole, avatarUrl)
 VALUES
     (
         @mgrid1,
@@ -30,7 +30,8 @@ VALUES
         '0900000000',
         @sid1,
         'Manager',
-        'Principal'
+        'Principal',
+        @avatar
     ),
     (
         @mgrid2,
@@ -42,7 +43,8 @@ VALUES
         '0900000003',
         @sid1,
         'Manager',
-        'VicePrincipal'
+        'VicePrincipal',
+        @avatar
     ),
     (
         @mgrid3,
@@ -54,7 +56,8 @@ VALUES
         '0900000002',
         @sid1,
         'Manager',
-        'Accountant'
+        'Accountant',
+        @avatar
     ),
     (
         @mgrid4,
@@ -66,14 +69,15 @@ VALUES
         '0900000005',
         @sid1,
         'Manager',
-        'Accountant'
+        'Accountant',
+        @avatar
     );
 
 -- Insert Teachers to school 1
 SET @tid1 = 'tid10000-0000-0000-0000-000000000000';
 SET @tid2 = 'tid20000-0000-0000-0000-000000000000';
 SET @tid3 = 'tid30000-0000-0000-0000-000000000000';
-INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole)
+INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole, avatarUrl)
 VALUES
     (
         @tid1,
@@ -85,7 +89,8 @@ VALUES
         '0900000004',
         @sid1,
         'Teacher',
-        null
+        null,
+        @avatar
     ),
     (
         @tid2,
@@ -97,7 +102,8 @@ VALUES
         '0900000006',
         @sid1,
         'Teacher',
-        null
+        null,
+        @avatar
     ),
     (
         @tid3,
@@ -109,7 +115,8 @@ VALUES
         '0900000007',
         @sid1,
         'Teacher',
-        null
+        null,
+        @avatar
     )
 ;
 
@@ -138,7 +145,7 @@ SET @prid1 = 'prid1000-0000-0000-0000-000000000000'; -- normal parent 1 child
 SET @prid2 = 'prid2000-0000-0000-0000-000000000000'; -- parent 2 children same class
 SET @prid3 = 'prid3000-0000-0000-0000-000000000000'; -- parent 2 children different class
 SET @prid4 = 'prid4000-0000-0000-0000-000000000000'; -- parent 2 children different school
-INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole)
+INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole, avatarUrl)
 VALUES
     (
         @prid1,
@@ -150,7 +157,8 @@ VALUES
         '0900000008',
         null,
         'Parent',
-        null
+        null,
+        @avatar
     ),
     (
         @prid2,
@@ -162,7 +170,8 @@ VALUES
         '0900000009',
         null,
         'Parent',
-        null
+        null,
+        @avatar
     ),
     (
         @prid3,
@@ -174,7 +183,8 @@ VALUES
         '09000000010',
         null,
         'Parent',
-        null
+        null,
+        @avatar
     ),
     (
         @prid4,
@@ -186,7 +196,8 @@ VALUES
         '09000000011',
         null,
         'Parent',
-        null
+        null,
+        @avatar
     )
 ;
 
@@ -378,10 +389,25 @@ VALUES
 ;
 
 -- DailyRemark
-INSERT INTO DailyRemark (date, activity, teacherId, studentId, content)
+SET @dremkid1 = 'dremkid1-0000-0000-0000-000000000000';
+SET @dremkid2 = 'dremkid2-0000-0000-0000-000000000000';
+SET @dremkid3 = 'dremkid3-0000-0000-0000-000000000000';
+INSERT INTO DailyRemark (id, date, teacherId, studentId)
 VALUES
-    ('2023-01-02', 'Sleep', @tid1, @stid2, 'Nay bé Student2 không ngủ được cả buổi trưa. Mong gia đình theo dõi tình sức khỏe của bé thêm.'),
-    ('2023-01-05', 'Eat', @tid2, @stid3, 'Bé Student3 ăn được 2/3 suất cơm, có biểu hiện biến ăn.')
+    (@dremkid1, '2023-04-01', @tid1, @stid1),
+    (@dremkid2, '2023-03-31', @tid1, @stid1),
+    (@dremkid3, '2023-03-30', @tid2, @stid1)
+;
+
+INSERT INTO DailyRemarkActivity (dailyRemarkId, activity, content)
+VALUES
+	(@dremkid1, 'Sleep', 'Nay bé Student1 không ngủ được cả buổi trưa. Mong gia đình theo dõi tình sức khỏe của bé thêm.'),
+    (@dremkid1, 'Eat', 'Bé Student ăn được 2/3 suất cơm, có biểu hiện biến ăn.'),
+    (@dremkid1, 'Other', 'Bé có khiếu hài hước, cần phát huy'),
+    (@dremkid2, 'Sleep', 'Nay bé Student1 không ngủ được cả buổi trưa. Mong gia đình theo dõi tình sức khỏe của bé thêm.'),
+    (@dremkid2, 'Eat', 'Bé Student ăn được 2/3 suất cơm, có biểu hiện biến ăn.'),
+    (@dremkid3, 'Sleep', 'Nay bé Student1 không ngủ được cả buổi trưa. Mong gia đình theo dõi tình sức khỏe của bé thêm.'),
+    (@dremkid3, 'Eat', 'Bé Student ăn được 2/3 suất cơm, có biểu hiện biến ăn.')
 ;
 
 -- Timetable

@@ -9,6 +9,8 @@ import SignupService from "./signup-service";
 import MedicineService from "./medicine-service";
 import PickupService from "./pickup-service";
 import LeaveLetterService from "./leaveletter-service";
+import DailyRemarkService from "./daily-remark-service";
+import PeriodRemarkService from "./period-remark-service";
 
 container.register<Kysely<DB>>(Kysely, { useValue: mysqlDB });
 
@@ -21,3 +23,6 @@ export const signupService = container.resolve(SignupService);
 export const medicineService = container.resolve(MedicineService);
 
 export const leaveletterService = container.resolve(LeaveLetterService);
+
+export const dailyRemarkService = container.resolve(DailyRemarkService);
+export const periodRemarkService = container.resolve(PeriodRemarkService);

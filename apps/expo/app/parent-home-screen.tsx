@@ -47,7 +47,16 @@ const ParentHomeScreen = () => {
               />
               <FeatureItem title={"Học tập"} icon={studyIcon} />
               <FeatureItem title={"Thực đơn"} icon={menuIcon} />
-              <FeatureItem title={"Nhận xét"} icon={remarkIcon} />
+              <FeatureItem
+                title={"Nhận xét"}
+                icon={remarkIcon}
+                onPress={() =>
+                  router.push({
+                    pathname: "/parent/remark/remark-home-screen",
+                    params: { studentId }
+                  })
+                }
+              />
             </View>
 
             <View className={"flex-row justify-start"}>

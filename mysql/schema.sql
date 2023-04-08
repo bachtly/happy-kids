@@ -30,6 +30,7 @@ CREATE TABLE `KindergartenSchema`.`User` (
   `birthdate` datetime,
   `email` varchar(255) UNIQUE NOT NULL,
   `phone` varchar(16),
+  `avatarUrl` text,
   `schoolId` varchar(36),
   `employeeRole` varchar(255),
   `userGroup` ENUM ('Manager', 'Teacher', 'Parent')
@@ -220,10 +221,15 @@ CREATE TABLE `KindergartenSchema`.`Dish` (
 CREATE TABLE `KindergartenSchema`.`DailyRemark` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `date` datetime,
-  `activity` ENUM ('Study', 'Eat', 'Sleep', 'Wc', 'Other'),
-  `content` text,
   `teacherId` varchar(36),
   `studentId` varchar(36)
+);
+
+CREATE TABLE `KindergartenSchema`.`DailyRemarkActivity` (
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `activity` ENUM ('Study', 'Eat', 'Sleep', 'Wc', 'Other'),
+  `content` text,
+  `dailyRemarkId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`PeriodRemark` (
@@ -349,6 +355,8 @@ ALTER TABLE `KindergartenSchema`.`Dish` ADD FOREIGN KEY (`mealId`) REFERENCES `K
 ALTER TABLE `KindergartenSchema`.`DailyRemark` ADD FOREIGN KEY (`teacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`DailyRemark` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`DailyRemarkActivity` ADD FOREIGN KEY (`dailyRemarkId`) REFERENCES `KindergartenSchema`.`DailyRemark` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`PeriodRemark` ADD FOREIGN KEY (`teacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 

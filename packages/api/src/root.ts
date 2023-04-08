@@ -4,13 +4,17 @@ import { leaveletterRouter } from "./router/leaveletter/leaveletter-router";
 import { medicineRouter } from "./router/medicine/medicine-router";
 import { createTRPCRouter } from "./trpc";
 import { pickupRouter } from "./router/pickup/pickup-router";
+import { dailyRemarkRouter } from "./router/remark/daily-remark-router";
+import { periodRemarkRouter } from "./router/remark/period-remark-router";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   attendance: attendanceRouter,
   medicine: medicineRouter,
   leaveletter: leaveletterRouter,
-  pickup: pickupRouter
+  pickup: pickupRouter,
+  dailyRemark: dailyRemarkRouter,
+  periodRemark: periodRemarkRouter
 });
 
 // export type definition of API
