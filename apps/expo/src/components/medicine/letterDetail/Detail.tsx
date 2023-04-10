@@ -52,7 +52,7 @@ const Detail = ({
   const medicineList = data?.medicineLetter?.medicines;
 
   return (
-    <View className="flex-1">
+    <Body>
       {isFetching && <ProgressBar indeterminate visible={true} />}
       <ScrollView
         className="flex-1"
@@ -61,108 +61,106 @@ const Detail = ({
         }
       >
         {isSuccess && data.medicineLetter && (
-          <Body>
-            <View className="m-2 flex-1 p-3">
-              <Text className="mb-3 text-center" variant={"titleMedium"}>
-                {`Đơn dặn thuốc cho bé ${studentName}`}
+          <View className="m-2 flex-1 p-3">
+            <Text className="mb-3 text-center" variant={"titleMedium"}>
+              {`Đơn dặn thuốc cho bé ${studentName}`}
+            </Text>
+            <View className="mb-3 flex-row">
+              <Text className="font-bold" variant={"bodyMedium"}>
+                Từ ngày
               </Text>
-              <View className="mb-3 flex-row">
-                <Text className="font-bold" variant={"bodyMedium"}>
-                  Từ ngày
-                </Text>
-                <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
-                  <FontAwesomeIcon
-                    name="calendar"
-                    size={16}
-                    color={theme.colors.primary}
-                  />{" "}
-                  {moment(data.medicineLetter.startDate).format("DD/MM/YY")}
-                </Text>
-              </View>
-
-              <View className="mb-3 flex-row">
-                <Text className="font-bold" variant={"bodyMedium"}>
-                  Đến ngày
-                </Text>
-                <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
-                  <FontAwesomeIcon
-                    name="calendar"
-                    size={16}
-                    color={theme.colors.primary}
-                  />{" "}
-                  {moment(data.medicineLetter.endDate).format("DD/MM/YY")}
-                </Text>
-              </View>
-
-              <View className="mb-3 flex-row">
-                <Text className="font-bold" variant={"bodyMedium"}>
-                  Đơn tạo bởi
-                </Text>
-                <Text
-                  className={"flex-grow items-center text-right"}
-                  variant={"bodyMedium"}
-                >
-                  <MuiIcons
-                    name="account"
-                    size={16}
-                    color={theme.colors.primary}
-                  />{" "}
-                  {data.medicineLetter.createdByParent}
-                </Text>
-              </View>
-
-              <Text className="mb-3" variant={"labelLarge"}>
-                Ghi chú
+              <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
+                <FontAwesomeIcon
+                  name="calendar"
+                  size={16}
+                  color={theme.colors.primary}
+                />{" "}
+                {moment(data.medicineLetter.startDate).format("DD/MM/YY")}
               </Text>
-              <CustomCard>
-                <Text style={{ fontSize: theme.fonts.bodyMedium.fontSize }}>
-                  {data.medicineLetter.note ?? "Không có ghi chú"}
-                </Text>
-              </CustomCard>
-              <View className="my-3 flex flex-row items-end justify-between">
-                <Text variant={"labelLarge"}>Đơn thuốc</Text>
-              </View>
-              {medicineList && medicineList.length > 0 ? (
-                <View>
-                  <MedicineBatchList
-                    medicineList={medicineList}
-                    batchList={data.medicineLetter.batchList}
-                  />
-                </View>
-              ) : (
-                <View
-                  className="rounded-sm border p-4"
-                  style={{
-                    backgroundColor: theme.colors.background,
-                    borderColor: "gray"
-                  }}
-                >
-                  <Text className={"text-center leading-6"}>
-                    Đơn này không có thuốc!
-                  </Text>
-                </View>
-              )}
-              {isTeacher ? (
-                <TeacherStatus
-                  userId={userId}
-                  status={data.medicineLetter.status}
-                  refetch={fetchData}
-                  isFetching={isFetching}
-                  medicineLetterId={id}
-                  medUseTimes={data.medicineLetter.useDiary}
-                />
-              ) : (
-                <ParentStatus
-                  status={data.medicineLetter.status}
-                  updatedByTeacher={data.medicineLetter.updatedByTeacher}
-                  medUseTimes={data.medicineLetter.useDiary}
-                />
-              )}
             </View>
-          </Body>
+
+            <View className="mb-3 flex-row">
+              <Text className="font-bold" variant={"bodyMedium"}>
+                Đến ngày
+              </Text>
+              <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
+                <FontAwesomeIcon
+                  name="calendar"
+                  size={16}
+                  color={theme.colors.primary}
+                />{" "}
+                {moment(data.medicineLetter.endDate).format("DD/MM/YY")}
+              </Text>
+            </View>
+
+            <View className="mb-3 flex-row">
+              <Text className="font-bold" variant={"bodyMedium"}>
+                Đơn tạo bởi
+              </Text>
+              <Text
+                className={"flex-grow items-center text-right"}
+                variant={"bodyMedium"}
+              >
+                <MuiIcons
+                  name="account"
+                  size={16}
+                  color={theme.colors.primary}
+                />{" "}
+                {data.medicineLetter.createdByParent}
+              </Text>
+            </View>
+
+            <Text className="mb-3" variant={"labelLarge"}>
+              Ghi chú
+            </Text>
+            <CustomCard>
+              <Text style={{ fontSize: theme.fonts.bodyMedium.fontSize }}>
+                {data.medicineLetter.note ?? "Không có ghi chú"}
+              </Text>
+            </CustomCard>
+            <View className="my-3 flex flex-row items-end justify-between">
+              <Text variant={"labelLarge"}>Đơn thuốc</Text>
+            </View>
+            {medicineList && medicineList.length > 0 ? (
+              <View>
+                <MedicineBatchList
+                  medicineList={medicineList}
+                  batchList={data.medicineLetter.batchList}
+                />
+              </View>
+            ) : (
+              <View
+                className="rounded-sm border p-4"
+                style={{
+                  backgroundColor: theme.colors.background,
+                  borderColor: "gray"
+                }}
+              >
+                <Text className={"text-center leading-6"}>
+                  Đơn này không có thuốc!
+                </Text>
+              </View>
+            )}
+            {isTeacher ? (
+              <TeacherStatus
+                userId={userId}
+                status={data.medicineLetter.status}
+                refetch={fetchData}
+                isFetching={isFetching}
+                medicineLetterId={id}
+                medUseTimes={data.medicineLetter.useDiary}
+              />
+            ) : (
+              <ParentStatus
+                status={data.medicineLetter.status}
+                updatedByTeacher={data.medicineLetter.updatedByTeacher}
+                medUseTimes={data.medicineLetter.useDiary}
+              />
+            )}
+          </View>
         )}
       </ScrollView>
-    </View>
+    </Body>
   );
 };
 

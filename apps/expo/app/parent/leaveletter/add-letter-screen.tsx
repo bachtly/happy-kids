@@ -3,14 +3,15 @@ import moment, { Moment } from "moment";
 
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
-import AlertError, { FormError } from "../../../src/components/AlertError";
+import { Text, TextInput, useTheme } from "react-native-paper";
+import { FormError } from "../../../src/components/AlertError";
 import DateRangePicker from "../../../src/components/date-picker/DateRangePicker";
 import MyImagePicker from "../../../src/components/ImagePicker";
-import AlertModal from "../../../src/components/common/AlertModal";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import SubmitComponent from "../../../src/components/common/SubmitComponent";
+import LetterSubmitAlert from "../../../src/components/common/LetterSubmitAlert";
 
 const AddLetter = () => {
   const now = moment();
@@ -80,58 +81,6 @@ const AddLetter = () => {
     });
   };
 
-  const AlertComponent = () => {
-    return submitError.length == 0 ? (
-      <AlertModal
-        title={"Tạo đơn thành công"}
-        visible={alertModalVisible}
-        onClose={() => {
-          setAlertModalVisible(false);
-          router.back();
-        }}
-        message={
-          "Bạn đã tạo đơn thành công, vui lòng chờ đơn được giáo viên xử lý"
-        }
-      />
-    ) : (
-      <AlertError
-        title="Tạo đơn thất bại"
-        visible={alertModalVisible}
-        onClose={() => setAlertModalVisible(false)}
-        submitError={submitError}
-      />
-    );
-  };
-  const SubmitComponent = () => {
-    if (postLeaveLetterMutation.isSuccess && submitError.length == 0)
-      return (
-        <Button
-          className={"mt-5 w-36"}
-          mode={"contained"}
-          disabled
-          icon={"check"}
-        >
-          Gửi thành công
-        </Button>
-      );
-    if (postLeaveLetterMutation.isLoading)
-      return (
-        <Button className={"mt-5 w-36"} mode={"contained"} disabled loading>
-          Đang gửi
-        </Button>
-      );
-    return (
-      <Button
-        className={"mt-5 w-36"}
-        mode={"contained"}
-        onPress={() => {
-          onSubmit();
-        }}
-      >
-        Xác nhận
-      </Button>
-    );
-  };
   return (
     <View className="flex-1">
       <CustomStackScreen title={"Tạo đơn xin nghỉ"} />
@@ -202,12 +151,23 @@ const AddLetter = () => {
           </ScrollView>
 
           <View className={"items-center"}>
-            <SubmitComponent />
+            <SubmitComponent
+              isLoading={postLeaveLetterMutation.isLoading}
+              isSuccess={
+                postLeaveLetterMutation.isSuccess && submitError.length == 0
+              }
+              onSubmit={onSubmit}
+            />
           </View>
         </View>
       </ScrollView>
 
-      <AlertComponent />
+      <LetterSubmitAlert
+        visible={alertModalVisible}
+        setVisible={setAlertModalVisible}
+        submitError={submitError}
+        afterSubmitSuccess={() => router.back()}
+      />
     </View>
   );
 };

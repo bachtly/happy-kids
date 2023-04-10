@@ -3,12 +3,14 @@ import { useNavigation } from "expo-router";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { Image, RefreshControl, ScrollView, View } from "react-native";
-import { TextInput, ProgressBar, Text, useTheme } from "react-native-paper";
+import { ProgressBar, Text, useTheme } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import MuiIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { api } from "../../../utils/api";
 import ParentStatus from "./ParentStatus";
 import TeacherStatus from "./TeacherStatus";
+import Body from "../../Body";
+import CustomCard from "../../CustomCard";
 
 const Detail = ({
   userId,
@@ -49,7 +51,7 @@ const Detail = ({
   const photoList = data?.leaveLetter?.photos;
 
   return (
-    <View className="flex-1">
+    <Body>
       {isFetching && <ProgressBar indeterminate visible={true} />}
       <ScrollView
         className="flex-1"
@@ -58,13 +60,7 @@ const Detail = ({
         }
       >
         {isSuccess && data.leaveLetter && (
-          <View
-            className="m-2  flex-1 rounded-lg border p-3"
-            style={{
-              backgroundColor: theme.colors.background,
-              borderColor: "gray"
-            }}
-          >
+          <View className="m-2 flex-1 p-3">
             <Text className="mb-3 text-center" variant={"titleMedium"}>
               {`Đơn xin nghỉ cho bé ${studentName}`}
             </Text>
@@ -116,12 +112,11 @@ const Detail = ({
             <Text className="mb-3" variant={"labelLarge"}>
               Lý do
             </Text>
-            <TextInput
-              disabled={true}
-              style={{ fontSize: theme.fonts.bodyMedium.fontSize }}
-            >
-              {data.leaveLetter.reason ?? "Không có ghi chú"}
-            </TextInput>
+            <CustomCard>
+              <Text style={{ fontSize: theme.fonts.bodyMedium.fontSize }}>
+                {data.leaveLetter.reason ?? "Không có ghi chú"}
+              </Text>
+            </CustomCard>
 
             <View className="my-3 flex flex-row items-end justify-between">
               <Text variant={"labelLarge"}>Ảnh đính kèm</Text>
@@ -170,7 +165,7 @@ const Detail = ({
           </View>
         )}
       </ScrollView>
-    </View>
+    </Body>
   );
 };
 
