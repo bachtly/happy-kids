@@ -1,27 +1,28 @@
 import { useRouter, useSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
-import { Button, Text } from "react-native-paper";
-import { useAuthContext } from "../src/utils/auth-context-provider";
-import CustomStackScreen from "../src/components/CustomStackScreen";
-import FeatureItem from "../src/components/home/FeatureItem";
-import attIcon from "../assets/images/attendance.png";
-import studyIcon from "../assets/images/study.png";
-import menuIcon from "../assets/images/menu.png";
-import remarkIcon from "../assets/images/remark.png";
-import albumIcon from "../assets/images/album.png";
-import noteIcon from "../assets/images/note.png";
-import medIcon from "../assets/images/medicine-icon.png";
-import leaveIcon from "../assets/images/leave-letter-icon.png";
-import pickupIcon from "../assets/images/pickup-icon.png";
-import tuitionIcon from "../assets/images/tuition.png";
-import feedbackIcon from "../assets/images/feedback.png";
-import Body from "../src/components/Body";
+import { Text, Button } from "react-native-paper";
+import { useAuthContext } from "../../src/utils/auth-context-provider";
+import CustomStackScreen from "../../src/components/CustomStackScreen";
+import Body from "../../src/components/Body";
+import FeatureItem from "../../src/components/home/FeatureItem";
 
-const TeacherHomeScreen = () => {
-  const { onLogout } = useAuthContext();
+import attIcon from "../../assets/images/attendance.png";
+import studyIcon from "../../assets/images/study.png";
+import menuIcon from "../../assets/images/menu.png";
+import remarkIcon from "../../assets/images/remark.png";
+import albumIcon from "../../assets/images/album.png";
+import noteIcon from "../../assets/images/note.png";
+import medIcon from "../../assets/images/medicine-icon.png";
+import leaveIcon from "../../assets/images/leave-letter-icon.png";
+import pickupIcon from "../../assets/images/pickup-icon.png";
+import tuitionIcon from "../../assets/images/tuition.png";
+import feedbackIcon from "../../assets/images/feedback.png";
+
+const ParentHomeScreen = () => {
   const router = useRouter();
+  const { onLogout } = useAuthContext();
 
-  const { classId } = useSearchParams();
+  const { studentId } = useSearchParams();
 
   return (
     <Body>
@@ -39,8 +40,8 @@ const TeacherHomeScreen = () => {
                 icon={attIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/teacher/attendance",
-                    params: { classId }
+                    pathname: "/parent/attendance/tab/history-screen",
+                    params: { studentId }
                   })
                 }
               />
@@ -51,8 +52,8 @@ const TeacherHomeScreen = () => {
                 icon={remarkIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/teacher/remark/remark-home-screen",
-                    params: { classId }
+                    pathname: "/parent/remark/remark-home-screen",
+                    params: { studentId }
                   })
                 }
               />
@@ -65,7 +66,7 @@ const TeacherHomeScreen = () => {
 
           {/*GROUP FEATURES*/}
           <View className={"space-y-4"}>
-            <Text variant={"titleLarge"}>Tương tác với phụ huynh</Text>
+            <Text variant={"titleLarge"}>Tương tác với giáo viên</Text>
 
             <View className={"flex-row justify-start"}>
               <FeatureItem title={"Lời nhắn"} icon={noteIcon} />
@@ -74,8 +75,8 @@ const TeacherHomeScreen = () => {
                 icon={medIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/teacher/medicine/medicine-home-screen",
-                    params: { classId }
+                    pathname: "/parent/medicine/medicine-home-screen",
+                    params: { studentId }
                   })
                 }
               />
@@ -84,8 +85,8 @@ const TeacherHomeScreen = () => {
                 icon={leaveIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/teacher/leaveletter/leaveletter-home-screen",
-                    params: { classId }
+                    pathname: "/parent/leaveletter/leaveletter-home-screen",
+                    params: { studentId }
                   })
                 }
               />
@@ -94,8 +95,8 @@ const TeacherHomeScreen = () => {
                 icon={pickupIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/teacher/pickup/history-screen",
-                    params: { classId }
+                    pathname: "/parent/pickup/history-screen",
+                    params: { studentId }
                   })
                 }
               />
@@ -107,7 +108,7 @@ const TeacherHomeScreen = () => {
             <Text variant={"titleLarge"}>Tương tác với nhà trường</Text>
 
             <View className={"flex-row justify-start"}>
-              <FeatureItem title={"Tiền lương"} icon={tuitionIcon} />
+              <FeatureItem title={"Học phí"} icon={tuitionIcon} />
               <FeatureItem title={"Góp ý"} icon={feedbackIcon} />
             </View>
           </View>
@@ -119,4 +120,4 @@ const TeacherHomeScreen = () => {
   );
 };
 
-export default TeacherHomeScreen;
+export default ParentHomeScreen;

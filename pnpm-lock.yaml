@@ -49,6 +49,7 @@ importers:
       '@expo-google-fonts/roboto': ^0.2.3
       '@expo/config-plugins': ^6.0.0
       '@react-native-community/datetimepicker': 6.7.3
+      '@react-navigation/bottom-tabs': ^6.5.7
       '@react-navigation/material-top-tabs': ^6.6.1
       '@shopify/flash-list': 1.4.0
       '@tanstack/react-query': ^4.23.0
@@ -90,6 +91,7 @@ importers:
       '@acme/tailwind-config': link:../../packages/config/tailwind
       '@expo-google-fonts/roboto': 0.2.3
       '@react-native-community/datetimepicker': 6.7.3
+      '@react-navigation/bottom-tabs': 6.5.7_rwpbj2hkakwxhxbauxbhong6pa
       '@react-navigation/material-top-tabs': 6.6.2_w3zo4aaax4tlmr27ulc7j6dsa4
       '@shopify/flash-list': 1.4.0_ayyqkr6ttoje2cgwlshoqqrvhm
       '@tanstack/react-query': 4.28.0_rn3qun46chv63cytpfol3dndvi

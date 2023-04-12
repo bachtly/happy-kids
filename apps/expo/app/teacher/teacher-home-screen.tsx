@@ -1,28 +1,27 @@
 import { useRouter, useSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
-import { Text, Button } from "react-native-paper";
-import { useAuthContext } from "../src/utils/auth-context-provider";
-import CustomStackScreen from "../src/components/CustomStackScreen";
-import Body from "../src/components/Body";
-import FeatureItem from "../src/components/home/FeatureItem";
+import { Button, Text } from "react-native-paper";
+import { useAuthContext } from "../../src/utils/auth-context-provider";
+import CustomStackScreen from "../../src/components/CustomStackScreen";
+import FeatureItem from "../../src/components/home/FeatureItem";
+import attIcon from "../../assets/images/attendance.png";
+import studyIcon from "../../assets/images/study.png";
+import menuIcon from "../../assets/images/menu.png";
+import remarkIcon from "../../assets/images/remark.png";
+import albumIcon from "../../assets/images/album.png";
+import noteIcon from "../../assets/images/note.png";
+import medIcon from "../../assets/images/medicine-icon.png";
+import leaveIcon from "../../assets/images/leave-letter-icon.png";
+import pickupIcon from "../../assets/images/pickup-icon.png";
+import tuitionIcon from "../../assets/images/tuition.png";
+import feedbackIcon from "../../assets/images/feedback.png";
+import Body from "../../src/components/Body";
 
-import attIcon from "../assets/images/attendance.png";
-import studyIcon from "../assets/images/study.png";
-import menuIcon from "../assets/images/menu.png";
-import remarkIcon from "../assets/images/remark.png";
-import albumIcon from "../assets/images/album.png";
-import noteIcon from "../assets/images/note.png";
-import medIcon from "../assets/images/medicine-icon.png";
-import leaveIcon from "../assets/images/leave-letter-icon.png";
-import pickupIcon from "../assets/images/pickup-icon.png";
-import tuitionIcon from "../assets/images/tuition.png";
-import feedbackIcon from "../assets/images/feedback.png";
-
-const ParentHomeScreen = () => {
-  const router = useRouter();
+const TeacherHomeScreen = () => {
   const { onLogout } = useAuthContext();
+  const router = useRouter();
 
-  const { studentId } = useSearchParams();
+  const { classId } = useSearchParams();
 
   return (
     <Body>
@@ -40,8 +39,8 @@ const ParentHomeScreen = () => {
                 icon={attIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/parent/attendance/tab/history-screen",
-                    params: { studentId }
+                    pathname: "/teacher/attendance",
+                    params: { classId }
                   })
                 }
               />
@@ -52,8 +51,8 @@ const ParentHomeScreen = () => {
                 icon={remarkIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/parent/remark/remark-home-screen",
-                    params: { studentId }
+                    pathname: "/teacher/remark/remark-home-screen",
+                    params: { classId }
                   })
                 }
               />
@@ -66,7 +65,7 @@ const ParentHomeScreen = () => {
 
           {/*GROUP FEATURES*/}
           <View className={"space-y-4"}>
-            <Text variant={"titleLarge"}>Tương tác với giáo viên</Text>
+            <Text variant={"titleLarge"}>Tương tác với phụ huynh</Text>
 
             <View className={"flex-row justify-start"}>
               <FeatureItem title={"Lời nhắn"} icon={noteIcon} />
@@ -75,8 +74,8 @@ const ParentHomeScreen = () => {
                 icon={medIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/parent/medicine/medicine-home-screen",
-                    params: { studentId }
+                    pathname: "/teacher/medicine/medicine-home-screen",
+                    params: { classId }
                   })
                 }
               />
@@ -85,8 +84,8 @@ const ParentHomeScreen = () => {
                 icon={leaveIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/parent/leaveletter/leaveletter-home-screen",
-                    params: { studentId }
+                    pathname: "/teacher/leaveletter/leaveletter-home-screen",
+                    params: { classId }
                   })
                 }
               />
@@ -95,8 +94,8 @@ const ParentHomeScreen = () => {
                 icon={pickupIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/parent/pickup/history-screen",
-                    params: { studentId }
+                    pathname: "/teacher/pickup/history-screen",
+                    params: { classId }
                   })
                 }
               />
@@ -108,7 +107,7 @@ const ParentHomeScreen = () => {
             <Text variant={"titleLarge"}>Tương tác với nhà trường</Text>
 
             <View className={"flex-row justify-start"}>
-              <FeatureItem title={"Học phí"} icon={tuitionIcon} />
+              <FeatureItem title={"Tiền lương"} icon={tuitionIcon} />
               <FeatureItem title={"Góp ý"} icon={feedbackIcon} />
             </View>
           </View>
@@ -120,4 +119,4 @@ const ParentHomeScreen = () => {
   );
 };
 
-export default ParentHomeScreen;
+export default TeacherHomeScreen;

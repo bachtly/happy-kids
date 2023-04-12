@@ -13,7 +13,7 @@ const DashBoard = () => {
         mode={"contained"}
         onPress={() => {
           router.push({
-            pathname: "parent-home-screen",
+            pathname: "parent/parent-landing-screen",
             params: {
               studentId: "stid1000-0000-0000-0000-000000000000"
             }
@@ -27,7 +27,7 @@ const DashBoard = () => {
         mode={"contained"}
         onPress={() => {
           router.push({
-            pathname: "teacher-home-screen",
+            pathname: "teacher/teacher-landing-screen",
             params: {
               classId: "clid1000-0000-0000-0000-000000000000"
             }
