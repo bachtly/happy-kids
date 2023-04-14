@@ -26,7 +26,7 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
       backgroundColor: "#1750c9"
     },
     package: "com.hcmut.happykids",
-    softwareKeyboardLayoutMode: "pan"
+    softwareKeyboardLayoutMode: "resize"
   },
   extra: {
     eas: {

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Image, TextInput as RNTextInput, View } from "react-native";
 import {
   Button,
@@ -13,6 +13,7 @@ import {
 // import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import { Keyboard } from "react-native";
 
 const LoginScreen = () => {
   const { onLogin } = useAuthContext();
@@ -34,6 +35,14 @@ const LoginScreen = () => {
 
   const router = useRouter();
   const passwordRef = useRef<RNTextInput>(null);
+
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  Keyboard.addListener("keyboardDidShow", () =>
+    setKeyboardVisible(Keyboard.isVisible())
+  );
+  Keyboard.addListener("keyboardDidHide", () =>
+    setKeyboardVisible(Keyboard.isVisible())
+  );
 
   const onPressLogin = () => {
     // loginMutation.mutate({ email: email, password });
@@ -64,7 +73,11 @@ const LoginScreen = () => {
           <Image
             /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
             source={require("../../../assets/images/happy-kids-logo.png")}
-            className={"mb-20 mt-24 h-32 w-96"}
+            className={"h-32 w-96"}
+            style={{
+              marginTop: keyboardVisible ? 48 : 96,
+              marginBottom: keyboardVisible ? 40 : 80
+            }}
             resizeMode={"cover"}
           />
           <View>
