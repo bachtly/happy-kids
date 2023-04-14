@@ -6,12 +6,12 @@ import { ScrollView, View } from "react-native";
 import { Text, TextInput, useTheme } from "react-native-paper";
 import { FormError } from "../../../src/components/AlertError";
 import DateRangePicker from "../../../src/components/date-picker/DateRangePicker";
-import MyImagePicker from "../../../src/components/ImagePicker";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import SubmitComponent from "../../../src/components/common/SubmitComponent";
 import LetterSubmitAlert from "../../../src/components/common/LetterSubmitAlert";
+import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
 
 const AddLetter = () => {
   const now = moment();
@@ -28,28 +28,8 @@ const AddLetter = () => {
 
   const [reason, setReason] = useState("");
 
-  type ImgItem = {
-    id: number;
-    photo: string;
-  };
-  const [images, setImages] = useState<ImgItem[]>([{ id: 0, photo: "" }]);
-  const [_, setNextImageId] = useState(1);
-  const addImage = (id: number, photo: string) => {
-    setNextImageId((prevId) => {
-      setImages((prev) =>
-        prev
-          .map((item) => {
-            if (item.id !== id) return item;
-            return { ...item, photo: photo };
-          })
-          .filter((item) => item.photo !== "")
-          .concat({ id: prevId, photo: "" })
-      );
-      return prevId + 1;
-    });
-  };
-
   const [submitError, setSubmitError] = useState<FormError[]>([]);
+  const [images, setImages] = useState<string[]>([]);
 
   const router = useRouter();
   const postLeaveLetterMutation = api.leaveletter.postLeaveLetter.useMutation({
@@ -77,7 +57,7 @@ const AddLetter = () => {
       startDate: dateStart.toDate(),
       endDate: dateEnd.toDate(),
       reason: reason,
-      photos: images.map((item) => item.photo).filter((item) => item !== "")
+      photos: images.filter((item) => item !== "")
     });
   };
 
@@ -134,21 +114,7 @@ const AddLetter = () => {
           <View className="my-2 flex flex-row items-end justify-between">
             <Text variant={"labelLarge"}>Ảnh đính kèm</Text>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 8 }}
-          >
-            {images.map((image) => (
-              <View className="h-32 w-32" key={image.id}>
-                <MyImagePicker
-                  imageData={image.photo}
-                  setImageData={(photo) => addImage(image.id, photo)}
-                  disabled={image.photo !== ""}
-                />
-              </View>
-            ))}
-          </ScrollView>
+          <MultiImagePicker onImagesChange={(imgs) => setImages(imgs)} />
 
           <View className={"items-center"}>
             <SubmitComponent
