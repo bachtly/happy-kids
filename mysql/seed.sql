@@ -4,6 +4,7 @@ USE KindergartenSchema;
 
 -- Common attributes
 SET @avatar = './seed/avatar';
+SET @multi_avatar = concat('\["', @avatar, '", "', @avatar, '"', '\]');
 
 -- Insert schools
 SET @sid1 = 'sid10000-0000-0000-0000-000000000000';
@@ -290,16 +291,27 @@ VALUES
 
 -- Post1
 SET @postid1 = 'postid10-0000-0000-0000-000000000000';
-INSERT INTO Post (id, createdAt, title, employeeId, content)
-VALUES (@postid1, '2023-01-06', 'THÔNG BÁO: Nghỉ học tránh bão số 1000', @mgrid4, 'Dựa vào dự báo thời tiết của VTV, bão số 1000 dự kiến sẽ đổ bộ vào khu vực tỉnh chúng ta vào ngày thứ 2 tới." Để tránh những ảnh hưởng đáng tiếc xảy ra, nhà trường xin thông báo cho các phụ huynh về việc tạm ngưng việc học của bé vào T2 tới và sẽ tiếp tục việc học vào T3');
+INSERT INTO Post (id, createdAt, userId, photos, content)
+VALUES 
+	(@postid1, '2023-01-06', @mgrid4, @multi_avatar,
+		'THÔNG BÁO: Nghỉ học tránh bão số 1000\nDựa vào dự báo thời tiết của VTV, bão số 1000 dự kiến sẽ đổ bộ vào khu vực tỉnh chúng ta vào ngày thứ 2 tới." Để tránh những ảnh hưởng đáng tiếc xảy ra, nhà trường xin thông báo cho các phụ huynh về việc tạm ngưng việc học của bé vào T2 tới và sẽ tiếp tục việc học vào T3');
 
-INSERT INTO UserReactPostRelationship (time, userId, postId)
-VALUES ('2023-01-06T20:00:00', @mgrid1, @postid1);
+INSERT INTO PostReaction (time, reaction, userId, postId)
+VALUES 
+	('2023-01-06T20:00:00', 'Like', @mgrid1, @postid1)
+;
 
-INSERT INTO UserCommentPostRelationship (time, userId, postId, content)
-VALUES ('2023-01-06T20:00:00', @prid1, @postid1, 'Nam mô a di đà phật');
+INSERT INTO PostComment (time, userId, postId, content)
+VALUES 
+	('2023-01-06T20:00:00', @prid1, @postid1, 'Nam mô a di đà phật'),
+    ('2023-01-07T21:00:00', @prid1, @postid1, 'Cảm ơn trường đã thông báo sớm (1). Gia đình em cũng có ý định đi du lịch từ sớm. Sẵn có dịp tốt thế này thì đi luôn cho tiện, hihi.'),
+    ('2023-01-08T22:00:00', @prid1, @postid1, 'Cám ơn trường đã thông báo sớm (2). Gia đình em cũng có ý định đi du lịch từ sớm. Sẵn có dịp tốt thế này thì đi luôn cho tiện, hihi.'),
+    ('2023-01-09T23:00:00', @prid1, @postid1, 'Cám ơn trường đã thông báo sớm (3). Gia đình em cũng có ý định đi du lịch từ sớm. Sẵn có dịp tốt thế này thì đi luôn cho tiện, hihi.'),
+    ('2023-01-10T23:01:00', @prid1, @postid1, 'Cám ơn trường đã thông báo sớm (4). Gia đình em cũng có ý định đi du lịch từ sớm. Sẵn có dịp tốt thế này thì đi luôn cho tiện, hihi.'),
+    ('2023-01-11T23:02:00', @prid1, @postid1, 'Cám ơn trường đã thông báo sớm (5). Gia đình em cũng có ý định đi du lịch từ sớm. Sẵn có dịp tốt thế này thì đi luôn cho tiện, hihi.')
+;
 
-INSERT INTO UserCanViewPostRelationship (userId, postId)
+INSERT INTO UserCanViewPost (userId, postId)
 VALUES (@mgrid1, @postid1), (@mgrid2, @postid1), (@mgrid3, @postid1),
        (@mgrid4, @postid1), (@tid1, @postid1), (@tid2,@postid1), (@tid3, @postid1),
        (@prid1, @postid1), (@prid2, @postid1), (@prid3, @postid1), (@prid4, @postid1)
@@ -307,16 +319,35 @@ VALUES (@mgrid1, @postid1), (@mgrid2, @postid1), (@mgrid3, @postid1),
 
 -- Post2
 SET @postid2 = 'postid20-0000-0000-0000-000000000000';
-INSERT INTO Post (id, createdAt, employeeId, title, content)
-VALUES (@postid2, '2023-01-10', @tid2,'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', 'Ngày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời');
+INSERT INTO Post (id, createdAt, userId, photos, content)
+VALUES 
+	(@postid2, '2023-01-10', @tid2, @multi_avatar,
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời');
 
-INSERT INTO UserReactPostRelationship (time, userId, postId)
-VALUES ('2023-01-10T20:00:00', @mgrid1, @postid2);
+INSERT INTO PostReaction (time, reaction, userId, postId)
+VALUES ('2023-01-10T20:00:00', 'Like', @mgrid1, @postid2);
 
-INSERT INTO UserCanViewPostRelationship (userId, postId)
+INSERT INTO UserCanViewPost (userId, postId)
 VALUES (@mgrid1, @postid2), (@mgrid2, @postid2), (@mgrid3, @postid2),
        (@mgrid4, @postid2), (@tid1, @postid2), (@tid2,@postid2), (@tid3, @postid2),
        (@prid2, @postid2), (@prid3, @postid2), (@prid4, @postid2)
+;
+
+-- Posts
+SET @postid3 = 'postid30-0000-0000-0000-000000000000';
+SET @postid4 = 'postid40-0000-0000-0000-000000000000';
+SET @postid5 = 'postid50-0000-0000-0000-000000000000';
+SET @postid6 = 'postid60-0000-0000-0000-000000000000';
+INSERT INTO Post (id, createdAt, userId, photos, content)
+VALUES 
+	(@postid3, '2023-04-11', @tid2, @multi_avatar,
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời'),
+	(@postid4, '2023-04-11', @tid2, @multi_avatar,
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời'),
+	(@postid5, '2023-04-11', @tid2, @multi_avatar,
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời'),
+	(@postid6, '2023-04-11', @tid2, @multi_avatar,
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời')
 ;
 
 -- Album

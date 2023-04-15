@@ -70,13 +70,13 @@ Table KindergartenSchema.Student {
 Table KindergartenSchema.Post {
   id varchar(36) [pk, default: `UUID()`]
   createdAt datetime
-  title varchar
   content text
+  photos text
 
-  employeeId varchar(36) [ref: - KindergartenSchema.User.id]
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
 }
 
-Table KindergartenSchema.UserCommentPostRelationship {
+Table KindergartenSchema.PostComment {
   id varchar(36) [pk, default: `UUID()`]
   content varchar
   time datetime
@@ -85,15 +85,16 @@ Table KindergartenSchema.UserCommentPostRelationship {
   postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
 
-Table KindergartenSchema.UserReactPostRelationship {
+Table KindergartenSchema.PostReaction {
   id varchar(36) [pk, default: `UUID()`]
   time datetime
+  reaction varchar(64)
 
   userId varchar(36) [ref: - KindergartenSchema.User.id]
   postId varchar(36) [ref: - KindergartenSchema.Post.id]
 }
 
-Table KindergartenSchema.UserCanViewPostRelationship {
+Table KindergartenSchema.UserCanViewPost {
   id varchar(36) [pk, default: `UUID()`]
 
   userId varchar(36) [ref: - KindergartenSchema.User.id]

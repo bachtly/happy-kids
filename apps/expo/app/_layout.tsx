@@ -44,7 +44,8 @@ const RootLayout = () => {
                 headerTintColor: theme.colors.background,
                 headerStyle: {
                   backgroundColor: theme.colors.primary
-                }
+                },
+                statusBarColor: theme.colors.primary
               }}
               initialRouteName="temporary-dashboard"
             />

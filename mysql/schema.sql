@@ -62,12 +62,12 @@ CREATE TABLE `KindergartenSchema`.`Student` (
 CREATE TABLE `KindergartenSchema`.`Post` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `createdAt` datetime,
-  `title` varchar(255),
   `content` text,
-  `employeeId` varchar(36)
+  `photos` text,
+  `userId` varchar(36)
 );
 
-CREATE TABLE `KindergartenSchema`.`UserCommentPostRelationship` (
+CREATE TABLE `KindergartenSchema`.`PostComment` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `content` varchar(255),
   `time` datetime,
@@ -75,14 +75,15 @@ CREATE TABLE `KindergartenSchema`.`UserCommentPostRelationship` (
   `postId` varchar(36)
 );
 
-CREATE TABLE `KindergartenSchema`.`UserReactPostRelationship` (
+CREATE TABLE `KindergartenSchema`.`PostReaction` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `time` datetime,
+  `reaction` varchar(64),
   `userId` varchar(36),
   `postId` varchar(36)
 );
 
-CREATE TABLE `KindergartenSchema`.`UserCanViewPostRelationship` (
+CREATE TABLE `KindergartenSchema`.`UserCanViewPost` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `userId` varchar(36),
   `postId` varchar(36)
@@ -289,19 +290,19 @@ ALTER TABLE `KindergartenSchema`.`Relative` ADD FOREIGN KEY (`parentId`) REFEREN
 
 ALTER TABLE `KindergartenSchema`.`Student` ADD FOREIGN KEY (`parentId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`Post` ADD FOREIGN KEY (`employeeId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+ALTER TABLE `KindergartenSchema`.`Post` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`UserCommentPostRelationship` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+ALTER TABLE `KindergartenSchema`.`PostComment` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`UserCommentPostRelationship` ADD FOREIGN KEY (`postId`) REFERENCES `KindergartenSchema`.`Post` (`id`);
+ALTER TABLE `KindergartenSchema`.`PostComment` ADD FOREIGN KEY (`postId`) REFERENCES `KindergartenSchema`.`Post` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`UserReactPostRelationship` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+ALTER TABLE `KindergartenSchema`.`PostReaction` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`UserReactPostRelationship` ADD FOREIGN KEY (`postId`) REFERENCES `KindergartenSchema`.`Post` (`id`);
+ALTER TABLE `KindergartenSchema`.`PostReaction` ADD FOREIGN KEY (`postId`) REFERENCES `KindergartenSchema`.`Post` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`UserCanViewPostRelationship` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+ALTER TABLE `KindergartenSchema`.`UserCanViewPost` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`UserCanViewPostRelationship` ADD FOREIGN KEY (`postId`) REFERENCES `KindergartenSchema`.`Post` (`id`);
+ALTER TABLE `KindergartenSchema`.`UserCanViewPost` ADD FOREIGN KEY (`postId`) REFERENCES `KindergartenSchema`.`Post` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`updatedByTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
