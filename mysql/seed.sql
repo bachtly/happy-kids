@@ -279,10 +279,10 @@ VALUES
 
 -- NoteLetter
 SET @notletid1 = 'notletid-1000-0000-0000-000000000000';
-INSERT INTO NoteLetter (id, createdAt, status, content, updatedByTeacherId, studentId)
-VALUES (@notletid1, '2023-01-05', 'Confirmed', 'Hôm nay bé bị cảm nhẹ, nhờ cô để mắt tới bé nhiều hơn', @tid1, @stid1);
+INSERT INTO NoteThread (id, createdAt, startDate, endDate, status, content, createdByParentId, studentId)
+VALUES (@notletid1, '2023-01-05', '2023-01-05', '2023-01-05', 'Confirmed', 'Hôm nay bé bị cảm nhẹ, nhờ cô để mắt tới bé nhiều hơn', @prid1, @stid1);
 
-INSERT INTO NoteLetterReply (createdAt, content, userId, noteLetterId)
+INSERT INTO NoteMessage (createdAt, content, userId, noteThreadId)
 VALUES
     ('2023-01-05', 'Dạ vâng chị', @tid1, @notletid1),
     ('2023-01-05', 'Cảm ơn cô nhiều nhé', @prid3, @notletid1)

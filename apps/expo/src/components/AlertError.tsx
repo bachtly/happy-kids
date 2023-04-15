@@ -12,6 +12,9 @@ const FormErrorMessage = {
   medicine_missing_medicine: "Thêm ít nhất 1 thuốc",
   medicine_empty_note: "Chưa nhập ghi chú",
 
+  // note
+  note_empty_note: "Chưa nhập nội dung lời nhắn",
+
   other: "Đã có lỗi xảy ra, vui lòng thử lại"
 };
 

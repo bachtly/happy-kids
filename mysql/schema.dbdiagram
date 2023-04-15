@@ -179,26 +179,29 @@ Table KindergartenSchema.PickupLetter {
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
-Table KindergartenSchema.NoteLetter {
+Table KindergartenSchema.NoteThread {
   id varchar(36) [pk]
 
   createdAt datetime
   status KindergartenSchema.LetterStatusEnum
 
+  photos text
   content text
+  startDate date
+  endDate date
 
-  updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
+  createdByParentId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
 }
 
-Table KindergartenSchema.NoteLetterReply {
+Table KindergartenSchema.NoteMessage {
   id varchar(36) [pk, default: `UUID()`]
   createdAt datetime
 
   content text
 
   userId varchar(36) [ref: - KindergartenSchema.User.id]
-  noteLetterId varchar(36) [ref: - KindergartenSchema.NoteLetter.id]
+  noteThreadId varchar(36) [ref: - KindergartenSchema.NoteThread.id]
 }
 
 Enum KindergartenSchema.CheckInStatusEnum {

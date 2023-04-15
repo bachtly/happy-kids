@@ -16,11 +16,12 @@ import pickupIcon from "../../assets/images/pickup-icon.png";
 import tuitionIcon from "../../assets/images/tuition.png";
 import feedbackIcon from "../../assets/images/feedback.png";
 import Body from "../../src/components/Body";
+import { useEffect } from "react";
 
 const TeacherHomeScreen = () => {
-  const { onLogout } = useAuthContext();
+  const { onLogout, onLogin } = useAuthContext();
   const router = useRouter();
-
+  useEffect(() => onLogin("tid10000-0000-0000-0000-000000000000"), []);
   const { classId } = useSearchParams();
 
   return (
@@ -68,7 +69,16 @@ const TeacherHomeScreen = () => {
             <Text variant={"titleLarge"}>Tương tác với phụ huynh</Text>
 
             <View className={"flex-row justify-start"}>
-              <FeatureItem title={"Lời nhắn"} icon={noteIcon} />
+              <FeatureItem
+                title={"Lời nhắn"}
+                icon={noteIcon}
+                onPress={() =>
+                  router.push({
+                    pathname: "/teacher/note/note-home-screen",
+                    params: { classId }
+                  })
+                }
+              />
               <FeatureItem
                 title={"Dặn thuốc"}
                 icon={medIcon}

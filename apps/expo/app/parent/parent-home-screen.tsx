@@ -17,11 +17,12 @@ import leaveIcon from "../../assets/images/leave-letter-icon.png";
 import pickupIcon from "../../assets/images/pickup-icon.png";
 import tuitionIcon from "../../assets/images/tuition.png";
 import feedbackIcon from "../../assets/images/feedback.png";
+import { useEffect } from "react";
 
 const ParentHomeScreen = () => {
   const router = useRouter();
-  const { onLogout } = useAuthContext();
-
+  const { onLogout, onLogin } = useAuthContext();
+  useEffect(() => onLogin("prid1000-0000-0000-0000-000000000000"), []);
   const { studentId } = useSearchParams();
 
   return (
@@ -69,7 +70,16 @@ const ParentHomeScreen = () => {
             <Text variant={"titleLarge"}>Tương tác với giáo viên</Text>
 
             <View className={"flex-row justify-start"}>
-              <FeatureItem title={"Lời nhắn"} icon={noteIcon} />
+              <FeatureItem
+                title={"Lời nhắn"}
+                icon={noteIcon}
+                onPress={() =>
+                  router.push({
+                    pathname: "/parent/note/note-home-screen",
+                    params: { studentId }
+                  })
+                }
+              />
               <FeatureItem
                 title={"Dặn thuốc"}
                 icon={medIcon}

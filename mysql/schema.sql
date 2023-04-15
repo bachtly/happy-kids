@@ -146,21 +146,24 @@ CREATE TABLE `KindergartenSchema`.`PickupLetter` (
   `studentId` varchar(36)
 );
 
-CREATE TABLE `KindergartenSchema`.`NoteLetter` (
+CREATE TABLE `KindergartenSchema`.`NoteThread` (
   `id` varchar(36) PRIMARY KEY,
   `createdAt` datetime,
   `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
+  `photos` text,
   `content` text,
-  `updatedByTeacherId` varchar(36),
+  `startDate` date,
+  `endDate` date,
+  `createdByParentId` varchar(36),
   `studentId` varchar(36)
 );
 
-CREATE TABLE `KindergartenSchema`.`NoteLetterReply` (
+CREATE TABLE `KindergartenSchema`.`NoteMessage` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `createdAt` datetime,
   `content` text,
   `userId` varchar(36),
-  `noteLetterId` varchar(36)
+  `noteThreadId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Attendance` (
@@ -324,13 +327,13 @@ ALTER TABLE `KindergartenSchema`.`PickupLetter` ADD FOREIGN KEY (`updatedByTeach
 
 ALTER TABLE `KindergartenSchema`.`PickupLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`NoteLetter` ADD FOREIGN KEY (`updatedByTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+ALTER TABLE `KindergartenSchema`.`NoteThread` ADD FOREIGN KEY (`createdByParentId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`NoteLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
+ALTER TABLE `KindergartenSchema`.`NoteThread` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`NoteLetterReply` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+ALTER TABLE `KindergartenSchema`.`NoteMessage` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`NoteLetterReply` ADD FOREIGN KEY (`noteLetterId`) REFERENCES `KindergartenSchema`.`NoteLetter` (`id`);
+ALTER TABLE `KindergartenSchema`.`NoteMessage` ADD FOREIGN KEY (`noteThreadId`) REFERENCES `KindergartenSchema`.`NoteThread` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 

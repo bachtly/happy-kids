@@ -11,12 +11,14 @@ import PickupService from "./pickup-service";
 import LeaveLetterService from "./leaveletter-service";
 import DailyRemarkService from "./daily-remark-service";
 import PeriodRemarkService from "./period-remark-service";
+import NoteService from "./note-service";
 
 container.register<Kysely<DB>>(Kysely, { useValue: mysqlDB });
 
 export const loginService = container.resolve(LoginService);
 export const attendanceService = container.resolve(AttendanceService);
 export const pickupService = container.resolve(PickupService);
+export const noteService = container.resolve(NoteService);
 
 export const signupService = container.resolve(SignupService);
 
