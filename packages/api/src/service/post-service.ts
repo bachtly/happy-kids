@@ -3,12 +3,16 @@ import { DB } from "kysely-codegen";
 import { PhotoService } from "../utils/PhotoService";
 import { injectable } from "tsyringe";
 import moment from "moment";
-import { asyncWriteFile } from "../utils/fileIO";
 import { v4 as uuidv4 } from "uuid";
+import { FileService } from "../utils/FileService";
 
 @injectable()
 class PostService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(
+    private mysqlDB: Kysely<DB>,
+    private fileService: FileService,
+    private photoService: PhotoService
+  ) {}
 
   getPostList = async (userId: string, page: number, itemsPerPage: number) => {
     console.log(
@@ -41,11 +45,11 @@ class PostService {
               : [];
             const photos = await Promise.all(
               photoPaths.map((photoPath) =>
-                PhotoService.getPhotoFromPath(photoPath)
+                this.photoService.getPhotoFromPath(photoPath)
               )
             );
 
-            const userAvatar = await PhotoService.getPhotoFromPath(
+            const userAvatar = await this.photoService.getPhotoFromPath(
               item.userAvatarUrl ?? ""
             );
 
@@ -77,8 +81,8 @@ class PostService {
     const photoPaths = photos
       .filter((item) => item != "")
       .map((item) => {
-        const filePath = "./post/" + uuidv4() + ".jpg";
-        void asyncWriteFile(filePath, item);
+        const filePath = "./post/" + uuidv4();
+        void this.fileService.asyncWriteFile(filePath, item);
         return filePath;
       });
 
@@ -167,7 +171,9 @@ class PostService {
       .executeTakeFirstOrThrow()
       .then(async (resp) => {
         return {
-          avatar: await PhotoService.getPhotoFromPath(resp.avatarUrl ?? ""),
+          avatar: await this.photoService.getPhotoFromPath(
+            resp.avatarUrl ?? ""
+          ),
           ...resp
         };
       });
@@ -208,7 +214,7 @@ class PostService {
         .execute()
         .then((resp) =>
           resp.flat().map(async (item) => {
-            const userAvatar = await PhotoService.getPhotoFromPath(
+            const userAvatar = await this.photoService.getPhotoFromPath(
               item.userAvatarUrl ?? ""
             );
 

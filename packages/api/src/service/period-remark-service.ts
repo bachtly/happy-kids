@@ -1,12 +1,12 @@
 import { injectable } from "tsyringe";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
-import { asyncReadFile } from "../utils/fileIO";
 import moment from "moment";
+import { FileService } from "../utils/FileService";
 
 @injectable()
 class PeriodRemarkService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
 
   getPeriodRemarkList = async (studentId: string) => {
     console.log(
@@ -18,7 +18,7 @@ class PeriodRemarkService {
     const getPhoto = async (photoPath: string) => {
       if (!photoPath || photoPath === "") return "";
       try {
-        return await asyncReadFile(photoPath);
+        return await this.fileService.asyncReadFile(photoPath);
       } catch (_) {
         return "";
       }
@@ -64,7 +64,7 @@ class PeriodRemarkService {
     const getPhoto = async (photoPath: string) => {
       if (!photoPath || photoPath === "") return "";
       try {
-        return await asyncReadFile(photoPath);
+        return await this.fileService.asyncReadFile(photoPath);
       } catch (_) {
         return "";
       }

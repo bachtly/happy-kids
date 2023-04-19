@@ -14,11 +14,11 @@ import {
   ThreadStatus
 } from "../router/note/protocols";
 import { getErrorMessage } from "../utils/errorHelper";
-import { asyncReadFile, asyncWriteFile } from "../utils/fileIO";
+import { FileService } from "../utils/FileService";
 
 @injectable()
 class NoteService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
 
   insertNoteMessage = async (
     noteThreadId: string,
@@ -69,9 +69,11 @@ class NoteService {
       const getPhotoPath = (photoB64: string) => {
         if (photoB64 === "") return "";
         const filename = "./note/" + uuidv4();
-        asyncWriteFile(filename, photoB64).catch((e: Error) =>
-          console.log("failed to write image note, error", e.message)
-        );
+        this.fileService
+          .asyncWriteFile(filename, photoB64)
+          .catch((e: Error) =>
+            console.log("failed to write image note, error", e.message)
+          );
         return filename;
       };
       return getPhotoPath(photoB64);
@@ -275,7 +277,7 @@ class NoteService {
       const getPhoto = async (photoPath: string) => {
         if (photoPath === "") return "";
         try {
-          return await asyncReadFile(photoPath);
+          return await this.fileService.asyncReadFile(photoPath);
         } catch (_) {
           return "";
         }

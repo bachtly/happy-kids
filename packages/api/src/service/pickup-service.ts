@@ -2,12 +2,12 @@ import { injectable } from "tsyringe";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import { v4 as uuidv4 } from "uuid";
-import { asyncReadFile, asyncWriteFile } from "../utils/fileIO";
 import moment from "moment";
+import { FileService } from "../utils/FileService";
 
 @injectable()
 class PickupService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
 
   getPickupList = async (timeStart: Date, timeEnd: Date, studentId: string) => {
     console.log(
@@ -93,7 +93,7 @@ class PickupService {
     const getPhoto = async (photoPath: string) => {
       if (!photoPath || photoPath === "") return "";
       try {
-        return await asyncReadFile(photoPath);
+        return await this.fileService.asyncReadFile(photoPath);
       } catch (_) {
         return "";
       }
@@ -144,10 +144,12 @@ class PickupService {
 
     const getPhotoPath = (photoB64: string) => {
       if (photoB64 === "") return "";
-      const filename = "./leaveletter/" + uuidv4() + ".jpg";
-      asyncWriteFile(filename, photoB64).catch((e: Error) =>
-        console.log("failed to write image medicine, error", e.message)
-      );
+      const filename = "./leaveletter/" + uuidv4();
+      this.fileService
+        .asyncWriteFile(filename, photoB64)
+        .catch((e: Error) =>
+          console.log("failed to write image medicine, error", e.message)
+        );
       return filename;
     };
 

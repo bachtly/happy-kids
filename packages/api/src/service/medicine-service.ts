@@ -16,12 +16,11 @@ import {
 } from "../router/medicine/protocols";
 import { sortAndUnique } from "../utils/arrayHelper";
 import { getErrorMessage } from "../utils/errorHelper";
-
-import { asyncReadFile, asyncWriteFile } from "../utils/fileIO";
+import { FileService } from "../utils/FileService";
 
 @injectable()
 class MedicineService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
   private createMedicineLetterOnly = async (
     parentId: string,
     studentId: string,
@@ -65,9 +64,11 @@ class MedicineService {
           const getPhotoPath = (photo: string) => {
             if (photo === "") return "";
             const filename = "./medicine/" + uuidv4();
-            asyncWriteFile(filename, medicine.photo).catch((e: Error) =>
-              console.log("failed to write image medicine, error", e.message)
-            );
+            this.fileService
+              .asyncWriteFile(filename, medicine.photo)
+              .catch((e: Error) =>
+                console.log("failed to write image medicine, error", e.message)
+              );
             return filename;
           };
           return {
@@ -393,7 +394,7 @@ class MedicineService {
       const getPhoto = async (photoPath: string) => {
         if (!photoPath || photoPath === "") return "";
         try {
-          return await asyncReadFile(photoPath);
+          return await this.fileService.asyncReadFile(photoPath);
         } catch (_) {
           return "";
         }

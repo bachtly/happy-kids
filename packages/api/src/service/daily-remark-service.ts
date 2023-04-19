@@ -1,13 +1,13 @@
 import { injectable } from "tsyringe";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
-import { asyncReadFile } from "../utils/fileIO";
 import moment from "moment/moment";
 import { v4 as uuidv4 } from "uuid";
+import { FileService } from "../utils/FileService";
 
 @injectable()
 class DailyRemarkService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
 
   getDailyRemarkList = async (
     timeStart: Date,
@@ -25,7 +25,7 @@ class DailyRemarkService {
     const getPhoto = async (photoPath: string) => {
       if (!photoPath || photoPath === "") return "";
       try {
-        return await asyncReadFile(photoPath);
+        return await this.fileService.asyncReadFile(photoPath);
       } catch (_) {
         return "";
       }
@@ -115,7 +115,7 @@ class DailyRemarkService {
     const getPhoto = async (photoPath: string) => {
       if (!photoPath || photoPath === "") return "";
       try {
-        return await asyncReadFile(photoPath);
+        return await this.fileService.asyncReadFile(photoPath);
       } catch (_) {
         return "";
       }

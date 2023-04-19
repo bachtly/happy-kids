@@ -13,12 +13,11 @@ import {
   LeaveLetter,
   GetLeaveLetterResponse
 } from "../router/leaveletter/protocols";
-
-import { asyncReadFile, asyncWriteFile } from "../utils/fileIO";
+import { FileService } from "../utils/FileService";
 
 @injectable()
 class LeaveLetterService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
   private createLeaveLetterOnly = async (
     parentId: string,
     studentId: string,
@@ -60,9 +59,11 @@ class LeaveLetterService {
           const getPhotoPath = (photoB64: string) => {
             if (photoB64 === "") return "";
             const filename = "./leaveletter/" + uuidv4();
-            asyncWriteFile(filename, photoB64).catch((e: Error) =>
-              console.log("failed to write image medicine, error", e.message)
-            );
+            this.fileService
+              .asyncWriteFile(filename, photoB64)
+              .catch((e: Error) =>
+                console.log("failed to write image medicine, error", e.message)
+              );
             return filename;
           };
           return {
@@ -319,7 +320,7 @@ class LeaveLetterService {
       const getPhoto = async (photoPath: string) => {
         if (photoPath === "") return "";
         try {
-          return await asyncReadFile(photoPath);
+          return await this.fileService.asyncReadFile(photoPath);
         } catch (_) {
           return "";
         }
