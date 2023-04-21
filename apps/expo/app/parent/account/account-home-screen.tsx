@@ -1,5 +1,7 @@
+import AccountHome from "../../../src/screens/account/AccountHome";
+
 const AccountHomeScreen = () => {
-  return <></>;
+  return <AccountHome />;
 };
 
 export default AccountHomeScreen;

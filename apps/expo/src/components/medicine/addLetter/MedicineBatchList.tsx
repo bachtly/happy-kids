@@ -5,7 +5,7 @@ import { View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { MedicineModel } from "../../../models/MedicineModels";
 import TimePicker from "../../TimePicker";
-import { ConfirmModal } from "../modals/ConfirmModal";
+import { ConfirmModal } from "../../common/ConfirmModal";
 import MedicineModal from "../modals/MedicineModal";
 import MedicineList, { Item } from "./MedicineList";
 import TabTableView from "../../common/TabTableView";

@@ -5,6 +5,8 @@ USE KindergartenSchema;
 -- Common attributes
 SET @avatar = './seed/avatar';
 SET @multi_avatar = concat('\["', @avatar, '", "', @avatar, '"', '\]');
+-- password = 'password123'
+SET @password_hashed = '$2a$10$1WrZyVUDl8mIKoImZ1O3vuOZwzVANa.5cicTr8LW5LUGYehFg4trS';
 
 -- Insert schools
 SET @sid1 = 'sid10000-0000-0000-0000-000000000000';
@@ -24,7 +26,7 @@ VALUES
     (
         @mgrid1,
         'bach_principal',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Principal',
         '2001-04-14',
         'bach.principal@gmail.com',
@@ -37,7 +39,7 @@ VALUES
     (
         @mgrid2,
         'bach_viceprincipal',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách VicePrincipal',
         '2001-04-14',
         'bach.viceprincipal@gmail.com',
@@ -50,7 +52,7 @@ VALUES
     (
         @mgrid3,
         'bach_accountant1',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Accountant1',
         '2001-04-14',
         'bach.accountant1@gmail.com',
@@ -63,7 +65,7 @@ VALUES
     (
         @mgrid4,
         'bach_accountant2',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Accountant2',
         '2001-04-14',
         'bach.accountant2@gmail.com',
@@ -83,7 +85,7 @@ VALUES
     (
         @tid1,
         'bach_teacher1',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Teacher1',
         '2001-04-14',
         'bach.teacher1@gmail.com',
@@ -96,7 +98,7 @@ VALUES
     (
         @tid2,
         'bach_teacher2',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Teacher2',
         '2001-04-14',
         'bach.teacher2@gmail.com',
@@ -109,7 +111,7 @@ VALUES
     (
         @tid3,
         'bach_teacher3',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Teacher3',
         '2001-04-14',
         'bach.teacher3@gmail.com',
@@ -151,7 +153,7 @@ VALUES
     (
         @prid1,
         'bach_parent1',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Parent1',
         '2001-04-14',
         'bach.parent1@gmail.com',
@@ -164,7 +166,7 @@ VALUES
     (
         @prid2,
         'bach_parent2',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Parent2',
         '2001-04-14',
         'bach.parent2@gmail.com',
@@ -177,7 +179,7 @@ VALUES
     (
         @prid3,
         'bach_parent3',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Parent3',
         '2001-04-14',
         'bach.parent3@gmail.com',
@@ -190,7 +192,7 @@ VALUES
     (
         @prid4,
         'bach_parent4',
-        '$argon2id$v=19$m=65536,t=3,p=4$vQuMUfM8K8n3Xzaa5+Ar/Q$9H9UvhkquRAfRtFN2PoD2lFZ8VT1gEQfqIwSUcmn5d0',
+        @password_hashed,
         'Lý Thanh Bách Parent4',
         '2001-04-14',
         'bach.parent4@gmail.com',

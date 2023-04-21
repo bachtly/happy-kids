@@ -8,6 +8,7 @@ import { dailyRemarkRouter } from "./router/remark/daily-remark-router";
 import { periodRemarkRouter } from "./router/remark/period-remark-router";
 import { noteRouter } from "./router/note/note-router";
 import { postRouter } from "./router/post/post-router";
+import { accountRouter } from "./router/account/account-router";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -18,7 +19,8 @@ export const appRouter = createTRPCRouter({
   dailyRemark: dailyRemarkRouter,
   periodRemark: periodRemarkRouter,
   note: noteRouter,
-  post: postRouter
+  post: postRouter,
+  account: accountRouter
 });
 
 // export type definition of API
