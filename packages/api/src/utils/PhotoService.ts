@@ -8,8 +8,13 @@ class PhotoService {
   constructor(private fileService: FileService) {}
   getPhotoFromPath = async (photoPath: string) => {
     if (!photoPath || photoPath === "") return "";
+
     try {
-      return await this.fileService.asyncReadFile(photoPath);
+      if (photoPath.endsWith(".png")) {
+        return await this.fileService.readFileBase64(photoPath);
+      } else {
+        return await this.fileService.asyncReadFile(photoPath);
+      }
     } catch (_) {
       return "";
     }

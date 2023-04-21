@@ -17,6 +17,7 @@ import {
 } from "../../../src/models/PickupModels";
 import Body from "../../../src/components/Body";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -32,6 +33,7 @@ const TIME_FORMAT = "hh:mm";
 
 const PickupDetailScreen = () => {
   const { id } = useSearchParams();
+  const { userId } = useAuthContext();
   const theme = useTheme();
 
   // just to trigger
@@ -121,7 +123,8 @@ const PickupDetailScreen = () => {
             mode={"contained"}
             onPress={() =>
               confirmMutation.mutate({
-                id: id
+                id: id,
+                teacherId: userId ?? ""
               })
             }
             disabled={pickup?.status != "NotConfirmed"}
@@ -133,7 +136,8 @@ const PickupDetailScreen = () => {
             mode={"contained-tonal"}
             onPress={() =>
               rejectMutation.mutate({
-                id: id
+                id: id,
+                teacherId: userId ?? ""
               })
             }
             disabled={pickup?.status != "NotConfirmed"}

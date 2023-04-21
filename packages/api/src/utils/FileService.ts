@@ -4,6 +4,13 @@ import { injectable } from "tsyringe";
 
 @injectable()
 class FileService {
+  readFileBase64 = async (filename: string) => {
+    const contents = await fsPromises.readFile(this.getFilePath(filename), {
+      encoding: "base64"
+    });
+    return contents;
+  };
+
   asyncWriteFile = async (filename: string, data: string) => {
     const get = await fsPromises.writeFile(this.getFilePath(filename), data);
 

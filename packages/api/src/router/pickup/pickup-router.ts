@@ -87,14 +87,16 @@ const pickupRouter = createTRPCRouter({
     .input(ConfirmPickupLetterRequest)
     .output(ConfirmPickupLetterResponse)
     .mutation(
-      async ({ input }) => await pickupService.confirmPickupLetter(input.id)
+      async ({ input }) =>
+        await pickupService.confirmPickupLetter(input.id, input.teacherId)
     ),
 
   rejectPickupLetter: publicProcedure
     .input(RejectPickupLetterRequest)
     .output(RejectPickupLetterResponse)
     .mutation(
-      async ({ input }) => await pickupService.rejectPickupLetter(input.id)
+      async ({ input }) =>
+        await pickupService.rejectPickupLetter(input.id, input.teacherId)
     )
 });
 

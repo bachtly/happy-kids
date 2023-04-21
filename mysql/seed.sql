@@ -267,8 +267,9 @@ INSERT INTO MedicineLetterUseDiary (id, status, date, note, medicineLetterId)
 VALUES (@medid1,"Used", "2023-01-04", 'be uong het thuoc', @medletid1);
 
 -- PickupLetter
-INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
-VALUES ('Chiều nay mẹ bé bận, nhờ chú Tư rước bé', '2023-01-05T17:00:00', '2023-01-04',
+SET @pickupid1 = 'pickupid-1000-0000-0000-000000000000';
+INSERT INTO PickupLetter (id, note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
+VALUES (@pickupid1, 'Chiều nay mẹ bé bận, nhờ chú Tư rước bé', '2023-01-05T17:00:00', '2023-01-04',
         'Confirmed', @rlid1, @tid1, @stid4);
 
 INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
@@ -509,6 +510,19 @@ INSERT INTO TuitionFee (status, startTime, endTime, billUrl, amount, studentId)
 VALUES
     ('Paid', '2022-12-01', '2023-01-01', 'bill.csv', '100000000', @stid1),
     ('UnPaid', '2022-01-01', '2023-02-01', 'bill.csv', '100000000', @stid1)
+;
+
+-- Notifications
+INSERT INTO Noti (userId, classId, createUserId, title, content, route, photoUrl, time)
+VALUES
+	(@prid1, null, @tid1, 'Giáo viên đã phản hồi đơn đón về của bạn', 'Giáo viên đã xác nhận đơn đón về', 
+		'{"pathname": "parent/pickup/pickup-detail-screen", "params": {"id": "pickupid-1000-0000-0000-000000000000"}}',
+		'./icons/pickup-icon.png', '2023-01-05T7:00:00'
+    ),
+    (@prid1, null, @tid1, 'Giáo viên đã phản hồi đơn đón về của bạn', 'Giáo viên đã xác nhận đơn đón về', 
+		'{"pathname": "parent/pickup/pickup-detail-screen", "params": {"id": "pickupid-1000-0000-0000-000000000000"}}',
+		'./icons/avatar', '2023-01-05T8:00:00'
+    )
 ;
 
 COMMIT;

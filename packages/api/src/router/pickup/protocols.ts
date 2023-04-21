@@ -91,7 +91,8 @@ const GetPickupListFromClassIdResponse = z.object({
 });
 
 const ConfirmPickupLetterRequest = z.object({
-  id: z.string()
+  id: z.string(),
+  teacherId: z.string()
 });
 
 const ConfirmPickupLetterResponse = z.object({
@@ -99,7 +100,8 @@ const ConfirmPickupLetterResponse = z.object({
 });
 
 const RejectPickupLetterRequest = z.object({
-  id: z.string()
+  id: z.string(),
+  teacherId: z.string()
 });
 
 const RejectPickupLetterResponse = z.object({

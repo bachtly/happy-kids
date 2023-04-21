@@ -14,6 +14,7 @@ import PeriodRemarkService from "./period-remark-service";
 import NoteService from "./note-service";
 import { PostService } from "./post-service";
 import AccountService from "./account-service";
+import NotiService from "./noti-service";
 
 container.register<Kysely<DB>>(Kysely, { useValue: mysqlDB });
 
@@ -34,3 +35,5 @@ export const periodRemarkService = container.resolve(PeriodRemarkService);
 export const postService = container.resolve(PostService);
 
 export const accountService = container.resolve(AccountService);
+
+export const notiService = container.resolve(NotiService);

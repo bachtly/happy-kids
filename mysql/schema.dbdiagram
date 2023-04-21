@@ -351,3 +351,16 @@ Table KindergartenSchema.AlbumPhoto {
 
   albumId varchar(36) [ref: - KindergartenSchema.Album.id]
 }
+
+Table KindergartenSchema.Noti {
+  id varchar(36) [pk, default: `UUID()`]
+  title text
+  content text
+  route text
+  photoUrl text
+  time datetime
+
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
+  classId varchar(36) [ref: - KindergartenSchema.Class.id]
+  createUserId varchar(36) [ref: - KindergartenSchema.User.id]
+}
