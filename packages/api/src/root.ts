@@ -22,7 +22,6 @@ export const appRouter = createTRPCRouter({
   note: noteRouter,
   post: postRouter,
   account: accountRouter,
-  post: postRouter,
   noti: notiRouter
 });
 

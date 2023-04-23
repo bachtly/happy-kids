@@ -1,11 +1,17 @@
-import { FileService } from "./FileService";
-import { injectable } from "tsyringe";
+import type { FileServiceInterface } from "./FileService";
+import { inject, injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { join } from "path";
 
+interface PhotoServiceInterface {
+  getPhotoFromPath: (photoPath: string) => Promise<string>;
+  storePhoto: (photoB64: string, folderPath: string) => string;
+}
 @injectable()
-class PhotoService {
-  constructor(private fileService: FileService) {}
+class PhotoService implements PhotoServiceInterface {
+  constructor(
+    @inject("FileService") private fileService: FileServiceInterface
+  ) {}
   getPhotoFromPath = async (photoPath: string) => {
     if (!photoPath || photoPath === "") return "";
 
@@ -38,3 +44,4 @@ class PhotoService {
 }
 
 export { PhotoService };
+export type { PhotoServiceInterface };

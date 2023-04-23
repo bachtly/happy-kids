@@ -1,16 +1,16 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
-import { FileService } from "../utils/FileService";
+import type { FileServiceInterface } from "../utils/FileService";
 import NotiService from "./noti-service";
 
 @injectable()
 class PickupService {
   constructor(
     private mysqlDB: Kysely<DB>,
-    private fileService: FileService,
+    @inject("FileService") private fileService: FileServiceInterface,
     private notiService: NotiService
   ) {}
 

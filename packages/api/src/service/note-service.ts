@@ -1,6 +1,6 @@
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
@@ -14,11 +14,14 @@ import {
   ThreadStatus
 } from "../router/note/protocols";
 import { getErrorMessage } from "../utils/errorHelper";
-import { FileService } from "../utils/FileService";
+import type { FileServiceInterface } from "../utils/FileService";
 
 @injectable()
 class NoteService {
-  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
+  constructor(
+    private mysqlDB: Kysely<DB>,
+    @inject("FileService") private fileService: FileServiceInterface
+  ) {}
 
   insertNoteMessage = async (
     noteThreadId: string,

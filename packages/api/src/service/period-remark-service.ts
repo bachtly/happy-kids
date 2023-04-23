@@ -1,12 +1,15 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import moment from "moment";
-import { FileService } from "../utils/FileService";
+import type { FileServiceInterface } from "../utils/FileService";
 
 @injectable()
 class PeriodRemarkService {
-  constructor(private mysqlDB: Kysely<DB>, private fileService: FileService) {}
+  constructor(
+    private mysqlDB: Kysely<DB>,
+    @inject("FileService") private fileService: FileServiceInterface
+  ) {}
 
   getPeriodRemarkList = async (studentId: string) => {
     console.log(

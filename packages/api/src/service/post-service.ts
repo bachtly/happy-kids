@@ -1,17 +1,17 @@
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
-import { PhotoService } from "../utils/PhotoService";
-import { injectable } from "tsyringe";
+import type { PhotoServiceInterface } from "../utils/PhotoService";
+import { inject, injectable } from "tsyringe";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
-import { FileService } from "../utils/FileService";
+import type { FileServiceInterface } from "../utils/FileService";
 
 @injectable()
 class PostService {
   constructor(
     private mysqlDB: Kysely<DB>,
-    private fileService: FileService,
-    private photoService: PhotoService
+    @inject("FileService") private fileService: FileServiceInterface,
+    @inject("PhotoService") private photoService: PhotoServiceInterface
   ) {}
 
   getPostList = async (userId: string, page: number, itemsPerPage: number) => {

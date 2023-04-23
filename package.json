@@ -43,7 +43,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint && manypkg check",
     "type-check": "turbo type-check",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "pnpm --filter api test"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [

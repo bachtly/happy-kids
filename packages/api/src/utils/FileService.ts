@@ -2,8 +2,14 @@ import { promises as fsPromises } from "fs";
 import { join } from "path";
 import { injectable } from "tsyringe";
 
+interface FileServiceInterface {
+  asyncWriteFile: (filename: string, data: string) => Promise<void>;
+  asyncReadFile: (filename: string) => Promise<string>;
+  readFileBase64: (filename: string) => Promise<string>;
+}
+
 @injectable()
-class FileService {
+class FileService implements FileServiceInterface {
   readFileBase64 = async (filename: string) => {
     const contents = await fsPromises.readFile(this.getFilePath(filename), {
       encoding: "base64"
@@ -33,3 +39,5 @@ class FileService {
 }
 
 export { FileService };
+
+export type { FileServiceInterface };

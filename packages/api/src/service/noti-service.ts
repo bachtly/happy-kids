@@ -1,14 +1,14 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
-import { PhotoService } from "../utils/PhotoService";
+import type { PhotoServiceInterface } from "../utils/PhotoService";
 import moment from "moment/moment";
 
 @injectable()
 class NotiService {
   constructor(
     private mysqlDB: Kysely<DB>,
-    private photoService: PhotoService
+    @inject("PhotoService") private photoService: PhotoServiceInterface
   ) {}
 
   getNotiList = async (userId: string, classId: string) => {
