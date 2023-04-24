@@ -1,18 +1,17 @@
 {
   "build": {
     "preview": {
+      "env": {
+        "API_URL": "http://38.54.15.167:8000"
+      },
       "android": {
-        "buildType": "apk"
-      }
+        "buildType": "apk",
+        "channel": "preview"
+      },
+      "channel": "preview"
     },
-    "preview2": {
-      "android": {
-        "gradleCommand": ":app:assembleRelease"
-      }
-    },
-    "preview3": {
-      "developmentClient": true
-    },
-    "production": {}
+    "production": {
+      "channel": "production"
+    }
   }
 }

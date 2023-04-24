@@ -211,7 +211,12 @@ class AttendanceService {
         fullname: student.fullname as string,
         avatarUrl: student.avatarUrl as string,
         className: student.className as string,
-        attendanceStatus: student.status as string,
+        attendanceStatus: student.status as
+          | "AbsenseWithoutPermission"
+          | "AbsenseWithPermission"
+          | "CheckedIn"
+          | "CheckedOut"
+          | "NotCheckedIn",
         attendanceCheckinNote: student.checkinNote as string
       };
     });

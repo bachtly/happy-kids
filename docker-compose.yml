@@ -1,0 +1,8 @@
+services:
+  nextjs:
+    image: nospy/pnpm:18-alpine
+    volumes:
+      - ./:/app
+    ports:
+      - 3000:3000
+    command: "pnpm --filter nextjs start"

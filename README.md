@@ -69,3 +69,49 @@ https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code
 ```
 
 ### Make sure that pre-commit hook is running
+
+## Deployment
+
+### Database
+MySQL is deployed in docker and the data should be mounted to server.
+```
+sudo docker run --name mysql -p 3306:3306 -v mysql_volume:/var/lib/mysql/ -d -e "MYSQL_ROOT_PASSWORD=temp123" mysql
+```
+The schema SQL script need to be run manually. Go into the docker container, open mysql shell, then paste the script
+to execute.
+```
+sudo docker exec -it mysql /bin/sh
+mysql -u root -p
+```
+
+### Expo
+The target is having a pre-release version, which allow internal users (teammates, instructors) to download from a URL.
+The app shoud allow updating whenever we build new version.
+#### First build 
+*(Note: should run at the first time. Updates should be used for following builds)*
+```
+pnpm install
+cd apps/expo && eas build --profile preview --platform android
+```
+#### Updates
+```
+pnpm install
+eas update:configure --platform android
+```
+Copy lines of code as the output suggests in to `app.config.ts`. Then run the following command.\
+**Note: The `expo-update` package, which is added during update, should not be committed.
+It will cause stack overflow when buildng the app again**
+```
+cd apps/expo && eas update --branch preview --message "Updating the app" --platform android
+```
+
+### Backend
+**First remember to create a `.env` file inside `app/nextjs`**\
+A nodejs docker is deployed to expose API for client to call. Nginx should be the web server.
+Should manually install and build nextjs first, then start the service.
+```
+pnpm install 
+sudo pnpm kysely-codegen
+pnpm --filter nextjs build
+sudo docker-compose start
+```

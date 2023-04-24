@@ -2,7 +2,7 @@ import { ConfigContext, ExpoConfig } from "@expo/config";
 
 const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
   name: "expo",
-  slug: "capstone-project",
+  slug: "mamnon",
   scheme: "expo",
   version: "1.0.0",
   orientation: "portrait",
@@ -30,10 +30,10 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
   },
   extra: {
     eas: {
-      projectId: "0d2986ef-bcf9-4c5a-934c-b4debb530bfd"
+      projectId: "86937d69-86ef-4543-b67f-31a8cfbd0c71"
     }
   },
-  plugins: ["./expo-plugins/with-modify-gradle.js"]
+  plugins: ["./expo-plugins/with-modify-gradle.js", "expo-build-properties"]
 });
 
 export default defineConfig;
