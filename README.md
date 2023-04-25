@@ -77,11 +77,17 @@ MySQL is deployed in docker and the data should be mounted to server.
 ```
 sudo docker run --name mysql -p 3306:3306 -v mysql_volume:/var/lib/mysql/ -d -e "MYSQL_ROOT_PASSWORD=temp123" mysql
 ```
-The schema SQL script need to be run manually. Go into the docker container, open mysql shell, then paste the script
+The schema SQL script need to be run manually. First, you need to copy mysql scripts to container. 
+```
+sudo docker cp mysql mysql:/
+```
+Go into the docker container, open mysql shell, then paste the script
 to execute.
 ```
 sudo docker exec -it mysql /bin/sh
-mysql -u root -p
+mysql -u root --default-character-set=utf8 -p
+source mysql/schema.sql
+source mysql/seed.sql
 ```
 
 ### Expo
