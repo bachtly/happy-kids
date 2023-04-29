@@ -32,7 +32,7 @@ class FileService implements FileServiceInterface {
   };
 
   private getFilePath = (filename: string) => {
-    const idxOfNext = __dirname.lastIndexOf("./next");
+    const idxOfNext = __dirname.lastIndexOf("/.next");
     if (idxOfNext !== -1) {
       // running inside next
       const storagePath = __dirname.slice(0, idxOfNext) + "/public/storage";

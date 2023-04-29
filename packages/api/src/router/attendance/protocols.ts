@@ -25,8 +25,7 @@ const AttendanceItem = z.object({
 });
 
 const GetAttendanceListResponse = z.object({
-  attendances: z.array(AttendanceItem),
-  message: z.nullable(z.string())
+  attendances: z.array(AttendanceItem)
 });
 
 export {
@@ -61,8 +60,8 @@ const AttendanceItemDetail = z.object({
   checkoutTime: z.nullable(z.date()),
   checkinNote: z.nullable(z.string()),
   checkoutNote: z.nullable(z.string()),
-  checkinPhotoUrl: z.nullable(z.string()),
-  checkoutPhotoUrl: z.nullable(z.string()),
+  checkinPhotos: z.nullable(z.array(z.string())),
+  checkoutPhotos: z.nullable(z.array(z.string())),
 
   checkinTeacherFullname: z.nullable(z.string()),
   checkoutTeacherFullname: z.nullable(z.string()),
@@ -71,8 +70,7 @@ const AttendanceItemDetail = z.object({
 });
 
 const GetAttendanceItemDetailResponse = z.object({
-  attendance: z.nullable(AttendanceItemDetail),
-  message: z.nullable(z.string())
+  attendance: z.nullable(AttendanceItemDetail)
 });
 
 const GetAttendanceStatisticsRequest = z.object({
@@ -89,18 +87,21 @@ const AttendanceStatistics = z.object({
 });
 
 const GetAttendanceStatisticsResponse = z.object({
-  statistics: z.nullable(AttendanceStatistics),
-  message: z.nullable(z.string())
+  statistics: z.nullable(AttendanceStatistics)
 });
 
 const Student = z.object({
   id: z.string(),
   fullname: z.string(),
-  avatarUrl: z.nullable(z.string()),
+  avatar: z.nullable(z.string()),
   className: z.nullable(z.string()),
 
   attendanceStatus: z.nullable(AttendanceStatus),
-  attendanceCheckinNote: z.nullable(z.string())
+  attendanceCheckinNote: z.nullable(z.string()),
+  attendanceCheckoutNote: z.nullable(z.string()),
+
+  checkinPhotos: z.nullable(z.array(z.string())),
+  checkoutPhotos: z.nullable(z.array(z.string()))
 });
 
 const GetStudentListRequest = z.object({
@@ -109,32 +110,26 @@ const GetStudentListRequest = z.object({
 });
 
 const GetStudentListResponse = z.object({
-  students: z.array(Student),
-  message: z.nullable(z.string())
+  students: z.array(Student)
 });
 
 const CheckInRequest = z.object({
   studentId: z.string(),
   status: AttendanceStatus,
   note: z.nullable(z.string()),
-  time: z.date(),
   teacherId: z.string(),
-  photoUrl: z.nullable(z.string())
+  photos: z.nullable(z.array(z.string()))
 });
 
-const CheckInResponse = z.object({
-  message: z.nullable(z.string())
-});
+const CheckInResponse = z.object({});
 
 const CheckOutRequest = z.object({
   studentId: z.string(),
   note: z.nullable(z.string()),
   time: z.date(),
   teacherId: z.string(),
-  photoUrl: z.nullable(z.string()),
+  photos: z.nullable(z.array(z.string())),
   pickerRelativeId: z.nullable(z.string())
 });
 
-const CheckOutResponse = z.object({
-  message: z.nullable(z.string())
-});
+const CheckOutResponse = z.object({});

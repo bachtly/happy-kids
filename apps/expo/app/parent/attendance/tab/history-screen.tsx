@@ -1,23 +1,24 @@
 import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
-import { Text, useTheme, ProgressBar } from "react-native-paper";
+import { FlatList } from "react-native";
+import { ProgressBar } from "react-native-paper";
 import AttendanceItem from "../../../../src/components/attendance/AttendanceItem";
 import { AttendanceItemModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
 import { AttendanceContext } from "../../../../src/utils/attendance-context";
 import Body from "../../../../src/components/Body";
 import DateRangeFilterBar from "../../../../src/components/date-picker/DateRangeFilterBar";
+import { useIsFocused } from "@react-navigation/native";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
 const HistoryScreen = () => {
   // properties
-  const { colors } = useTheme();
   const { studentId } = React.useContext(AttendanceContext) ?? {
     studentId: null
   };
+  const isFocused = useIsFocused();
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
@@ -33,16 +34,22 @@ const HistoryScreen = () => {
 
   // update list when search criterias change
   useEffect(() => {
+    refresh();
+  }, [studentId, timeStart, timeEnd, isFocused]);
+
+  const refresh = () => {
     attMutation.mutate({
       timeStart: timeStart.toDate(),
       timeEnd: timeEnd.toDate(),
       studentId: studentId ?? ""
     });
-  }, [studentId, timeStart, timeEnd]);
+  };
+
+  const isLoading = () => attMutation.isLoading;
 
   return (
     <Body>
-      {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      {isLoading() && <ProgressBar indeterminate visible={true} />}
       <DateRangeFilterBar
         timeStart={timeStart}
         setTimeStart={setTimeStart}
@@ -50,23 +57,15 @@ const HistoryScreen = () => {
         setTimeEnd={setTimeEnd}
       />
 
-      <ScrollView className={"p-2"}>
-        {attendanceList != null && attendanceList.length > 0 ? (
-          attendanceList.map((item, key) => (
-            <AttendanceItem key={key} {...item} />
-          ))
-        ) : (
-          <View className={"mt-5 mb-10"}>
-            <Text
-              className={"text-center"}
-              variant={"titleLarge"}
-              style={{ color: colors.onSurfaceDisabled }}
-            >
-              Không có dữ liệu để hiển thị
-            </Text>
-          </View>
+      <FlatList
+        onRefresh={() => refresh()}
+        refreshing={isLoading()}
+        contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
+        data={attendanceList}
+        renderItem={({ item }: { item: AttendanceItemModel }) => (
+          <AttendanceItem {...item} />
         )}
-      </ScrollView>
+      />
     </Body>
   );
 };

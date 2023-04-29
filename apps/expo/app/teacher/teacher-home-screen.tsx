@@ -40,7 +40,7 @@ const TeacherHomeScreen = () => {
                 icon={attIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/teacher/attendance",
+                    pathname: "/teacher/attendance/tab/attendance-home-screen",
                     params: { classId }
                   })
                 }

@@ -1,143 +1,95 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
+import { Avatar, Text } from "react-native-paper";
 import {
-  Avatar,
-  Button,
-  RadioButton,
-  Text,
-  TextInput
-} from "react-native-paper";
-import {
+  AttendanceStatus,
   AttendanceStudentModel,
   STATUS_ENUM_TO_VERBOSE
 } from "../../models/AttendanceModels";
-import { api } from "../../utils/api";
-import { useAuthContext } from "../../utils/auth-context-provider";
-import MyImagePicker from "../ImagePicker";
 import CustomCard from "../CustomCard";
-
-enum Status {
-  NotCheckedIn = "NotCheckedIn",
-  CheckedIn = "CheckedIn",
-  AbsenseWithPermission = "AbsenseWithPermission",
-  AbsenseWithoutPermission = "AbsenseWithoutPermission"
-}
+import { useRouter } from "expo-router";
+import UnderlineButton from "../common/UnderlineButton";
+import EllipsedText from "../common/EllipsedText";
+import defaultAvatar from "assets/images/default-user-avatar.png";
+import MultipleImageView from "../common/MultiImageView";
 
 interface CheckinItemProps {
   attendanceStudentModel: AttendanceStudentModel;
   refresh: () => void;
-  date: Date;
 }
 
 const CheckinItem = (props: CheckinItemProps) => {
-  const [image, setImage] = useState("");
-  const [status, setStatus] = useState(
-    props.attendanceStudentModel.attendanceStatus || Status.NotCheckedIn
-  );
-  const [note, setNote] = useState("");
+  const router = useRouter();
+
   const [isFilled, setIsFilled] = useState(false);
-
-  const authContext = useAuthContext();
-
-  const attMutation = api.attendance.checkin.useMutation({
-    onSuccess: () => props.refresh()
-  });
 
   useEffect(() => {
     setIsFilled(
       props.attendanceStudentModel.attendanceStatus != null &&
         props.attendanceStudentModel.attendanceStatus !=
-          Status.NotCheckedIn.toString()
+          AttendanceStatus.NotCheckedIn.toString()
     );
   });
 
   return (
-    <View className={"mb-3"}>
-      <CustomCard>
-        <View className={"mb-3 flex-row space-x-2"}>
-          <Avatar.Image
-            className={"my-auto"}
-            size={42}
-            source={{ uri: props.attendanceStudentModel.avatarUrl ?? "" }}
-          />
-          <View>
-            <Text className={""} variant={"titleSmall"}>
-              {props.attendanceStudentModel.fullname}
-            </Text>
-            <Text className={"italic"} variant={"bodyMedium"}>
-              {props.attendanceStudentModel.attendanceStatus &&
-                STATUS_ENUM_TO_VERBOSE.get(
-                  props.attendanceStudentModel.attendanceStatus
-                )}
-            </Text>
-          </View>
+    <CustomCard>
+      <View className={"mb-3 flex-row space-x-2"}>
+        <Avatar.Image
+          className={"my-auto"}
+          size={42}
+          source={
+            props.attendanceStudentModel.avatar
+              ? {
+                  uri: `data:image/jpeg;base64,${props.attendanceStudentModel.avatar}`
+                }
+              : defaultAvatar
+          }
+        />
+        <View>
+          <Text className={""} variant={"titleSmall"}>
+            {props.attendanceStudentModel.fullname}
+          </Text>
+          <Text className={"italic"} variant={"bodyMedium"}>
+            {props.attendanceStudentModel.attendanceStatus &&
+              STATUS_ENUM_TO_VERBOSE.get(
+                props.attendanceStudentModel.attendanceStatus
+              )}
+          </Text>
         </View>
+      </View>
 
-        <View className={"mb-3 flex-row justify-between"} style={{ left: -8 }}>
-          {[
-            Status.CheckedIn,
-            Status.AbsenseWithPermission,
-            Status.AbsenseWithoutPermission
-          ].map((itemStatus, key) => (
-            <View key={key} className={"flex-row"}>
-              <RadioButton
-                value={itemStatus.toString()}
-                status={status == itemStatus ? "checked" : "unchecked"}
-                onPress={() => setStatus(itemStatus)}
-                disabled={isFilled}
-              />
-              <Text className={"m-auto"}>
-                {STATUS_ENUM_TO_VERBOSE.get(itemStatus.toString())}
-              </Text>
-            </View>
-          ))}
-        </View>
+      <View className={"mb-2"}>
+        <EllipsedText
+          lines={2}
+          content={
+            isFilled
+              ? props.attendanceStudentModel.attendanceCheckinNote ?? ""
+              : "Hôm nay bé chưa được điểm danh"
+          }
+        />
+      </View>
 
-        <View className={"mb-3"}>
-          <TextInput
-            className={"flex-1"}
-            onChangeText={(text) => setNote(text.toString())}
-            outlineStyle={{ padding: 0 }}
-            contentStyle={{ margin: 0, padding: 1 }}
-            placeholder={
-              props.attendanceStudentModel.attendanceCheckinNote ||
-              "Ghi chú ..."
-            }
-            multiline={true}
-            disabled={isFilled}
-          />
-        </View>
+      {isFilled && (
+        <MultipleImageView
+          images={props.attendanceStudentModel.checkinPhotos ?? []}
+        />
+      )}
 
-        <View className={"mb-3 h-20 w-20"}>
-          <MyImagePicker
-            imageData={image}
-            setImageData={setImage}
-            disabled={isFilled}
-          />
-        </View>
-
-        <Button
-          mode={"outlined"}
-          disabled={isFilled}
-          onPress={() => {
-            const studentId = props.attendanceStudentModel.id;
-            const teacherId = authContext.userId;
-
-            teacherId &&
-              attMutation.mutate({
-                studentId: studentId,
-                status: status,
-                note: note,
-                time: props.date,
-                photoUrl: props.attendanceStudentModel.avatarUrl,
-                teacherId: teacherId
+      {!isFilled && (
+        <View style={{ alignSelf: "flex-end" }}>
+          <UnderlineButton
+            onPress={() => {
+              router.push({
+                pathname: "teacher/attendance/checkin-text-editor-screen",
+                params: { studentId: props.attendanceStudentModel.id }
               });
-          }}
-        >
-          Điểm danh
-        </Button>
-      </CustomCard>
-    </View>
+            }}
+          >
+            Điểm danh ngay
+          </UnderlineButton>
+        </View>
+      )}
+    </CustomCard>
   );
 };
 

@@ -65,9 +65,8 @@ const attendanceRouter = createTRPCRouter({
           input.studentId,
           input.status,
           input.note ?? "",
-          input.time,
           input.teacherId,
-          input.photoUrl ?? ""
+          input.photos ?? []
         )
     ),
 
@@ -81,7 +80,7 @@ const attendanceRouter = createTRPCRouter({
           input.note ?? "",
           input.time,
           input.teacherId,
-          input.photoUrl ?? "",
+          input.photos ?? [],
           input.pickerRelativeId ?? ""
         )
     )

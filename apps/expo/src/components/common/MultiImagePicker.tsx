@@ -30,7 +30,9 @@ const MultiImagePicker = (props: MultiImagePickerProps) => {
   };
 
   useEffect(() => {
-    props.onImagesChange(images.map((image) => image.photo));
+    props.onImagesChange(
+      images.map((image) => image.photo).filter((photo) => photo.trim() != "")
+    );
   }, [images]);
 
   return (

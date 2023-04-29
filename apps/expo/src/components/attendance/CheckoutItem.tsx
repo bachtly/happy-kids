@@ -1,109 +1,96 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import { View } from "react-native";
-import { Avatar, Button, Text, TextInput } from "react-native-paper";
+import { Avatar, Text } from "react-native-paper";
 import {
+  AttendanceStatus,
   AttendanceStudentModel,
   STATUS_ENUM_TO_VERBOSE
 } from "../../models/AttendanceModels";
-import { api } from "../../utils/api";
-import { useAuthContext } from "../../utils/auth-context-provider";
-import MyImagePicker from "../ImagePicker";
 import CustomCard from "../CustomCard";
-
-enum Status {
-  NotCheckedIn = "NotCheckedIn",
-  CheckedIn = "CheckedIn",
-  AbsenseWithPermission = "AbsenseWithPermission",
-  AbsenseWithoutPermission = "AbsenseWithoutPermission"
-}
+import defaultAvatar from "assets/images/default-user-avatar.png";
+import EllipsedText from "../common/EllipsedText";
+import UnderlineButton from "../common/UnderlineButton";
+import { useRouter } from "expo-router";
+import { Moment } from "moment";
+import MultipleImageView from "../common/MultiImageView";
 
 interface CheckoutItemProps {
   attendanceStudentModel: AttendanceStudentModel;
   refresh: () => void;
-  date: Date;
+  time: Moment;
 }
 
 const CheckoutItem = (props: CheckoutItemProps) => {
-  const [image, setImage] = useState("");
-  const [note, setNote] = useState("");
-  const [isFilled, setIsFilled] = useState(false);
-
-  const authContext = useAuthContext();
-
-  const attMutation = api.attendance.checkout.useMutation({
-    onSuccess: () => props.refresh()
-  });
-
-  useEffect(() => {
-    setIsFilled(
-      props.attendanceStudentModel.attendanceStatus == null ||
-        props.attendanceStudentModel.attendanceStatus !=
-          Status.CheckedIn.toString()
-    );
-  });
+  const router = useRouter();
 
   return (
-    <View className={"mb-3"}>
-      <CustomCard>
-        <View className={"mb-3 flex-row space-x-3"}>
-          <Avatar.Image
-            className={"my-auto"}
-            size={42}
-            source={{ uri: props.attendanceStudentModel.avatarUrl ?? "" }}
-          />
-          <View>
-            <Text className={""} variant={"titleSmall"}>
-              {props.attendanceStudentModel.fullname}
-            </Text>
-            <Text className={"italic"} variant={"bodyMedium"}>
-              {props.attendanceStudentModel.attendanceStatus &&
-                STATUS_ENUM_TO_VERBOSE.get(
-                  props.attendanceStudentModel.attendanceStatus
-                )}
-            </Text>
-          </View>
+    <CustomCard>
+      <View className={"mb-3 flex-row space-x-3"}>
+        <Avatar.Image
+          className={"my-auto"}
+          size={42}
+          source={
+            props.attendanceStudentModel.avatar
+              ? {
+                  uri: `data:image/jpeg;base64,${props.attendanceStudentModel.avatar}`
+                }
+              : defaultAvatar
+          }
+        />
+        <View>
+          <Text className={""} variant={"titleSmall"}>
+            {props.attendanceStudentModel.fullname}
+          </Text>
+          <Text className={"italic"} variant={"bodyMedium"}>
+            {props.attendanceStudentModel.attendanceStatus &&
+              STATUS_ENUM_TO_VERBOSE.get(
+                props.attendanceStudentModel.attendanceStatus
+              )}
+          </Text>
         </View>
+      </View>
 
-        <View className={"mb-3 flex-row space-x-3"}>
-          <TextInput
-            className={"flex-1"}
-            onChangeText={(text) => setNote(text.toString())}
-            outlineStyle={{ padding: 0 }}
-            contentStyle={{ margin: 0, padding: 1 }}
-            placeholder={"Ghi chú"}
-            multiline={true}
-            disabled={isFilled}
-          />
-        </View>
+      <View className={"mb-2"}>
+        <EllipsedText
+          lines={2}
+          content={
+            props.attendanceStudentModel.attendanceStatus ==
+            AttendanceStatus.CheckedOut
+              ? props.attendanceStudentModel.attendanceCheckoutNote ?? ""
+              : props.attendanceStudentModel.attendanceStatus ==
+                AttendanceStatus.CheckedIn
+              ? "Hôm nay bé chưa được điểm danh về"
+              : "Hôm nay bé chưa được điểm danh đến"
+          }
+        />
+      </View>
 
-        <View className={"mb-3 h-20 w-20"}>
-          <MyImagePicker
-            imageData={image}
-            setImageData={setImage}
-            disabled={isFilled}
-          />
-        </View>
+      {props.attendanceStudentModel.attendanceStatus ==
+        AttendanceStatus.CheckedOut && (
+        <MultipleImageView
+          images={props.attendanceStudentModel.checkinPhotos ?? []}
+        />
+      )}
 
-        <Button
-          onPress={() => {
-            const studentId = props.attendanceStudentModel.id;
-            const teacherId = authContext.userId;
-
-            teacherId &&
-              attMutation.mutate({
-                studentId: studentId,
-                note: note,
-                time: props.date,
-                photoUrl: props.attendanceStudentModel.avatarUrl,
-                teacherId: teacherId,
-                pickerRelativeId: null
+      {props.attendanceStudentModel.attendanceStatus ==
+        AttendanceStatus.CheckedIn && (
+        <View style={{ alignSelf: "flex-end" }}>
+          <UnderlineButton
+            onPress={() => {
+              router.push({
+                pathname: "teacher/attendance/checkout-text-editor-screen",
+                params: {
+                  studentId: props.attendanceStudentModel.id,
+                  time: props.time.toISOString()
+                }
               });
-          }}
-        >
-          Điểm danh
-        </Button>
-      </CustomCard>
-    </View>
+            }}
+          >
+            Điểm danh ngay
+          </UnderlineButton>
+        </View>
+      )}
+    </CustomCard>
   );
 };
 

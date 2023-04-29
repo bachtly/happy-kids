@@ -9,10 +9,10 @@ import {
   useTheme,
   ProgressBar
 } from "react-native-paper";
-import MyImagePicker from "../../../src/components/ImagePicker";
 import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import MultipleImageView from "../../../src/components/common/MultiImageView";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -100,15 +100,7 @@ const DetailScreen = () => {
 
           <View className={"mb-2"}>
             <Text className={"mb-2"}>Hình ảnh:</Text>
-            {attendance && attendance.checkinPhotoUrl && (
-              <View className={"h-24 w-24"}>
-                <MyImagePicker
-                  imageData={attendance?.checkinPhotoUrl ?? ""}
-                  setImageData={() => {}}
-                  disabled={true}
-                />
-              </View>
-            )}
+            <MultipleImageView images={attendance?.checkinPhotos ?? []} />
           </View>
           <Divider className={"mb-2"} />
         </View>
@@ -143,15 +135,7 @@ const DetailScreen = () => {
 
           <View className={"mb-2"}>
             <Text className={"mb-2"}>Hình ảnh:</Text>
-            {attendance && attendance.checkoutPhotoUrl && (
-              <View className={"h-24 w-24"}>
-                <MyImagePicker
-                  imageData={attendance?.checkoutPhotoUrl ?? ""}
-                  setImageData={() => {}}
-                  disabled={true}
-                />
-              </View>
-            )}
+            <MultipleImageView images={attendance?.checkoutPhotos ?? []} />
           </View>
           <Divider className={"mb-2"} />
         </View>

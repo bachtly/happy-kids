@@ -220,8 +220,8 @@ Table KindergartenSchema.Attendance {
   checkoutTime datetime
   checkinNote varchar
   checkoutNote varchar
-  checkinPhotoUrl varchar
-  checkoutPhotoUrl varchar
+  checkinPhotos varchar
+  checkoutPhotos varchar
   status KindergartenSchema.CheckInStatusEnum
 
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]

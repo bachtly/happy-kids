@@ -4,10 +4,15 @@ import moment from "moment";
 import { injectable } from "tsyringe";
 import { AttendanceStatus } from "../router/attendance/protocols";
 import { z } from "zod";
+import { PhotoService } from "../utils/PhotoService";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 
 @injectable()
 class AttendanceService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(
+    private mysqlDB: Kysely<DB>,
+    private photoService: PhotoService
+  ) {}
 
   getAttendanceList = async (
     timeStart: Date,
@@ -37,11 +42,13 @@ class AttendanceService {
       .where("date", "<=", timeEnd)
       .where("studentId", "=", studentId)
       .execute()
-      .then((resp) => resp.flat());
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     return {
-      attendances: attendances,
-      message: null
+      attendances: attendances
     };
   };
 
@@ -77,25 +84,46 @@ class AttendanceService {
         "Attendance.checkoutTime",
         "Attendance.checkinNote",
         "Attendance.checkoutNote",
-        "Attendance.checkinPhotoUrl",
-        "Attendance.checkoutPhotoUrl",
+        "Attendance.checkinPhotos",
+        "Attendance.checkoutPhotos",
         "CheckinTeacher.fullname as checkinTeacherFullname",
         "CheckoutTeacher.fullname as checkoutTeacherFullname",
         "Relative.fullname as pickerRelativeFullname"
       ])
       .where("Attendance.id", "=", id)
-      .executeTakeFirst();
+      .executeTakeFirstOrThrow()
+      .then(async (resp) => {
+        const checkinPhotoPaths = resp.checkinPhotos
+          ? <string[]>JSON.parse(resp.checkinPhotos)
+          : [];
+        const checkoutPhotoPaths = resp.checkoutPhotos
+          ? <string[]>JSON.parse(resp.checkoutPhotos)
+          : [];
 
-    if (attendance == null) {
-      return {
-        attendance: null,
-        message: "No record found"
-      };
-    }
+        const checkinPhotos = await Promise.all(
+          checkinPhotoPaths.map((photoPath) =>
+            this.photoService.getPhotoFromPath(photoPath)
+          )
+        );
+        const checkoutPhotos = await Promise.all(
+          checkoutPhotoPaths.map((photoPath) =>
+            this.photoService.getPhotoFromPath(photoPath)
+          )
+        );
+
+        return {
+          ...resp,
+          checkinPhotos: checkinPhotos,
+          checkoutPhotos: checkoutPhotos
+        };
+      })
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     return {
-      attendance: attendance,
-      message: null
+      attendance: attendance
     };
   };
 
@@ -120,7 +148,11 @@ class AttendanceService {
       .where("date", "<=", timeEnd)
       .where("studentId", "=", studentId)
       .execute()
-      .then((resp) => resp.flat());
+      .then((resp) => resp.flat())
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     const statistics = {
       CheckedIn: 0,
@@ -132,6 +164,7 @@ class AttendanceService {
     records.map((record) => {
       switch (record.status) {
         case "CheckedIn":
+        case "CheckedOut":
           statistics.CheckedIn = record.count;
           break;
         case "NotCheckedIn":
@@ -145,19 +178,20 @@ class AttendanceService {
           break;
         default:
           console.log("The attendance status is not handled");
+          throw SYSTEM_ERROR_MESSAGE;
       }
     });
 
     return {
-      statistics: statistics,
-      message: null
+      statistics: statistics
     };
   };
 
   getStudentList = async (classId: string, date: Date) => {
     console.log(
       `getStudentList receive request ${JSON.stringify({
-        classId: classId
+        classId: classId,
+        date: date
       })}`
     );
 
@@ -177,7 +211,7 @@ class AttendanceService {
       .leftJoin(
         this.mysqlDB
           .selectFrom("Attendance")
-          .select(["studentId", "status", "checkinNote"])
+          .selectAll()
           .where("date", "<=", endOfDate)
           .where("date", ">=", startOfDate)
           .as("Attendance"),
@@ -190,40 +224,64 @@ class AttendanceService {
         "Student.avatarUrl",
         "Class.name as className",
         "Attendance.status",
-        "Attendance.checkinNote"
+        "Attendance.checkinNote",
+        "Attendance.checkoutNote",
+        "Attendance.checkinPhotos",
+        "Attendance.checkoutPhotos"
       ])
       .where("Class.id", "=", classId)
       .execute()
-      .then((resp) => {
-        const rawStudents = resp.map((item) => {
+      .then((resp) =>
+        resp.map((item) => {
           if (!item.status) {
             item.status = "NotCheckedIn";
           }
           return item;
-        });
-
-        return rawStudents;
+        })
+      )
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
 
-    const refinedStudents = rawStudents.map((student) => {
-      return {
-        id: student.id,
-        fullname: student.fullname as string,
-        avatarUrl: student.avatarUrl as string,
-        className: student.className as string,
-        attendanceStatus: student.status as
-          | "AbsenseWithoutPermission"
-          | "AbsenseWithPermission"
-          | "CheckedIn"
-          | "CheckedOut"
-          | "NotCheckedIn",
-        attendanceCheckinNote: student.checkinNote as string
-      };
-    });
+    const refinedStudents = await Promise.all(
+      rawStudents.map(async (student) => {
+        const checkinPhotoPaths = student.checkinPhotos
+          ? <string[]>JSON.parse(student.checkinPhotos)
+          : [];
+        const checkoutPhotoPaths = student.checkoutPhotos
+          ? <string[]>JSON.parse(student.checkoutPhotos)
+          : [];
+
+        const checkinPhotos = await Promise.all(
+          checkinPhotoPaths.map((photoPath) =>
+            this.photoService.getPhotoFromPath(photoPath)
+          )
+        );
+        const checkoutPhotos = await Promise.all(
+          checkoutPhotoPaths.map((photoPath) =>
+            this.photoService.getPhotoFromPath(photoPath)
+          )
+        );
+
+        return {
+          id: student.id,
+          fullname: student.fullname as string,
+          avatar: await this.photoService.getPhotoFromPath(
+            student.avatarUrl ?? ""
+          ),
+          className: student.className as string,
+          attendanceStatus: student.status as z.infer<typeof AttendanceStatus>,
+          attendanceCheckinNote: student.checkinNote as string,
+          attendanceCheckoutNote: student.checkoutNote as string,
+          checkinPhotos: checkinPhotos,
+          checkoutPhotos: checkoutPhotos
+        };
+      })
+    );
 
     return {
-      students: refinedStudents,
-      message: null
+      students: refinedStudents
     };
   };
 
@@ -231,41 +289,46 @@ class AttendanceService {
     studentId: string,
     status: z.infer<typeof AttendanceStatus>,
     note: string,
-    time: Date,
     teacherId: string,
-    photoUrl: string
+    photos: string[]
   ) => {
     console.log(
       `checkIn receive request ${JSON.stringify({
         status: status,
-        date: time,
-        checkInTime: time,
         checkInNote: note,
         studentId: studentId,
         teacherId: teacherId,
-        checkInPhotoUrl: photoUrl
+        checkInPhotos: photos
       })}`
     );
 
-    const count = await this.mysqlDB
+    if (studentId === "") throw SYSTEM_ERROR_MESSAGE;
+    if (note === "") throw "Vui lòng thêm ghi chú";
+    if (status == "NotCheckedIn") throw "Vui lòng chọn tình trạng điểm danh";
+    if (status == "CheckedIn" && photos.length == 0)
+      throw "Vui lòng tải lên hình ảnh điểm danh của bé";
+
+    await this.mysqlDB
       .insertInto("Attendance")
       .values({
         status: status,
-        date: time,
-        checkinTime: time,
+        date: moment().toDate(),
         checkinNote: note,
         studentId: studentId,
         checkinTeacherId: teacherId,
-        checkinPhotoUrl: photoUrl
+        checkinPhotos: JSON.stringify(
+          photos.map((photo) => {
+            return this.photoService.storePhoto(photo, "./attendance");
+          })
+        )
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
-
-    return {
-      message: null
-    };
+    return {};
   };
 
   checkout = async (
@@ -273,49 +336,53 @@ class AttendanceService {
     note: string,
     time: Date,
     teacherId: string,
-    photoUrl: string,
+    photos: string[],
     pickerRelativeId: string
   ) => {
     console.log(
       `checkOut receive request ${JSON.stringify({
         date: time,
-        checkoutTime: time,
         checkoutNote: note,
         studentId: studentId,
         teacherId: teacherId,
-        checkoutPhotoUrl: photoUrl,
+        checkoutPhotos: photos,
         pickerRelativeId: pickerRelativeId
       })}`
     );
+
+    if (studentId === "") throw SYSTEM_ERROR_MESSAGE;
+    if (note === "") throw "Vui lòng thêm ghi chú";
+    if (photos.length == 0) throw "Vui lòng tải lên hình ảnh điểm danh của bé";
 
     const startOfDate = moment(moment(time).format("MM/DD/YYYY")).toDate();
     const endOfDate = moment(moment(time).format("MM/DD/YYYY"))
       .add(1, "day")
       .toDate();
 
-    const query = this.mysqlDB
+    await this.mysqlDB
       .updateTable("Attendance")
       .set({
         status: "CheckedOut",
-        checkoutTime: time,
+        checkoutTime: moment().toDate(),
         checkoutNote: note,
         checkoutTeacherId: teacherId,
-        checkoutPhotoUrl: photoUrl,
+        checkoutPhotos: JSON.stringify(
+          photos.map((photo) => {
+            return this.photoService.storePhoto(photo, "./attendance");
+          })
+        ),
         pickerRelativeId: pickerRelativeId != "" ? pickerRelativeId : null
       })
       .where("studentId", "=", studentId)
       .where("date", "<=", endOfDate)
-      .where("date", ">=", startOfDate);
-
-    const count = await query
+      .where("date", ">=", startOfDate)
       .executeTakeFirstOrThrow()
-      .then((res) => res.numUpdatedRows);
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (count && count <= 0) return { message: "Update fail." };
-
-    return {
-      message: null
-    };
+    return {};
   };
 }
 

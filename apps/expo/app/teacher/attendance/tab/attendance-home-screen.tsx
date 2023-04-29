@@ -4,14 +4,14 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "react-native-paper";
 import CheckinScreen from "./checkin-screen";
 import CheckoutScreen from "./checkout-screen";
-import { TeacherAttendanceContext } from "../../../src/utils/attendance-context";
-import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import { TeacherAttendanceContext } from "../../../../src/utils/attendance-context";
+import CustomStackScreen from "../../../../src/components/CustomStackScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
-const AttendanceLayout = () => {
+const AttendanceHomeScreen = () => {
   const { colors } = useTheme();
   const { classId } = useSearchParams();
   const [classIdSaved, setClassIdSaved] = useState("");
@@ -50,4 +50,4 @@ const AttendanceLayout = () => {
   );
 };
 
-export default AttendanceLayout;
+export default AttendanceHomeScreen;
