@@ -2,22 +2,9 @@ import "reflect-metadata";
 import AccountService from "../account-service";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
-import { getTestDB } from "@acme/db";
-import { FileServiceInterface } from "../../utils/FileService";
 import { PhotoService } from "../../utils/PhotoService";
-
-class MockFileService implements FileServiceInterface {
-  storage = "";
-  readFileBase64 = (_: string) => {
-    return Promise.resolve("");
-  };
-  asyncReadFile = async (_: string) => {
-    return Promise.resolve(this.storage);
-  };
-  asyncWriteFile = async (_: string, data: string) => {
-    this.storage = await Promise.resolve(data);
-  };
-}
+import { FileService } from "../../utils/FileService";
+import { getTestDB } from "@acme/db";
 
 describe("AccountService", () => {
   let accountService: AccountService;
@@ -27,7 +14,7 @@ describe("AccountService", () => {
     mysqlDB = await getTestDB();
     accountService = new AccountService(
       mysqlDB,
-      new PhotoService(new MockFileService())
+      new PhotoService(new FileService())
     );
   }, 10000);
 
@@ -94,7 +81,7 @@ describe("AccountService", () => {
         }
       },
       {
-        testName: "not match pass",
+        testName: "parent",
         userId: "prid1000-0000-0000-0000-000000000000",
         expected: {
           errMess: "",
@@ -124,7 +111,7 @@ describe("AccountService", () => {
   describe("updatePassword then checkPassword", () => {
     const dataSet = [
       {
-        testName: "no error",
+        testName: "success",
         userId: "mgrid100-0000-0000-0000-000000000000",
         oldPass: "password123",
         newPass: "newpass123",
@@ -179,7 +166,7 @@ describe("AccountService", () => {
   describe("updateAccountInfo then getAccountInfo", () => {
     const dataSet = [
       {
-        testName: "no error",
+        testName: "success",
         userId: "mgrid100-0000-0000-0000-000000000000",
         accountInfo: {
           fullname: "newName",

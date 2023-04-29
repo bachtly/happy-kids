@@ -32,9 +32,19 @@ class FileService implements FileServiceInterface {
   };
 
   private getFilePath = (filename: string) => {
-    const storagePath =
-      __dirname.slice(0, __dirname.lastIndexOf("/.next")) + "/public/storage";
-    return join(storagePath, filename);
+    const idxOfNext = __dirname.lastIndexOf("./next");
+    if (idxOfNext !== -1) {
+      // running inside next
+      const storagePath = __dirname.slice(0, idxOfNext) + "/public/storage";
+      return join(storagePath, filename);
+    } else {
+      // running inside api
+      return join(
+        __dirname,
+        "../../../../apps/nextjs/public/storage",
+        filename
+      );
+    }
   };
 }
 

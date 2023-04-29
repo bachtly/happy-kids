@@ -8,7 +8,8 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "test": "pnpm with-env jest --coverage",
+    "test:unit": "pnpm with-env jest unit --coverage",
+    "test:int": "pnpm with-env jest int --coverage",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {

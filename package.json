@@ -45,7 +45,8 @@
     "lint": "turbo lint && manypkg check",
     "type-check": "turbo type-check",
     "prepare": "husky install",
-    "test": "pnpm --filter api test"
+    "test:unit": "pnpm --filter api test:unit",
+    "test:int": "pnpm --filter api test:int"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
