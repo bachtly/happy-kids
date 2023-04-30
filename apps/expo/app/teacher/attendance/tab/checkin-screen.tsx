@@ -10,6 +10,7 @@ import { TeacherAttendanceContext } from "../../../../src/utils/attendance-conte
 import Body from "../../../../src/components/Body";
 import DateFilterBar from "../../../../src/components/date-picker/DateFilterBar";
 import CustomStackScreen from "../../../../src/components/CustomStackScreen";
+import AlertModal from "../../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -20,13 +21,15 @@ const CheckinScreen = () => {
 
   // states
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // data
   const [studentList, setStudentList] = useState<AttendanceStudentModel[]>([]);
   const attMutation = api.attendance.getStudentList.useMutation({
     onSuccess: (resp) => {
       setStudentList(resp.students);
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // update list when search criterias change
@@ -60,8 +63,15 @@ const CheckinScreen = () => {
         contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
         data={studentList}
         renderItem={({ item }: { item: AttendanceStudentModel }) => (
-          <CheckinItem attendanceStudentModel={item} refresh={refresh} />
+          <CheckinItem attendance={item} refresh={refresh} />
         )}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </Body>
   );

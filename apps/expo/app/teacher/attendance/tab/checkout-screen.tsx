@@ -9,6 +9,7 @@ import { TeacherAttendanceContext } from "../../../../src/utils/attendance-conte
 import Body from "../../../../src/components/Body";
 import DateFilterBar from "../../../../src/components/date-picker/DateFilterBar";
 import { useIsFocused } from "@react-navigation/native";
+import AlertModal from "../../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -18,11 +19,13 @@ const CheckoutScreen = () => {
   const isFocused = useIsFocused();
 
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // data
   const [studentList, setStudentList] = useState<AttendanceStudentModel[]>([]);
   const attMutation = api.attendance.getStudentList.useMutation({
-    onSuccess: (resp) => setStudentList(resp.students)
+    onSuccess: (resp) => setStudentList(resp.students),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // update list when search criterias change
@@ -55,11 +58,18 @@ const CheckoutScreen = () => {
         data={studentList}
         renderItem={({ item }: { item: AttendanceStudentModel }) => (
           <CheckoutItem
-            attendanceStudentModel={item}
+            attendance={item}
             refresh={() => refresh()}
             time={time}
           />
         )}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </Body>
   );

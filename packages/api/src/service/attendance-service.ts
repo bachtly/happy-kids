@@ -215,23 +215,63 @@ class AttendanceService {
         "Attendance.studentId",
         "Student.id"
       )
+      .leftJoin(
+        this.mysqlDB
+          .selectFrom("LeaveLetter")
+          .selectAll()
+          .where(
+            "LeaveLetter.startDate",
+            "<=",
+            this.timeService.getEndOfDay(date)
+          )
+          .where(
+            "LeaveLetter.endDate",
+            ">=",
+            this.timeService.getStartOfDay(date)
+          )
+          .as("LeaveLetter"),
+        "LeaveLetter.studentId",
+        "Student.id"
+      )
+      .leftJoin(
+        this.mysqlDB
+          .selectFrom("PickupLetter")
+          .selectAll()
+          .where(
+            "PickupLetter.pickupTime",
+            "<=",
+            this.timeService.getEndOfDay(date)
+          )
+          .where(
+            "PickupLetter.pickupTime",
+            ">=",
+            this.timeService.getStartOfDay(date)
+          )
+          .as("PickupLetter"),
+        "PickupLetter.studentId",
+        "Student.id"
+      )
       .select([
         "Student.id",
         "Student.fullname",
         "Student.avatarUrl",
         "Class.name as className",
-        "Attendance.status",
-        "Attendance.checkinNote",
-        "Attendance.checkoutNote",
+        "Attendance.status as attendanceStatus",
+        "Attendance.checkinNote as attendanceCheckinNote",
+        "Attendance.checkoutNote as attendanceCheckoutNote",
         "Attendance.checkinPhotos",
-        "Attendance.checkoutPhotos"
+        "Attendance.checkoutPhotos",
+        "LeaveLetter.status as leaveletterStatus",
+        "LeaveLetter.id as leaveletterId",
+        "PickupLetter.id as pickupLetterId",
+        "PickupLetter.status as pickupLetterStatus"
       ])
       .where("Class.id", "=", classId)
       .execute()
       .then((resp) =>
         resp.map((item) => {
-          if (!item.status) {
-            item.status = "NotCheckedIn";
+          if (!item.attendanceStatus) {
+            item.attendanceStatus = "NotCheckedIn";
           }
           return item;
         })
@@ -262,15 +302,10 @@ class AttendanceService {
         );
 
         return {
-          id: student.id,
-          fullname: student.fullname as string,
+          ...student,
           avatar: await this.photoService.getPhotoFromPath(
             student.avatarUrl ?? ""
           ),
-          className: student.className as string,
-          attendanceStatus: student.status as z.infer<typeof AttendanceStatus>,
-          attendanceCheckinNote: student.checkinNote as string,
-          attendanceCheckoutNote: student.checkoutNote as string,
           checkinPhotos: checkinPhotos,
           checkoutPhotos: checkoutPhotos
         };
@@ -310,6 +345,7 @@ class AttendanceService {
       .values({
         status: status,
         date: moment().toDate(),
+        checkinTime: moment().toDate(),
         checkinNote: note,
         studentId: studentId,
         checkinTeacherId: teacherId,

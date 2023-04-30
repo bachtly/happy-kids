@@ -13,9 +13,10 @@ import UnderlineButton from "../common/UnderlineButton";
 import { useRouter } from "expo-router";
 import { Moment } from "moment";
 import MultipleImageView from "../common/MultiImageView";
+import LetterStatusText from "../medicine/StatusText";
 
 interface CheckoutItemProps {
-  attendanceStudentModel: AttendanceStudentModel;
+  attendance: AttendanceStudentModel;
   refresh: () => void;
   time: Moment;
 }
@@ -30,22 +31,20 @@ const CheckoutItem = (props: CheckoutItemProps) => {
           className={"my-auto"}
           size={42}
           source={
-            props.attendanceStudentModel.avatar
+            props.attendance.avatar
               ? {
-                  uri: `data:image/jpeg;base64,${props.attendanceStudentModel.avatar}`
+                  uri: `data:image/jpeg;base64,${props.attendance.avatar}`
                 }
               : defaultAvatar
           }
         />
         <View>
           <Text className={""} variant={"titleSmall"}>
-            {props.attendanceStudentModel.fullname}
+            {props.attendance.fullname}
           </Text>
           <Text className={"italic"} variant={"bodyMedium"}>
-            {props.attendanceStudentModel.attendanceStatus &&
-              STATUS_ENUM_TO_VERBOSE.get(
-                props.attendanceStudentModel.attendanceStatus
-              )}
+            {props.attendance.attendanceStatus &&
+              STATUS_ENUM_TO_VERBOSE.get(props.attendance.attendanceStatus)}
           </Text>
         </View>
       </View>
@@ -54,33 +53,42 @@ const CheckoutItem = (props: CheckoutItemProps) => {
         <EllipsedText
           lines={2}
           content={
-            props.attendanceStudentModel.attendanceStatus ==
-            AttendanceStatus.CheckedOut
-              ? props.attendanceStudentModel.attendanceCheckoutNote ?? ""
-              : props.attendanceStudentModel.attendanceStatus ==
-                AttendanceStatus.CheckedIn
-              ? "Hôm nay bé chưa được điểm danh về"
-              : "Hôm nay bé chưa được điểm danh đến"
+            props.attendance.attendanceStatus == AttendanceStatus.CheckedOut
+              ? props.attendance.attendanceCheckoutNote ?? ""
+              : props.attendance.attendanceStatus == AttendanceStatus.CheckedIn
+              ? "Bé chưa được điểm danh về"
+              : "Bé chưa được điểm danh đến"
           }
         />
       </View>
 
-      {props.attendanceStudentModel.attendanceStatus ==
-        AttendanceStatus.CheckedOut && (
-        <MultipleImageView
-          images={props.attendanceStudentModel.checkinPhotos ?? []}
-        />
+      {props.attendance.attendanceStatus == AttendanceStatus.CheckedOut && (
+        <MultipleImageView images={props.attendance.checkinPhotos ?? []} />
       )}
 
-      {props.attendanceStudentModel.attendanceStatus ==
-        AttendanceStatus.CheckedIn && (
+      {props.attendance.pickupLetterStatus && (
+        <UnderlineButton
+          icon={"file"}
+          onPress={() => {
+            router.push({
+              pathname: "teacher/pickup/pickup-detail-screen",
+              params: { id: props.attendance.pickupLetterId }
+            });
+          }}
+        >
+          Bé có đơn đón về (
+          {<LetterStatusText status={props.attendance.pickupLetterStatus} />})
+        </UnderlineButton>
+      )}
+
+      {props.attendance.attendanceStatus == AttendanceStatus.CheckedIn && (
         <View style={{ alignSelf: "flex-end" }}>
           <UnderlineButton
             onPress={() => {
               router.push({
                 pathname: "teacher/attendance/checkout-text-editor-screen",
                 params: {
-                  studentId: props.attendanceStudentModel.id,
+                  studentId: props.attendance.id,
                   time: props.time.toISOString()
                 }
               });

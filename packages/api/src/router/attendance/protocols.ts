@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { LetterStatus } from "../leaveletter/protocols";
+import { PickupLetterStatus } from "../pickup/protocols";
 
 const AttendanceStatus = z.enum([
   "AbsenseWithoutPermission",
@@ -92,7 +94,7 @@ const GetAttendanceStatisticsResponse = z.object({
 
 const Student = z.object({
   id: z.string(),
-  fullname: z.string(),
+  fullname: z.nullable(z.string()),
   avatar: z.nullable(z.string()),
   className: z.nullable(z.string()),
 
@@ -101,7 +103,13 @@ const Student = z.object({
   attendanceCheckoutNote: z.nullable(z.string()),
 
   checkinPhotos: z.nullable(z.array(z.string())),
-  checkoutPhotos: z.nullable(z.array(z.string()))
+  checkoutPhotos: z.nullable(z.array(z.string())),
+
+  leaveletterId: z.nullable(z.string()),
+  leaveletterStatus: z.nullable(LetterStatus),
+
+  pickupLetterId: z.nullable(z.string()),
+  pickupLetterStatus: z.nullable(PickupLetterStatus)
 });
 
 const GetStudentListRequest = z.object({

@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-const LetterStatus = z.enum(["NotConfirmed", "Confirmed", "Rejected"]);
+const PickupLetterStatus = z.enum(["NotConfirmed", "Confirmed", "Rejected"]);
 
 const Pickup = z.object({
   id: z.string(),
   time: z.nullable(z.date()),
-  status: z.nullable(LetterStatus),
+  status: z.nullable(PickupLetterStatus),
   pickerFullname: z.nullable(z.string()),
   studentFullname: z.nullable(z.string())
 });
@@ -29,7 +29,7 @@ const PickupDetail = z.object({
   id: z.string(),
   note: z.nullable(z.string()),
   time: z.nullable(z.date()),
-  status: z.nullable(LetterStatus),
+  status: z.nullable(PickupLetterStatus),
   createdAt: z.nullable(z.date()),
   teacherFullname: z.nullable(z.string()),
   pickerFullname: z.nullable(z.string())
@@ -107,6 +107,7 @@ const RejectPickupLetterRequest = z.object({
 const RejectPickupLetterResponse = z.object({
   message: z.nullable(z.string())
 });
+export { PickupLetterStatus };
 
 export { GetPickupDetailRequest, GetPickupDetailResponse };
 

@@ -1,3 +1,6 @@
+import { LeaveLetterStatus } from "./LeaveLetterModels";
+import { PickupLetterStatus } from "./PickupModels";
+
 interface AttendanceItemModel {
   id: string;
   date: Date | null;
@@ -22,7 +25,7 @@ interface AttendanceStatisticsModel {
 
 interface AttendanceStudentModel {
   id: string;
-  fullname: string;
+  fullname: string | null;
   avatar: string | null;
   className?: string | null;
   attendanceStatus: string | null;
@@ -30,6 +33,10 @@ interface AttendanceStudentModel {
   attendanceCheckoutNote: string | null;
   checkinPhotos?: string[] | null;
   checkoutPhotos?: string[] | null;
+  leaveletterId?: string | null;
+  leaveletterStatus?: LeaveLetterStatus | null;
+  pickupLetterId?: string | null;
+  pickupLetterStatus?: PickupLetterStatus | null;
 }
 
 const STATUS_ENUM_TO_VERBOSE = new Map([

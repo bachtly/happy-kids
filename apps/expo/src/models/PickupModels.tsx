@@ -1,8 +1,4 @@
-enum PickupLetterStatus {
-  NotConfirmed = "NotConfirmed",
-  Confirmed = "Confirmed",
-  Rejected = "Rejected"
-}
+type PickupLetterStatus = "NotConfirmed" | "Confirmed" | "Rejected";
 
 const STATUS_ENUM_TO_VERBOSE = new Map([
   ["NotConfirmed", "Chưa xác nhận"],

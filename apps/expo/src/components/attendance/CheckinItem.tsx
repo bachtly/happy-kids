@@ -12,9 +12,10 @@ import UnderlineButton from "../common/UnderlineButton";
 import EllipsedText from "../common/EllipsedText";
 import defaultAvatar from "assets/images/default-user-avatar.png";
 import MultipleImageView from "../common/MultiImageView";
+import LetterStatusText from "../medicine/StatusText";
 
 interface CheckinItemProps {
-  attendanceStudentModel: AttendanceStudentModel;
+  attendance: AttendanceStudentModel;
   refresh: () => void;
 }
 
@@ -25,8 +26,8 @@ const CheckinItem = (props: CheckinItemProps) => {
 
   useEffect(() => {
     setIsFilled(
-      props.attendanceStudentModel.attendanceStatus != null &&
-        props.attendanceStudentModel.attendanceStatus !=
+      props.attendance.attendanceStatus != null &&
+        props.attendance.attendanceStatus !=
           AttendanceStatus.NotCheckedIn.toString()
     );
   });
@@ -38,22 +39,20 @@ const CheckinItem = (props: CheckinItemProps) => {
           className={"my-auto"}
           size={42}
           source={
-            props.attendanceStudentModel.avatar
+            props.attendance.avatar
               ? {
-                  uri: `data:image/jpeg;base64,${props.attendanceStudentModel.avatar}`
+                  uri: `data:image/jpeg;base64,${props.attendance.avatar}`
                 }
               : defaultAvatar
           }
         />
         <View>
           <Text className={""} variant={"titleSmall"}>
-            {props.attendanceStudentModel.fullname}
+            {props.attendance.fullname}
           </Text>
           <Text className={"italic"} variant={"bodyMedium"}>
-            {props.attendanceStudentModel.attendanceStatus &&
-              STATUS_ENUM_TO_VERBOSE.get(
-                props.attendanceStudentModel.attendanceStatus
-              )}
+            {props.attendance.attendanceStatus &&
+              STATUS_ENUM_TO_VERBOSE.get(props.attendance.attendanceStatus)}
           </Text>
         </View>
       </View>
@@ -63,32 +62,50 @@ const CheckinItem = (props: CheckinItemProps) => {
           lines={2}
           content={
             isFilled
-              ? props.attendanceStudentModel.attendanceCheckinNote ?? ""
-              : "Hôm nay bé chưa được điểm danh"
+              ? props.attendance.attendanceCheckinNote ?? ""
+              : "Bé chưa được điểm danh"
           }
         />
       </View>
 
       {isFilled && (
-        <MultipleImageView
-          images={props.attendanceStudentModel.checkinPhotos ?? []}
-        />
+        <MultipleImageView images={props.attendance.checkinPhotos ?? []} />
       )}
 
-      {!isFilled && (
-        <View style={{ alignSelf: "flex-end" }}>
-          <UnderlineButton
-            onPress={() => {
-              router.push({
-                pathname: "teacher/attendance/checkin-text-editor-screen",
-                params: { studentId: props.attendanceStudentModel.id }
-              });
-            }}
-          >
-            Điểm danh ngay
-          </UnderlineButton>
-        </View>
+      {props.attendance.leaveletterStatus && (
+        <UnderlineButton
+          icon={"file"}
+          onPress={() => {
+            router.push({
+              pathname: "teacher/leaveletter/letter-detail-screen",
+              params: {
+                id: props.attendance.leaveletterId,
+                studentName: props.attendance.fullname
+              }
+            });
+          }}
+        >
+          Bé có đơn xin nghỉ (
+          {<LetterStatusText status={props.attendance.leaveletterStatus} />})
+        </UnderlineButton>
       )}
+
+      {!isFilled &&
+        (!props.attendance.leaveletterStatus ||
+          props.attendance.leaveletterStatus != "NotConfirmed") && (
+          <View style={{ alignSelf: "flex-end" }}>
+            <UnderlineButton
+              onPress={() => {
+                router.push({
+                  pathname: "teacher/attendance/checkin-text-editor-screen",
+                  params: { studentId: props.attendance.id }
+                });
+              }}
+            >
+              Điểm danh ngay
+            </UnderlineButton>
+          </View>
+        )}
     </CustomCard>
   );
 };
