@@ -17,10 +17,12 @@ import AccountService from "./account-service";
 import NotiService from "./noti-service";
 import { PhotoService } from "../utils/PhotoService";
 import { FileService } from "../utils/FileService";
+import { TimeService } from "../utils/TimeService";
 
 container.register<Kysely<DB>>(Kysely, { useValue: mysqlDB });
 container.register("FileService", { useClass: FileService });
 container.register("PhotoService", { useClass: PhotoService });
+container.register("TimeService", { useClass: TimeService });
 
 export const loginService = container.resolve(LoginService);
 export const attendanceService = container.resolve(AttendanceService);

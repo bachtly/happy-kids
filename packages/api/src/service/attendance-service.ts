@@ -1,17 +1,19 @@
 import { Kysely, sql } from "kysely";
 import { DB } from "kysely-codegen";
 import moment from "moment";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { AttendanceStatus } from "../router/attendance/protocols";
 import { z } from "zod";
 import { PhotoService } from "../utils/PhotoService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
+import type { TimeServiceInterface } from "../utils/TimeService";
 
 @injectable()
 class AttendanceService {
   constructor(
     private mysqlDB: Kysely<DB>,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    @inject("TimeService") private timeService: TimeServiceInterface
   ) {}
 
   getAttendanceList = async (
@@ -38,8 +40,8 @@ class AttendanceService {
         "checkinNote",
         "checkoutNote"
       ])
-      .where("date", ">=", timeStart)
-      .where("date", "<=", timeEnd)
+      .where("date", ">=", this.timeService.getStartOfDay(timeStart))
+      .where("date", "<=", this.timeService.getEndOfDay(timeEnd))
       .where("studentId", "=", studentId)
       .execute()
       .catch((err: Error) => {
@@ -144,8 +146,8 @@ class AttendanceService {
       .selectFrom("Attendance")
       .select(["status", sql<number>`count(status)`.as("count")])
       .groupBy("status")
-      .where("date", ">=", timeStart)
-      .where("date", "<=", timeEnd)
+      .where("date", ">=", this.timeService.getStartOfDay(timeStart))
+      .where("date", "<=", this.timeService.getEndOfDay(timeEnd))
       .where("studentId", "=", studentId)
       .execute()
       .then((resp) => resp.flat())
@@ -195,11 +197,6 @@ class AttendanceService {
       })}`
     );
 
-    const startOfDate = moment(moment(date).format("MM/DD/YYYY")).toDate();
-    const endOfDate = moment(moment(date).format("MM/DD/YYYY"))
-      .add(1, "day")
-      .toDate();
-
     const rawStudents = await this.mysqlDB
       .selectFrom("Student")
       .innerJoin(
@@ -212,8 +209,8 @@ class AttendanceService {
         this.mysqlDB
           .selectFrom("Attendance")
           .selectAll()
-          .where("date", "<=", endOfDate)
-          .where("date", ">=", startOfDate)
+          .where("date", "<=", this.timeService.getEndOfDay(date))
+          .where("date", ">=", this.timeService.getStartOfDay(date))
           .as("Attendance"),
         "Attendance.studentId",
         "Student.id"
@@ -354,11 +351,6 @@ class AttendanceService {
     if (note === "") throw "Vui lòng thêm ghi chú";
     if (photos.length == 0) throw "Vui lòng tải lên hình ảnh điểm danh của bé";
 
-    const startOfDate = moment(moment(time).format("MM/DD/YYYY")).toDate();
-    const endOfDate = moment(moment(time).format("MM/DD/YYYY"))
-      .add(1, "day")
-      .toDate();
-
     await this.mysqlDB
       .updateTable("Attendance")
       .set({
@@ -374,8 +366,8 @@ class AttendanceService {
         pickerRelativeId: pickerRelativeId != "" ? pickerRelativeId : null
       })
       .where("studentId", "=", studentId)
-      .where("date", "<=", endOfDate)
-      .where("date", ">=", startOfDate)
+      .where("date", "<=", this.timeService.getEndOfDay(time))
+      .where("date", ">=", this.timeService.getStartOfDay(time))
       .executeTakeFirstOrThrow()
       .catch((err: Error) => {
         console.log(err);
