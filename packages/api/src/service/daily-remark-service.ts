@@ -4,6 +4,7 @@ import { DB } from "kysely-codegen";
 import moment from "moment/moment";
 import { v4 as uuidv4 } from "uuid";
 import type { FileServiceInterface } from "../utils/FileService";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 
 @injectable()
 class DailyRemarkService {
@@ -65,6 +66,10 @@ class DailyRemarkService {
               : ""
           }))
         )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
 
     const ids = Array.from(new Set(remarkActivities.map((item) => item.id)));
@@ -102,8 +107,7 @@ class DailyRemarkService {
     });
 
     return {
-      remarks: remarkReturn,
-      message: null
+      remarks: remarkReturn
     };
   };
 
@@ -177,6 +181,10 @@ class DailyRemarkService {
             studentAvatar: item.avatarUrl ? await getPhoto(item.avatarUrl) : ""
           }))
         )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
 
     const ids = Array.from(
@@ -216,8 +224,7 @@ class DailyRemarkService {
     });
 
     return {
-      remarks: remarkReturn,
-      message: null
+      remarks: remarkReturn
     };
   };
 
@@ -245,9 +252,13 @@ class DailyRemarkService {
         teacherId: teacherId
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return null;
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
     return id;
   };
@@ -271,6 +282,8 @@ class DailyRemarkService {
       })}`
     );
 
+    if (content.trim() === "") throw "Vui lòng nhập nội dung nhận xét";
+
     if (remarkId === null) {
       remarkId = await this.insertDailyRemark(date, studentId, teacherId);
     }
@@ -283,13 +296,15 @@ class DailyRemarkService {
         dailyRemarkId: remarkId
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
-    return {
-      message: null
-    };
+    return {};
   };
 }
 

@@ -7,13 +7,12 @@ import { z } from "zod";
 import {
   GetLeaveLetterListResponse,
   PostLeaveLetterResponse,
-  ResponseStatus,
   LetterStatus,
-  UpdateStatusLeaveLetterResponse,
   LeaveLetter,
   GetLeaveLetterResponse
 } from "../router/leaveletter/protocols";
 import type { FileServiceInterface } from "../utils/FileService";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 
 @injectable()
 class LeaveLetterService {
@@ -27,7 +26,7 @@ class LeaveLetterService {
     startDate: Date,
     endDate: Date,
     reason: string
-  ): Promise<{ id: string; err: Error | null }> => {
+  ) => {
     const id = uuidv4();
     return this.mysqlDB
       .insertInto("LeaveLetter")
@@ -43,19 +42,21 @@ class LeaveLetterService {
       })
       .executeTakeFirstOrThrow()
       .then((_) => {
-        return { id: id, err: null };
+        return { id: id };
       })
       .catch((err: Error) => {
-        return { id: "", err: err };
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
   };
 
   private createLeaveLetterPhotoOnly = async (
     leaveLetterId: string,
     photos: string[]
-  ): Promise<Error | null> => {
-    if (photos.length == 0) return null;
-    return this.mysqlDB
+  ) => {
+    if (photos.length == 0) throw "Vui lòng tải lên hình ảnh";
+
+    void (await this.mysqlDB
       .insertInto("LeaveLetterPhoto")
       .values(
         photos.map((photoB64) => {
@@ -76,28 +77,24 @@ class LeaveLetterService {
         })
       )
       .execute()
-      .then((_) => {
-        // console.log(res);
-        return null;
-      })
       .catch((err: Error) => {
-        return err;
-      });
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      }));
   };
-  private deleteLeaveLetter = async (
-    leaveLetterId: string
-  ): Promise<boolean> => {
-    return this.mysqlDB
+  private deleteLeaveLetter = async (leaveLetterId: string) => {
+    void (await this.mysqlDB
       .deleteFrom("LeaveLetter")
       .where("id", "=", leaveLetterId)
       .executeTakeFirstOrThrow()
       .then((resp) => {
-        if (resp.numDeletedRows == BigInt(0)) throw Error("delete failed");
-        return true;
+        if (resp.numDeletedRows == BigInt(0))
+          throw Error("Xóa đơn xin nghỉ thất bại");
       })
-      .catch((_) => {
-        return false;
-      });
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      }));
   };
   createLeaveLetter = async (
     parentId: string,
@@ -107,36 +104,22 @@ class LeaveLetterService {
     reason: string,
     photos: string[]
   ): Promise<z.infer<typeof PostLeaveLetterResponse>> => {
-    const { id, err } = await this.createLeaveLetterOnly(
+    const { id } = await this.createLeaveLetterOnly(
       parentId,
       studentId,
       startDate,
       endDate,
       reason
     );
-    if (err) {
-      return {
-        status: ResponseStatus.enum.Fail,
-        message: err.message,
-        leaveLetterId: ""
-      };
-    }
-    const err2 = await this.createLeaveLetterPhotoOnly(id, photos);
-    if (err2) {
-      // cleaning if possible
-      if (!(await this.deleteLeaveLetter(id)))
-        console.log("clean leaveletter failed");
-      else console.log("clean leaveletter success");
 
-      return {
-        status: ResponseStatus.enum.Fail,
-        message: err2.message,
-        leaveLetterId: ""
-      };
-    }
+    await this.createLeaveLetterPhotoOnly(id, photos);
+
+    // cleaning if possible
+    void (await this.deleteLeaveLetter(id).catch((_) =>
+      console.log("clean leaveletter failed")
+    ));
+
     return {
-      status: ResponseStatus.enum.Success,
-      message: "create success",
       leaveLetterId: id
     };
   };
@@ -145,8 +128,8 @@ class LeaveLetterService {
     teacherId: string,
     leaveLetterId: string,
     status: z.infer<typeof LetterStatus>
-  ): Promise<z.infer<typeof UpdateStatusLeaveLetterResponse>> => {
-    return this.mysqlDB
+  ) => {
+    void (await this.mysqlDB
       .updateTable("LeaveLetter")
       .set({
         status,
@@ -155,18 +138,12 @@ class LeaveLetterService {
       .where("id", "=", leaveLetterId)
       .executeTakeFirstOrThrow()
       .then((res) => {
-        if (res.numUpdatedRows <= 0) throw Error("Update failed");
-        return {
-          status: ResponseStatus.enum.Success,
-          message: "update success"
-        };
+        if (res.numUpdatedRows <= 0) throw SYSTEM_ERROR_MESSAGE;
       })
       .catch((err: Error) => {
-        return {
-          status: ResponseStatus.enum.Fail,
-          message: err.message
-        };
-      });
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      }));
   };
 
   private getLeaveLetterListByStudent = async (
@@ -187,27 +164,16 @@ class LeaveLetterService {
       .where("studentId", "=", studentId)
       .execute()
       .then((resp) => {
-        // console.log(resp);
         const res = z.array(LeaveLetter).safeParse(resp);
-        if (!res.success) {
-          return {
-            status: ResponseStatus.enum.Fail,
-            message: res.error.message,
-            leaveLetterList: []
-          };
-        }
+        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
+
         return {
-          status: ResponseStatus.Enum.Success,
-          message: "",
           leaveLetterList: res.data
         };
       })
-      .catch((e: Error) => {
-        return {
-          status: ResponseStatus.Enum.Fail,
-          message: e.message,
-          leaveLetterList: []
-        };
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
   };
   private getLeaveLetterListByClassId = async (
@@ -236,25 +202,15 @@ class LeaveLetterService {
       .then((resp) => {
         // console.log(resp);
         const res = z.array(LeaveLetter).safeParse(resp);
-        if (!res.success) {
-          return {
-            status: ResponseStatus.enum.Fail,
-            message: res.error.message,
-            leaveLetterList: []
-          };
-        }
+        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
+
         return {
-          status: ResponseStatus.Enum.Success,
-          message: "",
           leaveLetterList: res.data
         };
       })
-      .catch((e: Error) => {
-        return {
-          status: ResponseStatus.Enum.Fail,
-          message: e.message,
-          leaveLetterList: []
-        };
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
   };
   getLeaveLetterList = async (
@@ -264,94 +220,83 @@ class LeaveLetterService {
     if (studentId) return this.getLeaveLetterListByStudent(studentId);
     if (classId) return this.getLeaveLetterListByClassId(classId);
     return {
-      status: ResponseStatus.Enum.Fail,
-      message: "both classId and studentId missing",
       leaveLetterList: []
     };
   };
   getLeaveLetter = async (
     leaveLetterId: string
   ): Promise<z.infer<typeof GetLeaveLetterResponse>> => {
-    try {
-      const resp = await this.mysqlDB
-        .selectFrom("LeaveLetter")
-        .leftJoin(
-          "LeaveLetterPhoto",
-          "LeaveLetterPhoto.leaveLetterId",
-          "LeaveLetter.id"
-        )
-        .leftJoin(
-          this.mysqlDB
-            .selectFrom("User")
-            .select(["id", "fullname"])
-            .as("UserTeacher"),
-          "UserTeacher.id",
-          "LeaveLetter.updatedByTeacherId"
-        )
-        .leftJoin(
-          this.mysqlDB
-            .selectFrom("User")
-            .select(["id", "fullname"])
-            .as("UserParent"),
-          "UserParent.id",
-          "LeaveLetter.createdByParentId"
-        )
-        .select([
-          "LeaveLetter.id as id",
-          "LeaveLetter.startDate as startDate",
-          "LeaveLetter.endDate as endDate",
-          "LeaveLetter.reason as reason",
-          "LeaveLetter.createdAt as createdAt",
-          "LeaveLetter.status as status",
-          "UserTeacher.fullname as updatedByTeacher",
-          "UserParent.fullname as createdByParent",
-          "LeaveLetterPhoto.photo as letter_photo"
-        ])
-        .where("LeaveLetter.id", "=", leaveLetterId)
-        .execute();
+    const resp = await this.mysqlDB
+      .selectFrom("LeaveLetter")
+      .leftJoin(
+        "LeaveLetterPhoto",
+        "LeaveLetterPhoto.leaveLetterId",
+        "LeaveLetter.id"
+      )
+      .leftJoin(
+        this.mysqlDB
+          .selectFrom("User")
+          .select(["id", "fullname"])
+          .as("UserTeacher"),
+        "UserTeacher.id",
+        "LeaveLetter.updatedByTeacherId"
+      )
+      .leftJoin(
+        this.mysqlDB
+          .selectFrom("User")
+          .select(["id", "fullname"])
+          .as("UserParent"),
+        "UserParent.id",
+        "LeaveLetter.createdByParentId"
+      )
+      .select([
+        "LeaveLetter.id as id",
+        "LeaveLetter.startDate as startDate",
+        "LeaveLetter.endDate as endDate",
+        "LeaveLetter.reason as reason",
+        "LeaveLetter.createdAt as createdAt",
+        "LeaveLetter.status as status",
+        "UserTeacher.fullname as updatedByTeacher",
+        "UserParent.fullname as createdByParent",
+        "LeaveLetterPhoto.photo as letter_photo"
+      ])
+      .where("LeaveLetter.id", "=", leaveLetterId)
+      .execute()
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-      if (resp.length == 0) throw Error("LetterId not exist");
-      const res = LeaveLetter.safeParse(resp[0]);
-      if (!res.success) {
-        return {
-          status: ResponseStatus.enum.Fail,
-          message: res.error.message,
-          leaveLetter: null
-        };
-      }
-      const leaveLetter = res.data;
-      const getPhoto = async (photoPath: string) => {
-        if (photoPath === "") return "";
-        try {
-          return await this.fileService.asyncReadFile(photoPath);
-        } catch (_) {
-          return "";
-        }
-      };
+    if (resp.length == 0) throw SYSTEM_ERROR_MESSAGE;
+    const res = LeaveLetter.safeParse(resp[0]);
+    if (!res.success) throw SYSTEM_ERROR_MESSAGE;
 
-      leaveLetter.photos = await Promise.all(
-        resp
-          .filter(
-            (
-              item
-            ): item is Omit<typeof item, "letter_photo"> & {
-              letter_photo: string;
-            } => item.letter_photo !== null
-          )
-          .map(async (item) => await getPhoto(item.letter_photo))
-      );
-      return {
-        status: ResponseStatus.Enum.Success,
-        message: "",
-        leaveLetter: leaveLetter
-      };
-    } catch (e: unknown) {
-      return {
-        status: ResponseStatus.Enum.Fail,
-        message: (e as Error).message,
-        leaveLetter: null
-      };
-    }
+    const leaveLetter = res.data;
+    const getPhoto = async (photoPath: string) => {
+      if (photoPath === "") return "";
+      return await this.fileService
+        .asyncReadFile(photoPath)
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        });
+    };
+
+    leaveLetter.photos = await Promise.all(
+      resp
+        .filter(
+          (
+            item
+          ): item is Omit<typeof item, "letter_photo"> & {
+            letter_photo: string;
+          } => item.letter_photo !== null
+        )
+        .map(async (item) => await getPhoto(item.letter_photo))
+    );
+
+    return {
+      leaveLetter: leaveLetter
+    };
   };
 }
 

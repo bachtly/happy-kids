@@ -1,17 +1,19 @@
 import { useSearchParams } from "expo-router";
 
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import Detail from "../../../src/components/medicine/letterDetail/Detail";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import AlertModal from "../../../src/components/common/AlertModal";
+import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
 
 const LetterDetail = () => {
   const { id, studentName } = useSearchParams();
   const { userId } = useAuthContext();
+  const [errorMessage, setErrorMessage] = useState("");
 
-  if (!id || !userId || !studentName)
-    throw Error("missing params in medicine detail screen");
+  if (!id || !userId || !studentName) setErrorMessage(SYSTEM_ERROR_MESSAGE);
 
   return (
     <View className="flex-1">
@@ -19,9 +21,16 @@ const LetterDetail = () => {
 
       <Detail
         studentName={studentName}
-        userId={userId}
+        userId={userId ?? ""}
         isTeacher={true}
         id={id}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </View>
   );

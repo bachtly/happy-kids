@@ -5,6 +5,7 @@ import { inject, injectable } from "tsyringe";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import type { FileServiceInterface } from "../utils/FileService";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 
 @injectable()
 class PostService {
@@ -60,12 +61,15 @@ class PostService {
             };
           })
         )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
 
     return {
       posts: posts,
-      hasNextPage: posts.length == itemsPerPage,
-      message: null
+      hasNextPage: posts.length == itemsPerPage
     };
   };
 
@@ -77,6 +81,8 @@ class PostService {
         userId: userId
       })}`
     );
+
+    if (content.trim() === "") throw "Vui lòng nhập nội dung bài viết";
 
     const photoPaths = photos
       .filter((item) => item != "")
@@ -95,13 +101,15 @@ class PostService {
         userId: userId
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
-    return {
-      message: null
-    };
+    return {};
   };
 
   comment = async (content: string, userId: string, postId: string) => {
@@ -113,6 +121,8 @@ class PostService {
       })}`
     );
 
+    if (content.trim() == "") throw "Vui lòng nhập nội dung bình luận";
+
     const count = await this.mysqlDB
       .insertInto("PostComment")
       .values({
@@ -122,13 +132,15 @@ class PostService {
         time: moment().toDate()
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
-    return {
-      message: null
-    };
+    return {};
   };
 
   react = async (reaction: string, userId: string, postId: string) => {
@@ -148,13 +160,15 @@ class PostService {
         postId: postId
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
-    return {
-      message: null
-    };
+    return {};
   };
 
   getUserInfo = async (userId: string) => {
@@ -176,11 +190,14 @@ class PostService {
           ),
           ...resp
         };
+      })
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
 
     return {
-      user: user,
-      message: null
+      user: user
     };
   };
 
@@ -224,12 +241,15 @@ class PostService {
             };
           })
         )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
 
     return {
       comments: comments,
-      hasNextPage: comments.length == itemsPerPage,
-      message: null
+      hasNextPage: comments.length == itemsPerPage
     };
   };
 }

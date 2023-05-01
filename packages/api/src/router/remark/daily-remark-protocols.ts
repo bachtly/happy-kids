@@ -30,8 +30,7 @@ const GetDailyRemarkListRequest = z.object({
 });
 
 const GetDailyRemarkListResponse = z.object({
-  remarks: z.array(DailyRemark),
-  message: z.nullable(z.string())
+  remarks: z.array(DailyRemark)
 });
 
 export { GetDailyRemarkListRequest, GetDailyRemarkListResponse };
@@ -52,8 +51,7 @@ const GetDailyRemarkListFromClassIdRequest = z.object({
 });
 
 const GetDailyRemarkListFromClassIdResponse = z.object({
-  remarks: z.array(TeacherDailyRemark),
-  message: z.nullable(z.string())
+  remarks: z.array(TeacherDailyRemark)
 });
 
 export {
@@ -70,8 +68,6 @@ const InsertDailyRemarkActivityRequest = z.object({
   teacherId: z.nullable(z.string())
 });
 
-const InsertDailyRemarkActivityResponse = z.object({
-  message: z.nullable(z.string())
-});
+const InsertDailyRemarkActivityResponse = z.object({});
 
 export { InsertDailyRemarkActivityRequest, InsertDailyRemarkActivityResponse };

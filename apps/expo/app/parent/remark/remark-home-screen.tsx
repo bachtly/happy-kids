@@ -7,8 +7,6 @@ import PeriodRemarkScreen from "./period-remark-screen";
 
 const Tab = createMaterialTopTabNavigator();
 
-// This is the main layout of the app
-// It wraps your pages with the providers they need
 const RemarkHomeScreen = () => {
   const { colors } = useTheme();
   const { studentId } = useSearchParams();

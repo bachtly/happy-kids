@@ -5,6 +5,7 @@ import { LeaveLetterStatus } from "../../../models/LeaveLetterModels";
 import { api } from "../../../utils/api";
 import LetterStatusDialog from "../../medicine/modals/OptionDialog";
 import LetterStatusText from "../../medicine/StatusText";
+import AlertModal from "../../common/AlertModal";
 
 const TeacherStatus = ({
   userId,
@@ -23,18 +24,14 @@ const TeacherStatus = ({
 
   const [visibleStatusDialog, setVisibleStatusDialog] = useState(false);
   const [statusLetter, setStatusLetter] = useState(status);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isChangedLetterStatus = statusLetter != status;
   const isAnyChanged = isChangedLetterStatus;
   const updateStatMedLetterMutation =
     api.leaveletter.updateMedicineLetter.useMutation({
-      onSuccess: (data) => {
-        if (data.status !== "Success") {
-          console.log(data.message);
-        } else {
-          refetch();
-        }
-      }
+      onSuccess: (_) => refetch(),
+      onError: (e) => setErrorMessage(e.message)
     });
 
   return (
@@ -94,6 +91,13 @@ const TeacherStatus = ({
         setOrigValue={setStatusLetter}
         visible={visibleStatusDialog}
         close={() => setVisibleStatusDialog(false)}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </View>
   );

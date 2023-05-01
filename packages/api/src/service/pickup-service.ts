@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import type { FileServiceInterface } from "../utils/FileService";
 import NotiService from "./noti-service";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 
 @injectable()
 class PickupService {
@@ -38,13 +39,14 @@ class PickupService {
       .where("pickupTime", "<=", timeEnd)
       .where("studentId", "=", studentId)
       .execute()
-      .then((resp) => resp.flat());
-
-    console.log(pickups);
+      .then((resp) => resp.flat())
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     return {
-      pickups: pickups,
-      message: null
+      pickups: pickups
     };
   };
 
@@ -73,18 +75,14 @@ class PickupService {
         "Relative.fullname as pickerFullname"
       ])
       .where("PickupLetter.id", "=", id)
-      .executeTakeFirst();
-
-    if (pickup == null) {
-      return {
-        pickup: null,
-        message: "No record found"
-      };
-    }
+      .executeTakeFirstOrThrow()
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     return {
-      pickup: pickup,
-      message: null
+      pickup: pickup
     };
   };
 
@@ -121,13 +119,14 @@ class PickupService {
           });
           return rels;
         })
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
 
-    console.log(relatives);
-
     return {
-      relatives: relatives,
-      message: null
+      relatives: relatives
     };
   };
 
@@ -146,6 +145,11 @@ class PickupService {
         parentId: parentId
       })}`
     );
+
+    if (fullname.trim() === "") throw "Vui lòng thêm họ và tên";
+    if (phone.trim() === "") throw "Vui lòng thêm số điện thoại";
+    if (note.trim() === "") throw "Vui lòng thêm mối quan hệ với bé";
+    if (avatarData.trim() === "") throw "Vui lòng thêm ảnh đại diện";
 
     const getPhotoPath = (photoB64: string) => {
       if (photoB64 === "") return "";
@@ -168,13 +172,15 @@ class PickupService {
         parentId: parentId
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
-    return {
-      message: null
-    };
+    return {};
   };
 
   insertPickupLetter = async (
@@ -192,6 +198,9 @@ class PickupService {
       })}`
     );
 
+    if (pickerId.trim() === "") throw "Vui lòng chọn người đón";
+    if (note.trim() === "") throw "Vui lòng thêm ghi chú";
+
     const id = uuidv4();
     const count = await this.mysqlDB
       .insertInto("PickupLetter")
@@ -205,9 +214,13 @@ class PickupService {
         status: "NotConfirmed"
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
     const pickupInfos = await this.mysqlDB
       .selectFrom("User as Teacher")
@@ -228,7 +241,11 @@ class PickupService {
       ])
       .where("Student.id", "=", studentId)
       .execute()
-      .then((resp) => resp);
+      .then((resp) => resp)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     pickupInfos.map((item) => {
       void this.notiService.insertNoti(
@@ -245,9 +262,7 @@ class PickupService {
       );
     });
 
-    return {
-      message: null
-    };
+    return {};
   };
 
   getPickupListFromStudentIds = async (time: Date, classId: string) => {
@@ -283,13 +298,14 @@ class PickupService {
       .where("pickupTime", ">=", startOfDate)
       .where("StudentClassRelationship.classId", "=", classId)
       .execute()
-      .then((resp) => resp.flat());
-
-    console.log(pickups);
+      .then((resp) => resp.flat())
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     return {
-      pickups: pickups,
-      message: null
+      pickups: pickups
     };
   };
 
@@ -309,9 +325,13 @@ class PickupService {
       })
       .where("id", "=", id)
       .executeTakeFirstOrThrow()
-      .then((res) => res.numUpdatedRows);
+      .then((res) => res.numUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (count && count <= 0) return { message: "Update fail." };
+    if (count && count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
     const parentId = await this.mysqlDB
       .selectFrom("PickupLetter")
@@ -327,7 +347,11 @@ class PickupService {
       .select(["Teacher.fullname"])
       .where("Teacher.id", "=", teacherId)
       .executeTakeFirst()
-      .then((resp) => resp?.fullname);
+      .then((resp) => resp?.fullname)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     parentId &&
       void this.notiService.insertNoti(
@@ -341,9 +365,7 @@ class PickupService {
         parentId
       );
 
-    return {
-      message: null
-    };
+    return {};
   };
 
   rejectPickupLetter = async (id: string, teacherId: string) => {
@@ -364,9 +386,13 @@ class PickupService {
 
     const count = await query
       .executeTakeFirstOrThrow()
-      .then((res) => res.numUpdatedRows);
+      .then((res) => res.numUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (count && count <= 0) return { message: "Update fail." };
+    if (count && count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
     const parentId = await this.mysqlDB
       .selectFrom("PickupLetter")
@@ -375,14 +401,22 @@ class PickupService {
       .select(["Parent.id as parentId"])
       .where("PickupLetter.id", "=", id)
       .executeTakeFirst()
-      .then((resp) => resp?.parentId);
+      .then((resp) => resp?.parentId)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     const teacherFullname = await this.mysqlDB
       .selectFrom("User as Teacher")
       .select(["Teacher.fullname"])
       .where("Teacher.id", "=", teacherId)
       .executeTakeFirst()
-      .then((resp) => resp?.fullname);
+      .then((resp) => resp?.fullname)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     parentId &&
       void this.notiService.insertNoti(
@@ -396,9 +430,7 @@ class PickupService {
         parentId
       );
 
-    return {
-      message: null
-    };
+    return {};
   };
 }
 

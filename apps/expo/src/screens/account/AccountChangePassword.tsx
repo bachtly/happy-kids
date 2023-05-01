@@ -1,5 +1,5 @@
 import { ScrollView, View, Text } from "react-native";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card } from "react-native-paper";
 
 import Body from "../../components/Body";
@@ -10,6 +10,7 @@ import EditableFormField from "../../components/account/EditableFormField";
 import { api } from "../../utils/api";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import { validatePassword } from "../../utils/password-validator";
+import AlertModal from "../../components/common/AlertModal";
 
 const AccountChangePassword = () => {
   const { userId } = useAuthContext();
@@ -22,23 +23,19 @@ const AccountChangePassword = () => {
   const [oldPassError, setOldPassError] = useState("");
   const [newPassError, setNewPassError] = useState("");
   const [newPassAgainError, setNewPassAgainError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isError =
     oldPassError !== "" || newPassError !== "" || newPassAgainError != "";
 
   const updatePass = api.account.updatePassword.useMutation({
-    onSuccess: (data) => {
-      if (data === "") {
-        alert("Cập nhật thành công");
-        setOldPass("");
-        setNewPass("");
-        setNewPassAgain("");
-      } else if (data === "wrong_pass") {
-        setOldPassError("Sai mật khẩu hiện tại");
-      } else {
-        alert("Đã xảy ra lỗi, vui lòng thử lại");
-      }
-    }
+    onSuccess: (_) => {
+      setErrorMessage("Cập nhật thành công");
+      setOldPass("");
+      setNewPass("");
+      setNewPassAgain("");
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   const onSubmit = () => {
@@ -124,6 +121,13 @@ const AccountChangePassword = () => {
           </View>
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

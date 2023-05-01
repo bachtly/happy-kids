@@ -13,6 +13,7 @@ import DropDownButton from "../DropDownButton";
 import { DailyRemarkModel } from "../../models/DailyRemarkModels";
 import moment from "moment";
 import { useAuthContext } from "../../utils/auth-context-provider";
+import AlertModal from "../common/AlertModal";
 
 type AddDailyRemarkModalProps = {
   visible: boolean;
@@ -31,16 +32,22 @@ const AddDailyRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
   const [activity, setActivity] = useState<DailyRemarkActivity | null>(null);
   const [content, setContent] = useState("");
   const [activityModalVisible, setActivityModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const remarkMutation = api.dailyRemark.insertDailyRemarkActivity.useMutation({
     onSuccess: () => {
       submit();
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   const insertActivity = () => {
+    if (activity === null) {
+      setErrorMessage("Vui lòng chọn hoạt động");
+      return;
+    }
+
     activity &&
-      content &&
       remarkMutation.mutate({
         activity: activity,
         content: content,
@@ -101,6 +108,13 @@ const AddDailyRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
           );
           setActivityModalVisible(false);
         }}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </>
   );

@@ -9,7 +9,13 @@ import { useRouter } from "expo-router";
 
 const TIME_FORMAT = "hh:mm DD/MM/YYYY";
 
-const PostItem = ({ item }: { item: PostItemModel }) => {
+const PostItem = ({
+  item,
+  isTeacher
+}: {
+  item: PostItemModel;
+  isTeacher: boolean;
+}) => {
   const { colors } = useTheme();
   const router = useRouter();
 
@@ -78,7 +84,9 @@ const PostItem = ({ item }: { item: PostItemModel }) => {
               className={"flex-1 py-2"}
               onPress={() =>
                 router.push({
-                  pathname: "teacher/post/comment-screen",
+                  pathname: isTeacher
+                    ? "teacher/post/comment-screen"
+                    : "parent/post/comment-screen",
                   params: { postId: item.id }
                 })
               }

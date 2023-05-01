@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-const ResponseStatus = z.enum(["Success", "Fail"]);
-
 const LetterStatus = z.enum(["Confirmed", "NotConfirmed", "Rejected"]);
 const MedicineStatus = z.enum(["NotUsed", "Used"]);
 
@@ -48,8 +46,6 @@ const PostMedicineLetterParams = z.object({
 });
 
 const PostMedicineLetterResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   medicineLetterId: z.string()
 });
 
@@ -58,8 +54,6 @@ const GetMedicineLetterParams = z.object({
 });
 
 const GetMedicineLetterResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   medicineLetter: MedicineLetter.optional()
 });
 
@@ -70,10 +64,7 @@ const UpdateStatusMedicineLetterParams = z.object({
   useDiary: z.array(MedicineUseTime).default([])
 });
 
-const UpdateStatusMedicineLetterResponse = z.object({
-  status: ResponseStatus,
-  message: z.string()
-});
+const UpdateStatusMedicineLetterResponse = z.object({});
 
 const GetMedicineLetterListParams = z.object({
   studentId: z.string().optional(),
@@ -81,8 +72,6 @@ const GetMedicineLetterListParams = z.object({
 });
 
 const GetMedicineLetterListResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   medicineLetterList: z.array(MedicineLetter)
 });
 
@@ -98,6 +87,5 @@ export {
   UpdateStatusMedicineLetterParams,
   UpdateStatusMedicineLetterResponse,
   MedicineUseTime,
-  ResponseStatus,
   LetterStatus
 };

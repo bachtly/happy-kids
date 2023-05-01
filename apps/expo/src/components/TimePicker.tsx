@@ -10,7 +10,7 @@ import Icons from "react-native-vector-icons/FontAwesome5";
 interface TimePickerProps {
   // React State passed from outside
   time: Moment | null;
-  setTime: (date: Moment | null) => void;
+  setTime: (date: Moment) => void;
 }
 
 const TimePicker = (props: TimePickerProps) => {

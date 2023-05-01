@@ -17,8 +17,7 @@ const GetPickupListRequest = z.object({
 });
 
 const GetPickupListResponse = z.object({
-  pickups: z.array(Pickup),
-  message: z.nullable(z.string())
+  pickups: z.array(Pickup)
 });
 
 const GetPickupDetailRequest = z.object({
@@ -36,8 +35,7 @@ const PickupDetail = z.object({
 });
 
 const GetPickupDetailResponse = z.object({
-  pickup: z.nullable(PickupDetail),
-  message: z.nullable(z.string())
+  pickup: z.nullable(PickupDetail)
 });
 
 const Relative = z.object({
@@ -53,8 +51,7 @@ const GetRelativeListRequest = z.object({
 });
 
 const GetRelativeListResponse = z.object({
-  relatives: z.nullable(z.array(Relative)),
-  message: z.nullable(z.string())
+  relatives: z.nullable(z.array(Relative))
 });
 
 const InsertRelativeRequest = z.object({
@@ -65,9 +62,7 @@ const InsertRelativeRequest = z.object({
   parentId: z.string()
 });
 
-const InsertRelativeResponse = z.object({
-  message: z.nullable(z.string())
-});
+const InsertRelativeResponse = z.object({});
 
 const InsertPickupLetterRequest = z.object({
   pickerId: z.string(),
@@ -76,9 +71,7 @@ const InsertPickupLetterRequest = z.object({
   note: z.string()
 });
 
-const InsertPickupLetterResponse = z.object({
-  message: z.nullable(z.string())
-});
+const InsertPickupLetterResponse = z.object({});
 
 const GetPickupListFromClassIdRequest = z.object({
   time: z.date(),
@@ -86,8 +79,7 @@ const GetPickupListFromClassIdRequest = z.object({
 });
 
 const GetPickupListFromClassIdResponse = z.object({
-  pickups: z.array(Pickup),
-  message: z.nullable(z.string())
+  pickups: z.array(Pickup)
 });
 
 const ConfirmPickupLetterRequest = z.object({
@@ -95,18 +87,14 @@ const ConfirmPickupLetterRequest = z.object({
   teacherId: z.string()
 });
 
-const ConfirmPickupLetterResponse = z.object({
-  message: z.nullable(z.string())
-});
+const ConfirmPickupLetterResponse = z.object({});
 
 const RejectPickupLetterRequest = z.object({
   id: z.string(),
   teacherId: z.string()
 });
 
-const RejectPickupLetterResponse = z.object({
-  message: z.nullable(z.string())
-});
+const RejectPickupLetterResponse = z.object({});
 export { PickupLetterStatus };
 
 export { GetPickupDetailRequest, GetPickupDetailResponse };

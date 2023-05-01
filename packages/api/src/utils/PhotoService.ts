@@ -2,6 +2,7 @@ import type { FileServiceInterface } from "./FileService";
 import { inject, injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { join } from "path";
+import { SYSTEM_ERROR_MESSAGE } from "./errorHelper";
 
 interface PhotoServiceInterface {
   getPhotoFromPath: (photoPath: string) => Promise<string>;
@@ -34,11 +35,10 @@ class PhotoService implements PhotoServiceInterface {
   storePhoto = (photoB64: string, folderPath: string) => {
     if (photoB64 === "") return "";
     const filename = join(folderPath, uuidv4());
-    this.fileService
-      .asyncWriteFile(filename, photoB64)
-      .catch((e: Error) =>
-        console.log(`failed to write to file ${filename}, error`, e.message)
-      );
+    this.fileService.asyncWriteFile(filename, photoB64).catch((err: Error) => {
+      console.log(err);
+      throw SYSTEM_ERROR_MESSAGE;
+    });
     return filename;
   };
 }

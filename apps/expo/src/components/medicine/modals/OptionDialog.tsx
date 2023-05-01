@@ -106,7 +106,7 @@ const IsUsedDialog = ({
       <Dialog onDismiss={onClose} visible={visible} style={{ maxHeight: 600 }}>
         <Dialog.Title>Cập nhật trạng thái uống thuốc</Dialog.Title>
         <Dialog.ScrollArea className={"flex flex-row items-center px-0"}>
-          <ScrollView className={"px-6 pt-1 pb-1"}>
+          <ScrollView className={"px-6 pb-1 pt-1"}>
             <View className="space-y-2">
               <Text variant={"labelLarge"}>Trạng thái uống</Text>
               <RadioButton.Group

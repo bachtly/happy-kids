@@ -8,6 +8,7 @@ import moment, { Moment } from "moment";
 import DailyRemarkItem from "../../../src/components/remark/DailyRemarkItem";
 import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
 import Body from "../../../src/components/Body";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -15,10 +16,12 @@ const DailyRemarkScreen = ({ classId }: { classId: string }) => {
   const isFocused = useIsFocused();
   const [remarkList, setRemarkList] = useState<DailyRemarkModel[]>([]);
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const remarkMutation =
     api.dailyRemark.getDailyRemarkListFromClassId.useMutation({
-      onSuccess: (resp) => setRemarkList(resp.remarks)
+      onSuccess: (resp) => setRemarkList(resp.remarks),
+      onError: (e) => setErrorMessage(e.message)
     });
 
   // update list when search criterias change
@@ -56,6 +59,13 @@ const DailyRemarkScreen = ({ classId }: { classId: string }) => {
           ))}
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

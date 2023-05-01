@@ -11,11 +11,10 @@ import {
   MedicineLetter,
   MedicineUseTime,
   PostMedicineLetterResponse,
-  ResponseStatus,
   UpdateStatusMedicineLetterResponse
 } from "../router/medicine/protocols";
 import { sortAndUnique } from "../utils/arrayHelper";
-import { getErrorMessage } from "../utils/errorHelper";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
 
 @injectable()
@@ -30,7 +29,7 @@ class MedicineService {
     startDate: Date,
     endDate: Date,
     note: string
-  ): Promise<{ id: string; err: Error | null }> => {
+  ) => {
     const id = uuidv4();
     // console.log(id);
 
@@ -48,19 +47,21 @@ class MedicineService {
       })
       .executeTakeFirstOrThrow()
       .then((_) => {
-        return { id: id, err: null };
+        return { id: id };
       })
       .catch((err: Error) => {
-        return { id: "", err: err };
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
   };
 
   private createMedicineOnly = async (
     medicineLetterId: string,
     medicines: z.infer<typeof Medicine>[]
-  ): Promise<Error | null> => {
-    if (medicines.length == 0) return null;
-    return this.mysqlDB
+  ) => {
+    if (medicines.length == 0) return;
+
+    void (await this.mysqlDB
       .insertInto("Medicine")
       .values(
         medicines.map((medicine) => {
@@ -69,9 +70,10 @@ class MedicineService {
             const filename = "./medicine/" + uuidv4();
             this.fileService
               .asyncWriteFile(filename, medicine.photo)
-              .catch((e: Error) =>
-                console.log("failed to write image medicine, error", e.message)
-              );
+              .catch((e: Error) => {
+                console.log(e);
+                throw SYSTEM_ERROR_MESSAGE;
+              });
             return filename;
           };
           return {
@@ -84,19 +86,14 @@ class MedicineService {
         })
       )
       .execute()
-      .then((_) => {
-        // console.log(res);
-        return null;
-      })
       .catch((err: Error) => {
-        return err;
-      });
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      }));
   };
 
-  private deleteMedicineLetter = async (
-    medicineLetterId: string
-  ): Promise<boolean> => {
-    return this.mysqlDB
+  private deleteMedicineLetter = async (medicineLetterId: string) => {
+    void (await this.mysqlDB
       .deleteFrom("MedicineLetter")
       .where("id", "=", medicineLetterId)
       .executeTakeFirstOrThrow()
@@ -104,9 +101,10 @@ class MedicineService {
         if (resp.numDeletedRows == BigInt(0)) throw Error("delete failed");
         return true;
       })
-      .catch((_) => {
-        return false;
-      });
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      }));
   };
   createMedicineLetter = async (
     parentId: string,
@@ -116,59 +114,38 @@ class MedicineService {
     note: string,
     medicines: z.infer<typeof Medicine>[]
   ): Promise<z.infer<typeof PostMedicineLetterResponse>> => {
-    const { id, err } = await this.createMedicineLetterOnly(
+    const { id } = await this.createMedicineLetterOnly(
       parentId,
       studentId,
       startDate,
       endDate,
       note
     );
-    if (err) {
-      return {
-        status: ResponseStatus.enum.Fail,
-        message: err.message,
-        medicineLetterId: ""
-      };
-    }
-    const err2 = await this.createMedicineOnly(id, medicines);
-    if (err2) {
-      // cleaning if possible
-      if (!(await this.deleteMedicineLetter(id)))
-        console.log("clean medicineletter failed");
-      return {
-        status: ResponseStatus.enum.Fail,
-        message: err2.message,
-        medicineLetterId: ""
-      };
-    }
+
+    await this.createMedicineOnly(id, medicines);
+
     return {
-      status: ResponseStatus.enum.Success,
-      message: "create success",
       medicineLetterId: id
     };
   };
 
-  private deleteMedicineLetterUseDiary = async (
-    medicineLetterId: string
-  ): Promise<boolean> => {
-    return this.mysqlDB
+  private deleteMedicineLetterUseDiary = async (medicineLetterId: string) => {
+    void (await this.mysqlDB
       .deleteFrom("MedicineLetterUseDiary")
       .where("medicineLetterId", "=", medicineLetterId)
       .execute()
-      .then((_) => {
-        return true;
-      })
-      .catch((_) => {
-        return false;
-      });
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      }));
   };
 
   private createMedicineLetterUseDiary = async (
     medicineLetterId: string,
     useDiary: z.infer<typeof MedicineUseTime>[]
-  ): Promise<Error | null> => {
-    if (useDiary.length == 0) return null;
-    return this.mysqlDB
+  ) => {
+    if (useDiary.length == 0) return;
+    void (await this.mysqlDB
       .insertInto("MedicineLetterUseDiary")
       .values(
         useDiary.map((medicine) => {
@@ -181,13 +158,10 @@ class MedicineService {
         })
       )
       .execute()
-      .then((_) => {
-        // console.log(res);
-        return null;
-      })
       .catch((err: Error) => {
-        return err;
-      });
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      }));
   };
 
   updateMedicineLetter = async (
@@ -196,28 +170,17 @@ class MedicineService {
     status: z.infer<typeof LetterStatus>,
     useDiary: z.infer<typeof MedicineUseTime>[]
   ): Promise<z.infer<typeof UpdateStatusMedicineLetterResponse>> => {
-    try {
-      const deleteSuccess = await this.deleteMedicineLetterUseDiary(
-        medicineLetterId
+    await this.deleteMedicineLetterUseDiary(medicineLetterId).catch((_) => {
+      console.log(
+        `delete medicine use diary failed, medletid=${medicineLetterId}`
       );
-      if (!deleteSuccess)
-        console.log(
-          `delete medicine use diary failed, medletid=${medicineLetterId}`
-        );
-      const insertError = await this.createMedicineLetterUseDiary(
-        medicineLetterId,
-        useDiary
-      );
-      if (insertError)
-        console.log(
-          `insert medicine use diary failed, error=${insertError.message}`
-        );
-    } catch (e: unknown) {
-      return {
-        status: ResponseStatus.Enum.Fail,
-        message: getErrorMessage(e)
-      };
-    }
+    });
+
+    await this.createMedicineLetterUseDiary(medicineLetterId, useDiary).catch(
+      (_) => {
+        console.log(`insert medicine use diary failed`);
+      }
+    );
 
     return this.mysqlDB
       .updateTable("MedicineLetter")
@@ -229,16 +192,11 @@ class MedicineService {
       .executeTakeFirstOrThrow()
       .then((res) => {
         if (res.numUpdatedRows <= 0) throw Error("Update failed");
-        return {
-          status: ResponseStatus.enum.Success,
-          message: "update success"
-        };
+        return {};
       })
       .catch((err: Error) => {
-        return {
-          status: ResponseStatus.enum.Fail,
-          message: err.message
-        };
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
   };
 
@@ -262,25 +220,14 @@ class MedicineService {
       .then((resp) => {
         // console.log(resp);
         const res = z.array(MedicineLetter).safeParse(resp);
-        if (!res.success) {
-          return {
-            status: ResponseStatus.enum.Fail,
-            message: res.error.message,
-            medicineLetterList: []
-          };
-        }
+        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
         return {
-          status: ResponseStatus.Enum.Success,
-          message: "",
           medicineLetterList: res.data
         };
       })
-      .catch((e: Error) => {
-        return {
-          status: ResponseStatus.Enum.Fail,
-          message: e.message,
-          medicineLetterList: []
-        };
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
   };
 
@@ -310,25 +257,14 @@ class MedicineService {
       .then((resp) => {
         // console.log(resp);
         const res = z.array(MedicineLetter).safeParse(resp);
-        if (!res.success) {
-          return {
-            status: ResponseStatus.enum.Fail,
-            message: res.error.message,
-            medicineLetterList: []
-          };
-        }
+        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
         return {
-          status: ResponseStatus.Enum.Success,
-          message: "",
           medicineLetterList: res.data
         };
       })
-      .catch((e: Error) => {
-        return {
-          status: ResponseStatus.Enum.Fail,
-          message: e.message,
-          medicineLetterList: []
-        };
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
       });
   };
 
@@ -338,161 +274,139 @@ class MedicineService {
   ): Promise<z.infer<typeof GetMedicineLetterListResponse>> => {
     if (studentId) return this.getMedicineLetterListByStudent(studentId);
     if (classId) return this.getMedicineLetterListByClassId(classId);
-    return {
-      status: ResponseStatus.Enum.Fail,
-      message: "both classId and studentId missing",
-      medicineLetterList: []
-    };
+
+    throw SYSTEM_ERROR_MESSAGE;
   };
   getMedicineLetter = async (
     medicineLetterId: string
   ): Promise<z.infer<typeof GetMedicineLetterResponse>> => {
-    try {
-      const resp = await this.mysqlDB
-        .selectFrom("MedicineLetter")
-        .leftJoin("Medicine", "Medicine.medicineLetterId", "MedicineLetter.id")
-        .leftJoin(
-          this.mysqlDB
-            .selectFrom("User")
-            .select(["id", "fullname"])
-            .as("UserTeacher"),
-          "UserTeacher.id",
-          "MedicineLetter.updatedByTeacherId"
+    const resp = await this.mysqlDB
+      .selectFrom("MedicineLetter")
+      .leftJoin("Medicine", "Medicine.medicineLetterId", "MedicineLetter.id")
+      .leftJoin(
+        this.mysqlDB
+          .selectFrom("User")
+          .select(["id", "fullname"])
+          .as("UserTeacher"),
+        "UserTeacher.id",
+        "MedicineLetter.updatedByTeacherId"
+      )
+      .leftJoin(
+        this.mysqlDB
+          .selectFrom("User")
+          .select(["id", "fullname"])
+          .as("UserParent"),
+        "UserParent.id",
+        "MedicineLetter.createdByParentId"
+      )
+      .select([
+        "MedicineLetter.id as id",
+        "MedicineLetter.startDate as startDate",
+        "MedicineLetter.endDate as endDate",
+        "MedicineLetter.note as note",
+        "MedicineLetter.createdAt as createdAt",
+        "MedicineLetter.status as status",
+        "UserTeacher.fullname as updatedByTeacher",
+        "UserParent.fullname as createdByParent",
+        "Medicine.id as medicine_id",
+        "Medicine.name as medicine_name",
+        "Medicine.photo as medicine_photo",
+        "Medicine.amount as medicine_amount",
+        "Medicine.time as medicine_time"
+      ])
+      .where("MedicineLetter.id", "=", medicineLetterId)
+      .execute()
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
+    if (resp.length == 0) throw SYSTEM_ERROR_MESSAGE;
+    const res = MedicineLetter.safeParse(resp[0]);
+    if (!res.success) throw SYSTEM_ERROR_MESSAGE;
+
+    const medicineLetter = res.data;
+    const getPhoto = async (photoPath: string) => {
+      if (!photoPath || photoPath === "") return "";
+      return await this.fileService
+        .asyncReadFile(photoPath)
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        });
+    };
+
+    medicineLetter.medicines = await Promise.all(
+      resp
+        .filter(
+          (
+            item
+          ): item is Omit<typeof item, "medicine_id"> & {
+            medicine_id: string;
+          } => item.medicine_id !== null
         )
-        .leftJoin(
-          this.mysqlDB
-            .selectFrom("User")
-            .select(["id", "fullname"])
-            .as("UserParent"),
-          "UserParent.id",
-          "MedicineLetter.createdByParentId"
-        )
-        .select([
-          "MedicineLetter.id as id",
-          "MedicineLetter.startDate as startDate",
-          "MedicineLetter.endDate as endDate",
-          "MedicineLetter.note as note",
-          "MedicineLetter.createdAt as createdAt",
-          "MedicineLetter.status as status",
-          "UserTeacher.fullname as updatedByTeacher",
-          "UserParent.fullname as createdByParent",
-          "Medicine.id as medicine_id",
-          "Medicine.name as medicine_name",
-          "Medicine.photo as medicine_photo",
-          "Medicine.amount as medicine_amount",
-          "Medicine.time as medicine_time"
-        ])
-        .where("MedicineLetter.id", "=", medicineLetterId)
-        .execute();
+        .map(async (item) => ({
+          id: item.medicine_id,
+          name: item.medicine_name ?? "",
+          photo: await getPhoto(item.medicine_photo ?? ""),
+          amount: item.medicine_amount ?? "",
+          time: item.medicine_time ?? 0,
+          batchNumber: 0
+        }))
+    );
 
-      if (resp.length == 0) throw Error("LetterId not exist");
-      const res = MedicineLetter.safeParse(resp[0]);
-      if (!res.success) {
-        return {
-          status: ResponseStatus.enum.Fail,
-          message: res.error.message
-        };
-      }
-      const medicineLetter = res.data;
-      const getPhoto = async (photoPath: string) => {
-        if (!photoPath || photoPath === "") return "";
-        try {
-          return await this.fileService.asyncReadFile(photoPath);
-        } catch (_) {
-          return "";
-        }
-      };
+    const batchList = sortAndUnique(
+      medicineLetter.medicines.map((item) => item.time)
+    );
+    const timeToBatchNumber = new Map<number, number>(
+      batchList.map((item, index) => [item, index])
+    );
+    medicineLetter.medicines = medicineLetter.medicines.map((item) => ({
+      ...item,
+      batchNumber: timeToBatchNumber.get(item.time) ?? 0
+    }));
+    medicineLetter.batchList = batchList;
 
-      medicineLetter.medicines = await Promise.all(
-        resp
-          .filter(
-            (
-              item
-            ): item is Omit<typeof item, "medicine_id"> & {
-              medicine_id: string;
-            } => item.medicine_id !== null
-          )
-          .map(async (item) => ({
-            id: item.medicine_id,
-            name: item.medicine_name ?? "",
-            photo: await getPhoto(item.medicine_photo ?? ""),
-            amount: item.medicine_amount ?? "",
-            time: item.medicine_time ?? 0,
-            batchNumber: 0
-          }))
-      );
+    // for use diary
+    const { useDiary } = await this.getMedicineLetterUseDiary(medicineLetterId);
+    medicineLetter.useDiary = useDiary;
 
-      const batchList = sortAndUnique(
-        medicineLetter.medicines.map((item) => item.time)
-      );
-      const timeToBatchNumber = new Map<number, number>(
-        batchList.map((item, index) => [item, index])
-      );
-      medicineLetter.medicines = medicineLetter.medicines.map((item) => ({
-        ...item,
-        batchNumber: timeToBatchNumber.get(item.time) ?? 0
-      }));
-      medicineLetter.batchList = batchList;
-
-      // for use diary
-      const { useDiary } = await this.getMedicineLetterUseDiary(
-        medicineLetterId
-      );
-      medicineLetter.useDiary = useDiary;
-
-      return {
-        status: ResponseStatus.Enum.Success,
-        message: "",
-        medicineLetter: medicineLetter
-      };
-    } catch (e: unknown) {
-      return {
-        status: ResponseStatus.Enum.Fail,
-        message: getErrorMessage(e)
-      };
-    }
+    return {
+      medicineLetter: medicineLetter
+    };
   };
 
   private getMedicineLetterUseDiary = async (
     medicineLetterId: string
   ): Promise<{
     useDiary: z.infer<typeof MedicineUseTime>[];
-    err: Error | null;
   }> => {
-    try {
-      const resp = await this.mysqlDB
-        .selectFrom("MedicineLetter")
-        .innerJoin(
-          "MedicineLetterUseDiary",
-          "MedicineLetterUseDiary.medicineLetterId",
-          "MedicineLetter.id"
-        )
-        .select([
-          "MedicineLetterUseDiary.date as date",
-          "MedicineLetterUseDiary.status as status",
-          "MedicineLetterUseDiary.note as note"
-        ])
-        .where("MedicineLetter.id", "=", medicineLetterId)
-        .orderBy("MedicineLetterUseDiary.date")
-        .execute();
+    const resp = await this.mysqlDB
+      .selectFrom("MedicineLetter")
+      .innerJoin(
+        "MedicineLetterUseDiary",
+        "MedicineLetterUseDiary.medicineLetterId",
+        "MedicineLetter.id"
+      )
+      .select([
+        "MedicineLetterUseDiary.date as date",
+        "MedicineLetterUseDiary.status as status",
+        "MedicineLetterUseDiary.note as note"
+      ])
+      .where("MedicineLetter.id", "=", medicineLetterId)
+      .orderBy("MedicineLetterUseDiary.date")
+      .execute()
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-      const res = z.array(MedicineUseTime).safeParse(resp);
-      if (!res.success) {
-        return {
-          useDiary: [],
-          err: res.error
-        };
-      }
-      return {
-        useDiary: res.data,
-        err: null
-      };
-    } catch (e: unknown) {
-      return {
-        useDiary: [],
-        err: Error(getErrorMessage(e))
-      };
-    }
+    const res = z.array(MedicineUseTime).safeParse(resp);
+    if (!res.success) throw SYSTEM_ERROR_MESSAGE;
+
+    return {
+      useDiary: res.data
+    };
   };
 }
 

@@ -10,6 +10,7 @@ import CustomStackScreen from "../../CustomStackScreen";
 import DateRangeFilterBar from "../../date-picker/DateRangeFilterBar";
 import ItemListWrapper from "../../common/ItemListWrapper";
 import { MedLetterItem } from "../../../models/MedicineModels";
+import AlertModal from "../../common/AlertModal";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -39,6 +40,7 @@ const MedicineHomeView = ({
 
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
   const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { refetch, isFetching } = api.medicine.getMedicineLetterList.useQuery(
     isTeacher
@@ -50,26 +52,23 @@ const MedicineHomeView = ({
         },
     {
       onSuccess: (resp) => {
-        if (resp.status !== "Success") {
-          console.log(resp.message);
-        } else {
-          setLetterList(
-            resp.medicineLetterList
-              .map((item) => ({
-                id: item.id,
-                createdAt: item.createdAt,
-                status: item.status,
-                note: item.note,
-                startDate: item.startDate,
-                endDate: item.endDate,
-                studentName: item.studentName
-              }))
-              .sort((item1, item2) =>
-                moment(item2.createdAt).diff(moment(item1.createdAt))
-              )
-          );
-        }
-      }
+        setLetterList(
+          resp.medicineLetterList
+            .map((item) => ({
+              id: item.id,
+              createdAt: item.createdAt,
+              status: item.status,
+              note: item.note,
+              startDate: item.startDate,
+              endDate: item.endDate,
+              studentName: item.studentName
+            }))
+            .sort((item1, item2) =>
+              moment(item2.createdAt).diff(moment(item1.createdAt))
+            )
+        );
+      },
+      onError: (e) => setErrorMessage(e.message)
     }
   );
 
@@ -135,6 +134,13 @@ const MedicineHomeView = ({
         setTimeEnd={setTimeEnd}
       />
       <ListComponent filteredLetList={getFilteredLetList()} />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </View>
   );
 };

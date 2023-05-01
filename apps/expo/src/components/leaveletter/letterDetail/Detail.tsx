@@ -1,7 +1,7 @@
 import { useNavigation } from "expo-router";
 
 import moment from "moment";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, RefreshControl, ScrollView, View } from "react-native";
 import { ProgressBar, Text, useTheme } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
@@ -11,6 +11,7 @@ import ParentStatus from "./ParentStatus";
 import TeacherStatus from "./TeacherStatus";
 import Body from "../../Body";
 import CustomCard from "../../CustomCard";
+import AlertModal from "../../common/AlertModal";
 
 const Detail = ({
   userId,
@@ -24,15 +25,16 @@ const Detail = ({
   studentName: string;
 }) => {
   const theme = useTheme();
+
+  const [errorMessage, setErrorMessage] = useState("");
+
   const { data, refetch, isFetching, isSuccess } =
     api.leaveletter.getLeaveLetter.useQuery(
       {
         leaveLetterId: id
       },
       {
-        onSuccess: (data) => {
-          if (data.status !== "Success") console.log(data.message);
-        }
+        onError: (e) => setErrorMessage(e.message)
       }
     );
 
@@ -165,6 +167,13 @@ const Detail = ({
           </View>
         )}
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

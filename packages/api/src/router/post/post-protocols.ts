@@ -17,8 +17,7 @@ const Post = z.object({
 
 const GetPostListResponse = z.object({
   posts: z.array(Post),
-  hasNextPage: z.boolean(),
-  message: z.nullable(z.string())
+  hasNextPage: z.boolean()
 });
 
 export { GetPostListResponse, GetPostListRequest };
@@ -29,9 +28,7 @@ const CommentRequest = z.object({
   postId: z.string()
 });
 
-const CommentResponse = z.object({
-  message: z.nullable(z.string())
-});
+const CommentResponse = z.object({});
 
 export { CommentRequest, CommentResponse };
 
@@ -58,8 +55,7 @@ const GetUserInfoRequest = z.object({
 });
 
 const GetUserInfoResponse = z.object({
-  user: User,
-  message: z.nullable(z.string())
+  user: User
 });
 
 export { GetUserInfoRequest, GetUserInfoResponse };
@@ -70,9 +66,7 @@ const InsertPostRequest = z.object({
   userId: z.string()
 });
 
-const InsertPostResponse = z.object({
-  message: z.nullable(z.string())
-});
+const InsertPostResponse = z.object({});
 
 export { InsertPostResponse, InsertPostRequest };
 
@@ -92,8 +86,7 @@ const GetCommentListRequest = z.object({
 
 const GetCommentListResponse = z.object({
   comments: z.array(Comment),
-  hasNextPage: z.boolean(),
-  message: z.nullable(z.string())
+  hasNextPage: z.boolean()
 });
 
 export { Comment, GetCommentListRequest, GetCommentListResponse };

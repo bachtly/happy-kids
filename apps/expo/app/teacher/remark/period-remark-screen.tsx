@@ -8,6 +8,7 @@ import Body from "../../../src/components/Body";
 import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -16,10 +17,12 @@ const PeriodRemarkScreen = ({ classId }: { classId: string }) => {
   const [remarkList, setRemarkList] = useState<PeriodRemarkModel[]>([]);
 
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const remarkMutation =
     api.periodRemark.getPeriodRemarkListFromClassId.useMutation({
-      onSuccess: (resp) => setRemarkList(resp.remarks)
+      onSuccess: (resp) => setRemarkList(resp.remarks),
+      onError: (e) => setErrorMessage(e.message)
     });
 
   // update list when search criterias change
@@ -57,6 +60,13 @@ const PeriodRemarkScreen = ({ classId }: { classId: string }) => {
           ))}
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

@@ -5,6 +5,7 @@ import { api } from "../../utils/api";
 import moment, { Moment } from "moment";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import { PeriodRemarkModel } from "../../models/PeriodRemarkModels";
+import AlertModal from "../common/AlertModal";
 
 type AddDailyRemarkModalProps = {
   visible: boolean;
@@ -22,11 +23,13 @@ const AddPeriodRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
   const { userId } = useAuthContext();
 
   const [content, setContent] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const remarkMutation = api.periodRemark.insertPeriodRemark.useMutation({
     onSuccess: () => {
       submit();
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   const insertActivity = () => {
@@ -34,8 +37,7 @@ const AddPeriodRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
     const startOfMonth = moment(date.toDate().setDate(1));
     const endOfMonth = moment(date.toDate().setDate(1)).add(1, "month");
 
-    content &&
-      userId &&
+    userId &&
       remark.studentId &&
       remarkMutation.mutate({
         period: "Month",
@@ -73,6 +75,13 @@ const AddPeriodRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </>
   );
 };

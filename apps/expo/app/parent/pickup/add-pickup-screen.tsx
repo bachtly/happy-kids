@@ -10,6 +10,7 @@ import DatePicker from "../../../src/components/date-picker/DatePicker";
 import SelectPickerModal from "../../../src/components/pickup/SelectPickerModal";
 import { RelativeModel } from "../../../src/models/PickupModels";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -17,14 +18,18 @@ const AddPickupScreen = () => {
   const { studentId } = useSearchParams();
   const router = useRouter();
 
-  const [date, setDate] = useState<Moment | null>(DEFAULT_TIME);
-  const [time, setTime] = useState<Moment | null>(null);
+  const [date, setDate] = useState<Moment>(DEFAULT_TIME);
+  const [time, setTime] = useState<Moment>(DEFAULT_TIME);
   const [note, setNote] = useState("");
   const [picker, setPicker] = useState<RelativeModel | null>(null);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const pickupMutation = api.pickup.insertPickupLetter.useMutation({});
+  const pickupMutation = api.pickup.insertPickupLetter.useMutation({
+    onSuccess: () => router.back(),
+    onError: (e) => setErrorMessage(e.message)
+  });
 
   const closeModal = () => {
     setModalVisible(false);
@@ -36,15 +41,13 @@ const AddPickupScreen = () => {
   };
 
   const confirmCreateLetter = () => {
-    if (picker && date && time && studentId && note) {
+    studentId &&
       pickupMutation.mutate({
-        pickerId: picker.id,
+        pickerId: picker?.id ?? "",
         date: combineDateTime(date, time).toDate(),
         studentId: studentId,
         note: note
       });
-      router.back();
-    }
   };
 
   const combineDateTime = (date: Moment, time: Moment) => {
@@ -115,6 +118,13 @@ const AddPickupScreen = () => {
         visible={modalVisible}
         close={closeModal}
         submit={submitModal}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </View>
   );

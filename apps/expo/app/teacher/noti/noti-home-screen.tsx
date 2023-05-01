@@ -8,6 +8,7 @@ import Body from "../../../src/components/Body";
 import { NotiItemModel } from "../../../src/models/NotiModels";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import NotiItem from "../../../src/components/noti/NotiItem";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const NotiHomeScreen = () => {
   const { userId } = useAuthContext();
@@ -16,9 +17,11 @@ const NotiHomeScreen = () => {
 
   // data
   const [notis, setNotis] = useState<NotiItemModel[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const notiMutation = api.noti.getNotiList.useMutation({
-    onSuccess: (resp) => setNotis(resp.notis)
+    onSuccess: (resp) => setNotis(resp.notis),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // update list when search criterias change
@@ -52,6 +55,13 @@ const NotiHomeScreen = () => {
           )}
         />
       </View>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

@@ -3,6 +3,7 @@ import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import type { PhotoServiceInterface } from "../utils/PhotoService";
 import moment from "moment/moment";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 
 @injectable()
 class NotiService {
@@ -44,11 +45,14 @@ class NotiService {
             };
           })
         )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
 
     return {
-      notis: notis,
-      message: null
+      notis: notis
     };
   };
 
@@ -80,13 +84,15 @@ class NotiService {
         userId: userId
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
-    return {
-      message: null
-    };
+    return {};
   };
 }
 

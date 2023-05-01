@@ -8,6 +8,7 @@ import { PostItemModel, PostUserModel } from "../../../src/models/PostModels";
 import PostItem from "../../../src/components/post/PostItem";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import PostHeader from "../../../src/components/post/PostHeader";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const ITEM_PER_PAGE = 5;
 
@@ -17,6 +18,7 @@ const PostHomeScreen = () => {
   const [posts, setPosts] = useState<PostItemModel[]>([]);
   const [userInfo, setUserInfo] = useState<PostUserModel | null>(null);
   const [page, setPage] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const postMutation = api.post.getPostList.useMutation({
     onSuccess: (resp) => {
@@ -35,13 +37,15 @@ const PostHomeScreen = () => {
         const tmp = page;
         setPage(tmp + 1);
       }
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   const postUserMutation = api.post.getUserInfo.useMutation({
     onSuccess: (resp) => {
       setUserInfo(resp.user);
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   useEffect(() => {
@@ -90,12 +94,19 @@ const PostHomeScreen = () => {
         contentContainerStyle={{ gap: 12, paddingBottom: 8 }}
         data={posts}
         renderItem={({ item }: { item: PostItemModel }) => (
-          <PostItem item={item} />
+          <PostItem item={item} isTeacher={true} />
         )}
         ListHeaderComponent={() => (
           <PostHeader avatar={userInfo?.avatar ?? ""} />
         )}
         onEndReached={() => infiniteRender()}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </Body>
   );

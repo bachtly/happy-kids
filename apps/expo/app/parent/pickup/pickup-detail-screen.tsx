@@ -16,6 +16,7 @@ import {
 } from "../../../src/models/PickupModels";
 import Body from "../../../src/components/Body";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -34,9 +35,11 @@ const PickupDetailScreen = () => {
   const theme = useTheme();
 
   const [pickup, setPickup] = useState<PickupItemModel | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const pickupMutation = api.pickup.getPickupDetail.useMutation({
-    onSuccess: (resp) => setPickup(resp.pickup)
+    onSuccess: (resp) => setPickup(resp.pickup),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // update list when search criterias change
@@ -110,6 +113,13 @@ const PickupDetailScreen = () => {
           <Divider className={"mb-2"} />
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

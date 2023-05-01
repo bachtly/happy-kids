@@ -1,7 +1,7 @@
 import { Text } from "react-native-paper";
 import { ScrollView, View } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Body from "../../components/Body";
 import LoadingBar from "../../components/common/LoadingBar";
@@ -11,6 +11,8 @@ import CustomButton from "../../components/account/CustomButton";
 import { api } from "../../utils/api";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import { ConfirmModal } from "../../components/common/ConfirmModal";
+import AlertModal from "../../components/common/AlertModal";
+import { UNIMPLETMENTED_MESSAGE } from "../../utils/constants";
 
 const AccountHome = ({ isTeacher }: { isTeacher?: boolean }) => {
   const folderName = isTeacher ? "teacher" : "parent";
@@ -19,6 +21,7 @@ const AccountHome = ({ isTeacher }: { isTeacher?: boolean }) => {
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("");
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { refetch, isFetching } = api.account.getAccountInfo.useQuery(
     {
@@ -26,13 +29,12 @@ const AccountHome = ({ isTeacher }: { isTeacher?: boolean }) => {
     },
     {
       onSuccess: (data) => {
-        if (data.res) {
-          const accGot = data.res;
-          setName(accGot.fullname);
-          setAvatar(accGot.avatar);
-        } else console.log(data.errMess);
+        const accGot = data.res;
+        setName(accGot.fullname);
+        setAvatar(accGot.avatar);
       },
-      enabled: false
+      enabled: false,
+      onError: (e) => setErrorMessage(e.message)
     }
   );
 
@@ -83,7 +85,7 @@ const AccountHome = ({ isTeacher }: { isTeacher?: boolean }) => {
               text="Đổi mật khẩu"
             />
             <CustomButton
-              onPress={() => alert("TODO")}
+              onPress={() => setErrorMessage(UNIMPLETMENTED_MESSAGE)}
               icon="file-document"
               text="Hướng dẫn"
             />
@@ -97,12 +99,20 @@ const AccountHome = ({ isTeacher }: { isTeacher?: boolean }) => {
           </View>
         </View>
       </ScrollView>
+
       <ConfirmModal
         title="Đăng xuất"
         message="Bạn có chắc chắn muốn đăng xuất?"
         onClose={() => setLogoutDialogVisible(false)}
         onConfirm={() => onLogout()}
         visible={logoutDialogVisible}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </Body>
   );

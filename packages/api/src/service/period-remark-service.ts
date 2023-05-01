@@ -3,6 +3,7 @@ import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import moment from "moment";
 import type { FileServiceInterface } from "../utils/FileService";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 
 @injectable()
 class PeriodRemarkService {
@@ -49,10 +50,13 @@ class PeriodRemarkService {
               : ""
           }))
         )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
     return {
-      remarks: remarks,
-      message: null
+      remarks: remarks
     };
   };
 
@@ -78,9 +82,6 @@ class PeriodRemarkService {
     const endOfMonth = moment(date.toDate().setDate(1))
       .add(1, "month")
       .toDate();
-    console.log(
-      "START - END: " + startOfMonth.toString() + " " + endOfMonth.toString()
-    );
 
     const remarkReturn = await Promise.all(
       await this.mysqlDB
@@ -118,11 +119,14 @@ class PeriodRemarkService {
             studentAvatar: item.avatarUrl ? await getPhoto(item.avatarUrl) : ""
           }))
         )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
     );
 
     return {
-      remarks: remarkReturn,
-      message: null
+      remarks: remarkReturn
     };
   };
 
@@ -145,6 +149,8 @@ class PeriodRemarkService {
       })}`
     );
 
+    if (content.trim() === "") throw "Vui lòng nhập nội dung nhận xét";
+
     const count = await this.mysqlDB
       .insertInto("PeriodRemark")
       .values({
@@ -156,13 +162,15 @@ class PeriodRemarkService {
         teacherId: teacherId
       })
       .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows);
+      .then((res) => res.numInsertedOrUpdatedRows)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
-    if (!count || count <= 0) return { message: "Insertion fail." };
+    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
 
-    return {
-      message: null
-    };
+    return {};
   };
 }
 

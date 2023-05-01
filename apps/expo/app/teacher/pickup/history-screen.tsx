@@ -10,6 +10,7 @@ import { useIsFocused } from "@react-navigation/native";
 import Body from "../../../src/components/Body";
 import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -24,9 +25,11 @@ const HistoryScreen = () => {
   // data
   const [classIdSaved, setClassIdSaved] = useState("");
   const [pickupList, setPickupList] = useState<PickupItemModel[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const pickupMutation = api.pickup.getPickupListFromClassId.useMutation({
-    onSuccess: (resp) => setPickupList(resp.pickups)
+    onSuccess: (resp) => setPickupList(resp.pickups),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // prevent the lost of studentId in searchParams when routing between tabs
@@ -55,7 +58,7 @@ const HistoryScreen = () => {
             <PickupItem key={key} item={item} isTeacher={true} />
           ))
         ) : (
-          <View className={"mt-5 mb-10"}>
+          <View className={"mb-10 mt-5"}>
             <Text
               className={"text-center"}
               variant={"titleLarge"}
@@ -66,6 +69,13 @@ const HistoryScreen = () => {
           </View>
         )}
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

@@ -10,6 +10,7 @@ import { LeaveLetterList } from "./LeaveLetterList";
 import CustomStackScreen from "../../CustomStackScreen";
 import DateRangeFilterBar from "../../date-picker/DateRangeFilterBar";
 import ItemListWrapper from "../../common/ItemListWrapper";
+import AlertModal from "../../common/AlertModal";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -39,6 +40,7 @@ const LeaveLetterHomeView = ({
 
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
   const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { refetch, isFetching } = api.leaveletter.getLeaveLetterList.useQuery(
     isTeacher
@@ -50,26 +52,23 @@ const LeaveLetterHomeView = ({
         },
     {
       onSuccess: (resp) => {
-        if (resp.status !== "Success") {
-          console.log(resp.message);
-        } else {
-          setLetterList(
-            resp.leaveLetterList
-              .map((item) => ({
-                id: item.id,
-                reason: item.reason,
-                createdAt: item.createdAt,
-                status: item.status,
-                startDate: item.startDate,
-                endDate: item.endDate,
-                studentName: item.studentName
-              }))
-              .sort((item1, item2) =>
-                moment(item2.createdAt).diff(moment(item1.createdAt))
-              )
-          );
-        }
-      }
+        setLetterList(
+          resp.leaveLetterList
+            .map((item) => ({
+              id: item.id,
+              reason: item.reason,
+              createdAt: item.createdAt,
+              status: item.status,
+              startDate: item.startDate,
+              endDate: item.endDate,
+              studentName: item.studentName
+            }))
+            .sort((item1, item2) =>
+              moment(item2.createdAt).diff(moment(item1.createdAt))
+            )
+        );
+      },
+      onError: (e) => setErrorMessage(e.message)
     }
   );
 
@@ -135,6 +134,13 @@ const LeaveLetterHomeView = ({
         setTimeEnd={setTimeEnd}
       />
       <ListComponent filteredLetList={getFilteredLetList()} />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </View>
   );
 };

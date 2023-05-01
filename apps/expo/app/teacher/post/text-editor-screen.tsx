@@ -7,6 +7,7 @@ import "querystring";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { useRouter } from "expo-router";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const TextEditorScreen = () => {
   const { userId } = useAuthContext();
@@ -15,12 +16,15 @@ const TextEditorScreen = () => {
   const { colors } = useTheme();
   const [content, setContent] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const postMutation = api.post.insertPost.useMutation({});
+  const postMutation = api.post.insertPost.useMutation({
+    onSuccess: () => router.back(),
+    onError: (e) => setErrorMessage(e.message)
+  });
 
   const insertPost = (content: string, photos: string[]) => {
     userId &&
-      content != "" &&
       postMutation.mutate({
         content: content,
         photos: photos,
@@ -58,12 +62,18 @@ const TextEditorScreen = () => {
       <Button
         onPress={() => {
           insertPost(content, photos);
-          router.back();
         }}
         mode={"contained"}
       >
         Đăng
       </Button>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </View>
   );
 };

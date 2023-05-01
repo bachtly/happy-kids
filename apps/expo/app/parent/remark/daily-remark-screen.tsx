@@ -8,6 +8,7 @@ import moment, { Moment } from "moment";
 import DailyRemarkItem from "../../../src/components/remark/DailyRemarkItem";
 import DateRangeFilterBar from "../../../src/components/date-picker/DateRangeFilterBar";
 import Body from "../../../src/components/Body";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -17,9 +18,11 @@ const DailyRemarkScreen = ({ studentId }: { studentId: string }) => {
   const [remarkList, setRemarkList] = useState<DailyRemarkModel[]>([]);
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
   const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const remarkMutation = api.dailyRemark.getDailyRemarkList.useMutation({
-    onSuccess: (resp) => setRemarkList(resp.remarks)
+    onSuccess: (resp) => setRemarkList(resp.remarks),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // update list when search criterias change
@@ -51,6 +54,13 @@ const DailyRemarkScreen = ({ studentId }: { studentId: string }) => {
           ))}
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

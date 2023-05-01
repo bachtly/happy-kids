@@ -15,8 +15,7 @@ const GetNotiListRequest = z.object({
 });
 
 const GetNotiListResponse = z.object({
-  notis: z.array(Noti),
-  message: z.nullable(z.string())
+  notis: z.array(Noti)
 });
 
 export { GetNotiListRequest, GetNotiListResponse };

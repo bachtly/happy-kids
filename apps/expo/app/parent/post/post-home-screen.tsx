@@ -6,6 +6,7 @@ import Body from "../../../src/components/Body";
 import { useIsFocused } from "@react-navigation/native";
 import { PostItemModel } from "../../../src/models/PostModels";
 import PostItem from "../../../src/components/post/PostItem";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const ITEM_PER_PAGE = 5;
 
@@ -13,6 +14,7 @@ const PostHomeScreen = () => {
   const isFocused = useIsFocused();
   const [posts, setPosts] = useState<PostItemModel[]>([]);
   const [page, setPage] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const postMutation = api.post.getPostList.useMutation({
     onSuccess: (resp) => {
@@ -31,7 +33,8 @@ const PostHomeScreen = () => {
         const tmp = page;
         setPage(tmp + 1);
       }
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   useEffect(() => {
@@ -71,10 +74,17 @@ const PostHomeScreen = () => {
         contentContainerStyle={{ gap: 12, paddingBottom: 8 }}
         data={posts}
         renderItem={({ item }: { item: PostItemModel }) => (
-          <PostItem item={item} />
+          <PostItem item={item} isTeacher={false} />
         )}
         // ListHeaderComponent={() => <PostHeader userInfo={userInfo} />}
         onEndReached={() => infiniteRender()}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </Body>
   );

@@ -7,13 +7,16 @@ import { PeriodRemarkModel } from "../../../src/models/PeriodRemarkModels";
 import PeriodRemarkItem from "../../../src/components/remark/PeriodRemarkItem";
 import Body from "../../../src/components/Body";
 import moment from "moment";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const PeriodRemarkScreen = ({ studentId }: { studentId: string }) => {
   const isFocused = useIsFocused();
   const [remarkList, setRemarkList] = useState<PeriodRemarkModel[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const remarkMutation = api.periodRemark.getPeriodRemarkList.useMutation({
-    onSuccess: (resp) => setRemarkList(resp.remarks)
+    onSuccess: (resp) => setRemarkList(resp.remarks),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // update list when search criterias change
@@ -36,6 +39,13 @@ const PeriodRemarkScreen = ({ studentId }: { studentId: string }) => {
           ))}
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

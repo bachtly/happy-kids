@@ -9,6 +9,7 @@ import { api } from "../../../utils/api";
 import LetterStatusDialog from "../modals/OptionDialog";
 import LetterStatusText from "../StatusText";
 import MedicineUseTabTable from "./MedicineUseTabTable";
+import AlertModal from "../../common/AlertModal";
 
 const TeacherStatus = ({
   userId,
@@ -31,6 +32,7 @@ const TeacherStatus = ({
   const [statusLetter, setStatusLetter] = useState(status);
   const [curMedUseTimes, setCurMedUseTimes] = useState(medUseTimes);
   const [curBatchNumber, setCurBatchNumber] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isChangedLetterStatus = statusLetter != status;
   const isChangedUseStatus =
@@ -38,13 +40,8 @@ const TeacherStatus = ({
   const isAnyChanged = isChangedLetterStatus || isChangedUseStatus;
   const updateStatMedLetterMutation =
     api.medicine.updateMedicineLetter.useMutation({
-      onSuccess: (data) => {
-        if (data.status !== "Success") {
-          console.log(data.message);
-        } else {
-          refetch();
-        }
-      }
+      onSuccess: (_) => refetch(),
+      onError: (e) => setErrorMessage(e.message)
     });
 
   useEffect(() => {
@@ -135,6 +132,13 @@ const TeacherStatus = ({
         setOrigValue={setStatusLetter}
         visible={visibleStatusDialog}
         close={() => setVisibleStatusDialog(false)}
+      />
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
       />
     </View>
   );

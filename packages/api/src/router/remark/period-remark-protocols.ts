@@ -16,8 +16,7 @@ const GetPeriodRemarkListRequest = z.object({
 });
 
 const GetPeriodRemarkListResponse = z.object({
-  remarks: z.array(PeriodRemark),
-  message: z.nullable(z.string())
+  remarks: z.array(PeriodRemark)
 });
 
 const TeacherPeriodRemark = z.object({
@@ -36,8 +35,7 @@ const GetPeriodRemarkListFromClassIdRequest = z.object({
 });
 
 const GetPeriodRemarkListFromClassIdResponse = z.object({
-  remarks: z.array(TeacherPeriodRemark),
-  message: z.nullable(z.string())
+  remarks: z.array(TeacherPeriodRemark)
 });
 
 export { GetPeriodRemarkListRequest, GetPeriodRemarkListResponse };
@@ -56,8 +54,6 @@ const InsertPeriodRemarkRequest = z.object({
   teacherId: z.string()
 });
 
-const InsertPeriodRemarkResponse = z.object({
-  message: z.nullable(z.string())
-});
+const InsertPeriodRemarkResponse = z.object({});
 
 export { InsertPeriodRemarkRequest, InsertPeriodRemarkResponse };

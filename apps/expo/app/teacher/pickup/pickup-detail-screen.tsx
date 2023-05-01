@@ -18,6 +18,7 @@ import {
 import Body from "../../../src/components/Body";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -40,17 +41,21 @@ const PickupDetailScreen = () => {
   const [changed, setChanged] = useState(false);
 
   const [pickup, setPickup] = useState<PickupItemModel | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const pickupMutation = api.pickup.getPickupDetail.useMutation({
-    onSuccess: (resp) => setPickup(resp.pickup)
+    onSuccess: (resp) => setPickup(resp.pickup),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   const confirmMutation = api.pickup.confirmPickupLetter.useMutation({
-    onSuccess: () => setChanged(!changed)
+    onSuccess: () => setChanged(!changed),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   const rejectMutation = api.pickup.rejectPickupLetter.useMutation({
-    onSuccess: () => setChanged(!changed)
+    onSuccess: () => setChanged(!changed),
+    onError: (e) => setErrorMessage(e.message)
   });
 
   // update list when search criterias change
@@ -146,6 +151,13 @@ const PickupDetailScreen = () => {
           </Button>
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

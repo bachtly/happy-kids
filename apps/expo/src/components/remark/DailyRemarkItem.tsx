@@ -102,7 +102,7 @@ const DailyRemarkItem = ({
 
       {isTeacher && (
         <>
-          <View className={"mt-1"}>
+          <View className={"mt-1"} style={{ alignSelf: "flex-end" }}>
             <UnderlineButton
               onPress={() => {
                 setAddRemarkModalVisible(true);

@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-type UpdatePassError = "" | "wrong_pass" | "other";
-
 const AccountInfo = z.object({
   fullname: z.string(),
   email: z.string(),
@@ -26,4 +24,3 @@ const UpdatePassword = z.object({
 });
 
 export { AccountInfo, GetAccountInfo, UpdateAccountInfo, UpdatePassword };
-export type { UpdatePassError };

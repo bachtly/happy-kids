@@ -1,5 +1,5 @@
 import { RefreshControl, ScrollView, View } from "react-native";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment, { Moment } from "moment";
 
 import Body from "../../components/Body";
@@ -15,6 +15,7 @@ import { AccountInfoModel } from "../../models/AccountModels";
 
 import { api } from "../../utils/api";
 import { useAuthContext } from "../../utils/auth-context-provider";
+import AlertModal from "../../components/common/AlertModal";
 
 const AccountInfo = () => {
   const { userId } = useAuthContext();
@@ -25,6 +26,7 @@ const AccountInfo = () => {
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState<Moment | null>(null);
   const [avatar, setAvatar] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [accountInfo, setAccountInfo] = useState<AccountInfoModel>({
     fullname: name,
@@ -55,22 +57,18 @@ const AccountInfo = () => {
     },
     {
       onSuccess: (data) => {
-        if (data.res) {
-          const accGot = data.res;
-          setAccountInfo((prev) => ({
-            fullname: accGot.fullname,
-            email: accGot.email,
-            phone: accGot.phone,
-            birthdate: accGot.birthdate
-              ? moment(accGot.birthdate)
-              : prev.birthdate,
-            avatar: accGot.avatar
-          }));
-        } else {
-          console.log(data.errMess);
-          alert(data.errMess);
-        }
-      }
+        const accGot = data.res;
+        setAccountInfo((prev) => ({
+          fullname: accGot.fullname,
+          email: accGot.email,
+          phone: accGot.phone,
+          birthdate: accGot.birthdate
+            ? moment(accGot.birthdate)
+            : prev.birthdate,
+          avatar: accGot.avatar
+        }));
+      },
+      onError: (e) => setErrorMessage(e.message)
     }
   );
 
@@ -146,6 +144,13 @@ const AccountInfo = () => {
           </View>
         </View>
       </ScrollView>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Body>
   );
 };

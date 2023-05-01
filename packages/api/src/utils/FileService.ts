@@ -1,6 +1,7 @@
 import { promises as fsPromises } from "fs";
 import { join } from "path";
 import { injectable } from "tsyringe";
+import { SYSTEM_ERROR_MESSAGE } from "./errorHelper";
 
 interface FileServiceInterface {
   asyncWriteFile: (filename: string, data: string) => Promise<void>;
@@ -11,23 +12,36 @@ interface FileServiceInterface {
 @injectable()
 class FileService implements FileServiceInterface {
   readFileBase64 = async (filename: string) => {
-    const contents = await fsPromises.readFile(this.getFilePath(filename), {
-      encoding: "base64"
-    });
+    const contents = await fsPromises
+      .readFile(this.getFilePath(filename), {
+        encoding: "base64"
+      })
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
     return contents;
   };
 
   asyncWriteFile = async (filename: string, data: string) => {
-    const get = await fsPromises.writeFile(this.getFilePath(filename), data);
+    const get = await fsPromises
+      .writeFile(this.getFilePath(filename), data)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
 
     if (get !== undefined) throw Error("write error");
   };
 
   asyncReadFile = async (filename: string) => {
-    const contents = await fsPromises.readFile(
-      this.getFilePath(filename),
-      "utf-8"
-    );
+    const contents = await fsPromises
+      .readFile(this.getFilePath(filename), "utf-8")
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
     return contents;
   };
 

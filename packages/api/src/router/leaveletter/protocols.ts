@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-const ResponseStatus = z.enum(["Success", "Fail"]);
-
 const LetterStatus = z.enum(["Confirmed", "NotConfirmed", "Rejected"]);
 
 const LeaveLetter = z.object({
@@ -29,8 +27,6 @@ const PostLeaveLetterParams = z.object({
 });
 
 const PostLeaveLetterResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   leaveLetterId: z.string()
 });
 
@@ -40,10 +36,7 @@ const UpdateStatusLeaveLetterParams = z.object({
   status: LetterStatus
 });
 
-const UpdateStatusLeaveLetterResponse = z.object({
-  status: ResponseStatus,
-  message: z.string()
-});
+const UpdateStatusLeaveLetterResponse = z.object({});
 
 const GetLeaveLetterListParams = z.object({
   studentId: z.string().optional(),
@@ -51,8 +44,6 @@ const GetLeaveLetterListParams = z.object({
 });
 
 const GetLeaveLetterListResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   leaveLetterList: z.array(LeaveLetter)
 });
 
@@ -61,8 +52,6 @@ const GetLeaveLetterParams = z.object({
 });
 
 const GetLeaveLetterResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   leaveLetter: LeaveLetter.nullable()
 });
 
@@ -76,6 +65,5 @@ export {
   GetLeaveLetterListResponse,
   GetLeaveLetterParams,
   GetLeaveLetterResponse,
-  ResponseStatus,
   LetterStatus
 };

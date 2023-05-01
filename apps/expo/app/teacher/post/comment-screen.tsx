@@ -8,6 +8,7 @@ import { useSearchParams } from "expo-router";
 import { Stack } from "expo-router";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import AlertModal from "../../../src/components/common/AlertModal";
 
 const ITEM_PER_PAGE = 6;
 
@@ -19,6 +20,7 @@ const CommentScreen = () => {
   const [comments, setComments] = useState<CommentModel[]>([]);
   const [content, setContent] = useState("");
   const [page, setPage] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const postMutation = api.post.getCommentList.useMutation({
     onSuccess: (resp) => {
@@ -37,12 +39,14 @@ const CommentScreen = () => {
         const tmp = page;
         setPage(tmp + 1);
       }
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
   const postCmtMutation = api.post.comment.useMutation({
     onSuccess: () => {
       refresh();
-    }
+    },
+    onError: (e) => setErrorMessage(e.message)
   });
 
   useEffect(() => {
@@ -65,8 +69,6 @@ const CommentScreen = () => {
 
   const insertComment = () => {
     userId &&
-      content != "" &&
-      postId != "" &&
       !postCmtMutation.isLoading &&
       postCmtMutation.mutate({
         content: content,
@@ -154,6 +156,13 @@ const CommentScreen = () => {
           />
         </View>
       </View>
+
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </>
   );
 };
