@@ -1,6 +1,7 @@
 import { useSearchParams } from "expo-router";
 import React, { useState } from "react";
 import LeaveLetterHomeView from "../../../src/components/leaveletter/leaveletterHome/LeaveLetterHomeView";
+import Body from "../../../src/components/Body";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
 const LeaveLetterHome = () => {
@@ -10,7 +11,7 @@ const LeaveLetterHome = () => {
   if (!classId) setErrorMessage(SYSTEM_ERROR_MESSAGE);
 
   return (
-    <>
+    <Body>
       <LeaveLetterHomeView
         classId={classId ?? ""}
         studentId={""}
@@ -22,7 +23,7 @@ const LeaveLetterHome = () => {
         message={errorMessage}
         onClose={() => setErrorMessage("")}
       />
-    </>
+    </Body>
   );
 };
 

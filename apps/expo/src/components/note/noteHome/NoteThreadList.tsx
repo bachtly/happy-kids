@@ -11,11 +11,15 @@ import LetterStatusText from "../../medicine/StatusText";
 type ItemListProps = {
   items: NoteThread[];
   isTeacher: boolean;
+  onRefresh: () => void;
+  refreshing: boolean;
 };
 
 export function NoteThreadList({
   items,
-  isTeacher
+  isTeacher,
+  onRefresh,
+  refreshing
 }: ItemListProps): React.ReactElement {
   const router = useRouter();
   const renderItem = ({ item }: { item: NoteThread }) => {
@@ -67,11 +71,12 @@ export function NoteThreadList({
 
   return (
     <FlatList
-      contentContainerStyle={{ gap: 8, paddingBottom: 16 }}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
       data={items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
-      scrollEnabled={false}
     />
   );
 }

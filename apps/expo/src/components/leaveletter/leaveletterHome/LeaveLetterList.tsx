@@ -21,11 +21,15 @@ export type LeaveLetterItem = {
 type ItemListProps = {
   items: LeaveLetterItem[];
   isTeacher: boolean;
+  onRefresh: () => void;
+  refreshing: boolean;
 };
 
 export function LeaveLetterList({
   items,
-  isTeacher
+  isTeacher,
+  onRefresh,
+  refreshing
 }: ItemListProps): React.ReactElement {
   const router = useRouter();
   const renderItem = ({ item }: { item: LeaveLetterItem }) => {
@@ -73,11 +77,12 @@ export function LeaveLetterList({
 
   return (
     <FlatList
-      contentContainerStyle={{ gap: 8, paddingBottom: 16 }}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
       data={items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
-      scrollEnabled={false}
     />
   );
 }

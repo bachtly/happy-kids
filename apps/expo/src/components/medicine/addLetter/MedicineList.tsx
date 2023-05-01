@@ -71,7 +71,7 @@ export default function MedicineList({
 
   return (
     <FlatList
-      contentContainerStyle={{ gap: 8, paddingBottom: 16 }}
+      contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
       data={items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}

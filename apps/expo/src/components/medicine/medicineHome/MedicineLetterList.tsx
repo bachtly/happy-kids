@@ -11,11 +11,15 @@ import { MedLetterItem } from "../../../models/MedicineModels";
 type ItemListProps = {
   items: MedLetterItem[];
   isTeacher: boolean;
+  onRefresh: () => void;
+  refreshing: boolean;
 };
 
 export function MedicineLetterList({
   items,
-  isTeacher
+  isTeacher,
+  onRefresh,
+  refreshing
 }: ItemListProps): React.ReactElement {
   const router = useRouter();
   const renderItem = ({ item }: { item: MedLetterItem }) => {
@@ -63,11 +67,12 @@ export function MedicineLetterList({
 
   return (
     <FlatList
-      contentContainerStyle={{ gap: 8, paddingBottom: 16 }}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
       data={items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
-      scrollEnabled={false}
     />
   );
 }

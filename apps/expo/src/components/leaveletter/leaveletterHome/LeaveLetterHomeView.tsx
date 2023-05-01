@@ -4,6 +4,7 @@ import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { api } from "../../../utils/api";
+import { ProgressBar } from "react-native-paper";
 
 import type { LeaveLetterItem } from "./LeaveLetterList";
 import { LeaveLetterList } from "./LeaveLetterList";
@@ -108,12 +109,19 @@ const LeaveLetterHomeView = ({
       isFetching={isFetching}
       emptyPlaceHolderText="Danh sách đơn trống"
     >
-      <LeaveLetterList isTeacher={isTeacher} items={filteredLetList} />
+      <LeaveLetterList
+        refreshing={isFetching}
+        onRefresh={fetchData}
+        isTeacher={isTeacher}
+        items={filteredLetList}
+      />
     </ItemListWrapper>
   );
 
   return (
     <View className="flex-1">
+      {isFetching && <ProgressBar indeterminate visible={true} />}
+
       <CustomStackScreen
         title={"Xin nghỉ"}
         addButtonHandler={

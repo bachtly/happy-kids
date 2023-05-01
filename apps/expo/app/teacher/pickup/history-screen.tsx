@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Text, useTheme, ProgressBar } from "react-native-paper";
+import { ProgressBar } from "react-native-paper";
 import { useSearchParams } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
-import { ScrollView, View } from "react-native";
+import { FlatList, View } from "react-native";
 import PickupItem from "../../../src/components/pickup/PickupItem";
 import { PickupItemModel } from "../../../src/models/PickupModels";
 import { useIsFocused } from "@react-navigation/native";
 import Body from "../../../src/components/Body";
 import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import ItemListWrapper from "../../../src/components/common/ItemListWrapper";
 import AlertModal from "../../../src/components/common/AlertModal";
 
 const DEFAULT_TIME = moment(moment.now());
 
 const HistoryScreen = () => {
-  const { colors } = useTheme();
   const { classId } = useSearchParams();
   const isFocused = useIsFocused();
 
@@ -39,11 +39,15 @@ const HistoryScreen = () => {
 
   // update list when search criterias change
   useEffect(() => {
+    refresh();
+  }, [classIdSaved, time, isFocused]);
+
+  const refresh = () => {
     pickupMutation.mutate({
       time: time.toDate(),
       classId: classIdSaved ?? ""
     });
-  }, [classIdSaved, time, isFocused]);
+  };
 
   return (
     <Body>
@@ -52,23 +56,24 @@ const HistoryScreen = () => {
 
       <DateFilterBar time={time} setTime={setTime} />
 
-      <ScrollView className={"p-2"}>
-        {pickupList != null && pickupList.length > 0 ? (
-          pickupList.map((item, key) => (
-            <PickupItem key={key} item={item} isTeacher={true} />
-          ))
-        ) : (
-          <View className={"mb-10 mt-5"}>
-            <Text
-              className={"text-center"}
-              variant={"titleLarge"}
-              style={{ color: colors.onSurfaceDisabled }}
-            >
-              Không có dữ liệu để hiển thị
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+      <ItemListWrapper
+        fetchData={() => refresh()}
+        isFetching={pickupMutation.isLoading}
+        isEmpty={pickupList.length == 0}
+        emptyPlaceHolderText={"Danh sách đơn trống"}
+      >
+        <View>
+          <FlatList
+            onRefresh={() => refresh()}
+            refreshing={pickupMutation.isLoading}
+            contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
+            data={pickupList}
+            renderItem={({ item }: { item: PickupItemModel }) => (
+              <PickupItem item={item} isTeacher={true} />
+            )}
+          />
+        </View>
+      </ItemListWrapper>
 
       <AlertModal
         visible={errorMessage != ""}

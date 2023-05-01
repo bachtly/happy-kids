@@ -104,12 +104,17 @@ const NoteHomeView = ({
     filteredLetList: NoteThread[];
   }) => (
     <ItemListWrapper
-      fetchData={() => {}}
+      fetchData={fetchData}
       isEmpty={filteredLetList.length == 0}
       isFetching={isFetching}
       emptyPlaceHolderText="Danh sách đơn trống"
     >
-      <NoteThreadList isTeacher={isTeacher} items={filteredLetList} />
+      <NoteThreadList
+        onRefresh={fetchData}
+        refreshing={isFetching}
+        isTeacher={isTeacher}
+        items={filteredLetList}
+      />
     </ItemListWrapper>
   );
 

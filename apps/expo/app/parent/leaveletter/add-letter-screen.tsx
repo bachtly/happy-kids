@@ -12,6 +12,7 @@ import SubmitComponent from "../../../src/components/common/SubmitComponent";
 import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
+import Body from "../../../src/components/Body";
 
 const AddLetter = () => {
   const now = moment();
@@ -63,7 +64,7 @@ const AddLetter = () => {
   };
 
   return (
-    <View className="flex-1">
+    <Body>
       <CustomStackScreen title={"Tạo đơn xin nghỉ"} />
 
       <ScrollView className="flex-1">
@@ -128,7 +129,7 @@ const AddLetter = () => {
         message={errorMessage}
         onClose={() => setErrorMessage("")}
       />
-    </View>
+    </Body>
   );
 };
 

@@ -4,6 +4,7 @@ import moment, { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { api } from "../../../utils/api";
+import { ProgressBar } from "react-native-paper";
 
 import { MedicineLetterList } from "./MedicineLetterList";
 import CustomStackScreen from "../../CustomStackScreen";
@@ -108,12 +109,19 @@ const MedicineHomeView = ({
       isFetching={isFetching}
       emptyPlaceHolderText="Danh sách đơn trống"
     >
-      <MedicineLetterList isTeacher={isTeacher} items={filteredLetList} />
+      <MedicineLetterList
+        onRefresh={fetchData}
+        refreshing={isFetching}
+        isTeacher={isTeacher}
+        items={filteredLetList}
+      />
     </ItemListWrapper>
   );
 
   return (
     <View className="flex-1">
+      {isFetching && <ProgressBar indeterminate visible={true} />}
+
       <CustomStackScreen
         title={"Dặn thuốc"}
         addButtonHandler={

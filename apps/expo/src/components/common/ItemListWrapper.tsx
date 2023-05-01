@@ -17,28 +17,30 @@ export default function ItemListWrapper({
   const theme = useTheme();
   return (
     <View className="flex-1">
-      {isFetching && <ProgressBar indeterminate visible={true} />}
-      <ScrollView
-        className="flex-1"
-        refreshControl={
-          <RefreshControl refreshing={false} onRefresh={fetchData} />
-        }
-      >
-        <View className="px-4 pt-4">
-          {!isEmpty ? (
-            children
-          ) : (
-            <View
-              className="rounded-sm border p-4"
-              style={{ borderColor: theme.colors.outline }}
-            >
-              <Text className={"text-center leading-6"}>
+      {!isEmpty ? (
+        children
+      ) : (
+        <>
+          {isFetching && <ProgressBar indeterminate visible={true} />}
+
+          <ScrollView
+            className="flex-1"
+            refreshControl={
+              <RefreshControl refreshing={false} onRefresh={fetchData} />
+            }
+          >
+            <View className="rounded-sm p-4">
+              <Text
+                className={"text-center"}
+                variant={"titleLarge"}
+                style={{ color: theme.colors.onSurfaceDisabled }}
+              >
                 {emptyPlaceHolderText}
               </Text>
             </View>
-          )}
-        </View>
-      </ScrollView>
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 }

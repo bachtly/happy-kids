@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
 import { View, Image } from "react-native";
 import { Text } from "react-native-paper";
-import {
-  PickupItemModel,
-  STATUS_ENUM_TO_VERBOSE
-} from "../../models/PickupModels";
+import { PickupItemModel } from "../../models/PickupModels";
 import pickupIcon from "../../../assets/images/pickup-icon.png";
 import moment from "moment/moment";
 import CustomCard from "../CustomCard";
+import LetterStatusText from "../medicine/StatusText";
+import React from "react";
+import { MedicineLetterStatus } from "../../models/MedicineModels";
 
 const DATE_FORMAT = "DD/MM/YYYY";
 const TIME_FORMAT = "hh:mm";
@@ -22,7 +22,7 @@ const PickupItem = ({
   const router = useRouter();
 
   return (
-    <View className={"mb-3"}>
+    <View>
       <CustomCard
         onPress={() => {
           router.push({
@@ -53,9 +53,14 @@ const PickupItem = ({
               Giờ đón: {moment(item.time).format(TIME_FORMAT).toString()}
             </Text>
             <Text>{moment(item.time).format(DATE_FORMAT).toString()}</Text>
-            <Text className={"text-right italic"}>
-              {item.status && STATUS_ENUM_TO_VERBOSE.get(item.status)}
-            </Text>
+
+            <View>
+              {item.status && (
+                <LetterStatusText
+                  status={item.status as MedicineLetterStatus}
+                />
+              )}
+            </View>
           </View>
         </View>
       </CustomCard>

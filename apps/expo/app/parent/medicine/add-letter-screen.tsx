@@ -15,6 +15,7 @@ import { GetTimeNumber } from "../../../src/components/medicine/TimeInDay";
 import CustomCard from "../../../src/components/CustomCard";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
+import Body from "../../../src/components/Body";
 
 const AddLetter = () => {
   const now = moment();
@@ -76,7 +77,7 @@ const AddLetter = () => {
   if (!userId || !studentId) setErrorMessage(SYSTEM_ERROR_MESSAGE);
 
   return (
-    <View className="flex-1">
+    <Body>
       <CustomStackScreen title={"Tạo đơn dặn thuốc"} />
 
       <ScrollView className="flex-1">
@@ -141,7 +142,7 @@ const AddLetter = () => {
         message={errorMessage}
         onClose={() => setErrorMessage("")}
       />
-    </View>
+    </Body>
   );
 };
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Text, useTheme, ProgressBar } from "react-native-paper";
+import { ProgressBar } from "react-native-paper";
 import { useSearchParams, useRouter } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
-import { ScrollView, View } from "react-native";
+import { FlatList } from "react-native";
 import PickupItem from "../../../src/components/pickup/PickupItem";
 import { PickupItemModel } from "../../../src/models/PickupModels";
 import { useIsFocused } from "@react-navigation/native";
@@ -11,13 +11,13 @@ import DateRangeFilterBar from "../../../src/components/date-picker/DateRangeFil
 import Body from "../../../src/components/Body";
 import CustomStack from "../../../src/components/CustomStackScreen";
 import AlertModal from "../../../src/components/common/AlertModal";
+import ItemListWrapper from "../../../src/components/common/ItemListWrapper";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
 
 const HistoryScreen = () => {
   const router = useRouter();
-  const { colors } = useTheme();
   const { studentId } = useSearchParams();
   const isFocused = useIsFocused();
 
@@ -35,6 +35,14 @@ const HistoryScreen = () => {
     onError: (e) => setErrorMessage(e.message)
   });
 
+  const refresh = () => {
+    pickupMutation.mutate({
+      timeStart: timeStart.toDate(),
+      timeEnd: timeEnd.toDate(),
+      studentId: studentId ?? ""
+    });
+  };
+
   // prevent the lost of studentId in searchParams when routing between tabs
   useEffect(() => {
     studentId && setStudentIdSaved(studentId);
@@ -42,11 +50,7 @@ const HistoryScreen = () => {
 
   // update list when search criterias change
   useEffect(() => {
-    pickupMutation.mutate({
-      timeStart: timeStart.toDate(),
-      timeEnd: timeEnd.toDate(),
-      studentId: studentId ?? ""
-    });
+    refresh();
   }, [studentId, timeStart, timeEnd, isFocused]);
 
   return (
@@ -73,23 +77,26 @@ const HistoryScreen = () => {
           setTimeEnd={setTimeEnd}
         />
 
-        <ScrollView className={"p-2"}>
-          {pickupList != null && pickupList.length > 0 ? (
-            pickupList.map((item, key) => (
-              <PickupItem key={key} item={item} isTeacher={false} />
-            ))
-          ) : (
-            <View className={"mb-10 mt-5"}>
-              <Text
-                className={"text-center"}
-                variant={"titleLarge"}
-                style={{ color: colors.onSurfaceDisabled }}
-              >
-                Không có dữ liệu để hiển thị
-              </Text>
-            </View>
-          )}
-        </ScrollView>
+        <ItemListWrapper
+          fetchData={() => refresh()}
+          isFetching={pickupMutation.isLoading}
+          isEmpty={pickupList.length == 0}
+          emptyPlaceHolderText={"Danh sách đơn trống"}
+        >
+          <FlatList
+            onRefresh={() => refresh()}
+            refreshing={pickupMutation.isLoading}
+            contentContainerStyle={{
+              gap: 8,
+              paddingBottom: 8,
+              paddingTop: 8
+            }}
+            data={pickupList}
+            renderItem={({ item }: { item: PickupItemModel }) => (
+              <PickupItem item={item} isTeacher={false} />
+            )}
+          />
+        </ItemListWrapper>
 
         <AlertModal
           visible={errorMessage != ""}

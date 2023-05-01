@@ -12,6 +12,7 @@ import { api } from "../../../src/utils/api";
 import moment, { Moment } from "moment";
 import DateRangePicker from "../../../src/components/date-picker/DateRangePicker";
 import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
+import Body from "../../../src/components/Body";
 
 const AddLetter = () => {
   const now = moment();
@@ -61,7 +62,7 @@ const AddLetter = () => {
   };
 
   return (
-    <View className="flex-1">
+    <Body>
       <CustomStackScreen title={"Tạo lời nhắn"} />
 
       <ScrollView className="flex-1">
@@ -131,7 +132,7 @@ const AddLetter = () => {
         submitError={submitError}
         afterSubmitSuccess={() => router.back()}
       />
-    </View>
+    </Body>
   );
 };
 
