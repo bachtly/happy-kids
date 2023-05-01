@@ -76,6 +76,7 @@ importers:
       expo-secure-store: ~12.1.1
       expo-splash-screen: ~0.18.1
       expo-status-bar: ~1.4.4
+      expo-updates: ~0.16.4
       metro: ~0.73.7
       moment: ^2.29.4
       nativewind: ^2.0.11
@@ -118,6 +119,7 @@ importers:
       expo-secure-store: 12.1.1_expo@48.0.0-beta.2
       expo-splash-screen: 0.18.1_uvd6ct5nrnbms6bsakw7cxpxfm
       expo-status-bar: 1.4.4
+      expo-updates: 0.16.4_expo@48.0.0-beta.2
       metro: 0.73.9
       moment: 2.29.4
       nativewind: 2.0.11_vubzc37hondlf3dgtrlfwzy45q
@@ -1873,7 +1875,21 @@ packages:
   /@expo/metro-config/0.6.0:
     resolution: {integrity: sha512-AqiWCyD6MGQuddZuitdpNVpPUO7JZEjPmLaDabAf/hEP6Uo9UJ4flx0OGcJRBkZTRSZ3Z3WwSBtq0LWvABJzrA==}
     dependencies:
-      '@expo/config': 8.0.1
+      '@expo/config': 8.0.2
+      chalk: 4.1.2
+      debug: 4.3.4
+      find-yarn-workspace-root: 2.0.0
+      getenv: 1.0.0
+      resolve-from: 5.0.0
+      sucrase: 3.32.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@expo/metro-config/0.7.1:
+    resolution: {integrity: sha512-vGWU62Zp5pRGw5IEHDNdqvsy62/hu/Na7bswePYVjoaItOjJY7+qilFeF0AAK+3V8qAM8fpltH3ByylKfWaA7A==}
+    dependencies:
+      '@expo/config': 8.0.2
       chalk: 4.1.2
       debug: 4.3.4
       find-yarn-workspace-root: 2.0.0
@@ -5507,6 +5523,10 @@ packages:
       - supports-color
     dev: false
 
+  /expo-eas-client/0.5.1:
+    resolution: {integrity: sha512-i3L/iwhI6cFhSUpVsCxSU5qehNznL/rQFYoof6qUIh3CMyijCuTEwjEhwbw2a5W6obPBzQUXbomMSFDO6D5/0Q==}
+    dev: false
+
   /expo-error-recovery/4.1.1_expo@48.0.0-beta.2:
     resolution: {integrity: sha512-/kCLOJyfVOD0KNcyS3v8csyCsYodisRlDRL6x7GlPjbbXVjv+m4m8ytFuE1C6t3GkwgXte/gJrSZdPIL4iFdyA==}
     requiresBuild: true
@@ -5552,6 +5572,10 @@ packages:
       expo-image-loader: 4.1.1_expo@48.0.0-beta.2
     dev: false
 
+  /expo-json-utils/0.5.1:
+    resolution: {integrity: sha512-Y5boshyf40vPjwxNnOIfacZPNkOymecZRQ1k+TSXlq6gnw5XRsnM5hnP0VLVYhdv8x+9CX6E1fDsDUNvsK38Dg==}
+    dev: false
+
   /expo-keep-awake/12.0.1_expo@48.0.0-beta.2:
     resolution: {integrity: sha512-hqeCnb4033TyuZaXs93zTK7rjVJ3bywXATyMmKmKkLEsH2PKBAl/VmjlCOPQL/2Ncqz6aj7Wo//tjeJTARBD4g==}
     peerDependencies:
@@ -5571,6 +5595,12 @@ packages:
     transitivePeerDependencies:
       - expo
       - supports-color
+    dev: false
+
+  /expo-manifests/0.5.2:
+    resolution: {integrity: sha512-WnsTlE2le3pV/B/AJPKTOSjb2K9AT1mPDCfQxTQ/KMCwF95saoXYt2OPF3hxZNaMAV6VIAhXgd5Y6wpcH9ruPQ==}
+    dependencies:
+      expo-json-utils: 0.5.1
     dev: false
 
   /expo-modules-autolinking/1.1.1:
@@ -5672,6 +5702,41 @@ packages:
 
   /expo-status-bar/1.4.4:
     resolution: {integrity: sha512-5DV0hIEWgatSC3UgQuAZBoQeaS9CqeWRZ3vzBR9R/+IUD87Adbi4FGhU10nymRqFXOizGsureButGZIXPs7zEA==}
+    dev: false
+
+  /expo-structured-headers/3.1.1:
+    resolution: {integrity: sha512-oV6yNGsJxQt7S9HYZTr+4L0I/yRwOF38USJ81I1KiN3GQI4C2z7P5OosyREA2VL9O+kUZVCCpNYsBLSa3/5bAQ==}
+    dev: false
+
+  /expo-updates-interface/0.9.1_expo@48.0.0-beta.2:
+    resolution: {integrity: sha512-wk88LLhseQ7LJvxdN7BTKiryyqALxnrvr+lyHK3/prg76Yy0EGi2Q/oE/rtFyyZ1JmQDRbO/5pdX0EE6QqVQXQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.0-beta.2_@babel+core@7.21.4
+    dev: false
+
+  /expo-updates/0.16.4_expo@48.0.0-beta.2:
+    resolution: {integrity: sha512-hEUotP10sBiYn6dvkYC2rIa+kAmsBuaMp32sIVNAYEwKMQJqEwqNAKTU6CpJ4Aoc//BYL2Hv8qNo/UsT4rATRg==}
+    hasBin: true
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/code-signing-certificates': 0.0.5
+      '@expo/config': 8.0.2
+      '@expo/config-plugins': 6.0.1
+      '@expo/metro-config': 0.7.1
+      arg: 4.1.0
+      expo: 48.0.0-beta.2_@babel+core@7.21.4
+      expo-eas-client: 0.5.1
+      expo-manifests: 0.5.2
+      expo-structured-headers: 3.1.1
+      expo-updates-interface: 0.9.1_expo@48.0.0-beta.2
+      fbemitter: 3.0.0
+      resolve-from: 5.0.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
     dev: false
 
   /expo/48.0.0-beta.2_@babel+core@7.21.4:

@@ -4,5 +4,7 @@
     "jsx": "react-native",
     "baseUrl": "."
   },
-  "include": ["app", "expo-plugins", "src", "app.config.ts", "index.ts"]
+  "include": ["app", "expo-plugins", "src", "app.config.ts",
+    "index.js"
+  ]
 }
