@@ -355,18 +355,8 @@ VALUES
 
 -- Album
 SET @albumid1 = 'albumid1-0000-0000-0000-000000000000';
-INSERT INTO Album (id, title, description)
-VALUES (@albumid1, 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa',  'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa');
-
-INSERT INTO AlbumStudentRelationship (studentId, albumId)
-VALUES (@stid1, @albumid1), (@stid2, @albumid1), (@stid4, @albumid1), (@stid6, @albumid1);
-
-INSERT INTO AlbumPhoto (albumId, photoUrl)
-VALUES
-    (@albumid1, 'https://hellobark.com/wp-content/uploads/madmax-corgi-2.jpg'),
-    (@albumid1, 'https://zoipet.com/wp-content/uploads/2021/12/gia-cho-corgi.jpg'),
-    (@albumid1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3EFJwoSJFW_VrtIzLDchg8P5VIPVLArjgxw&usqp=CAU')
-;
+INSERT INTO Album (id, title, description,photos, createdAt, classId)
+VALUES (@albumid1, 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', @multi_avatar, '2023-01-02T17:00:00', @clid1);
 
 -- Attendance T2 2023-01-02
 INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId)

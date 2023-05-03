@@ -60,7 +60,16 @@ const TeacherHomeScreen = () => {
             </View>
 
             <View className={"flex-row justify-start"}>
-              <FeatureItem title={"Album ảnh"} icon={albumIcon} />
+              <FeatureItem
+                title={"Album ảnh"}
+                icon={albumIcon}
+                onPress={() =>
+                  router.push({
+                    pathname: "/teacher/album/album-home-screen",
+                    params: { classId }
+                  })
+                }
+              />
             </View>
           </View>
 

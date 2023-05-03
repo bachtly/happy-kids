@@ -336,20 +336,10 @@ Table KindergartenSchema.Album {
   id varchar(36) [pk, default: `UUID()`]
   title varchar
   description text
-}
-
-Table KindergartenSchema.AlbumStudentRelationship {
-  id varchar(36) [pk, default: `UUID()`]
-
-  studentId varchar(36) [ref: - KindergartenSchema.Student.id]
-  albumId varchar(36) [ref: - KindergartenSchema.Album.id]
-}
-
-Table KindergartenSchema.AlbumPhoto {
-  id varchar(36) [pk, default: `UUID()`]
-  photoUrl text
-
-  albumId varchar(36) [ref: - KindergartenSchema.Album.id]
+  photos text
+  createdAt datetime
+  
+  classId varchar(36) [ref: - KindergartenSchema.Class.id]
 }
 
 Table KindergartenSchema.Noti {

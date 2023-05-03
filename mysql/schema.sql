@@ -259,19 +259,10 @@ CREATE TABLE `KindergartenSchema`.`TuitionFee` (
 CREATE TABLE `KindergartenSchema`.`Album` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `title` varchar(255),
-  `description` text
-);
-
-CREATE TABLE `KindergartenSchema`.`AlbumStudentRelationship` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `studentId` varchar(36),
-  `albumId` varchar(36)
-);
-
-CREATE TABLE `KindergartenSchema`.`AlbumPhoto` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `photoUrl` text,
-  `albumId` varchar(36)
+  `description` text,
+  `photos` text,
+  `createdAt` datetime,
+  `classId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Noti` (
@@ -380,11 +371,7 @@ ALTER TABLE `KindergartenSchema`.`PeriodRemark` ADD FOREIGN KEY (`studentId`) RE
 
 ALTER TABLE `KindergartenSchema`.`TuitionFee` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
-ALTER TABLE `KindergartenSchema`.`AlbumStudentRelationship` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
-
-ALTER TABLE `KindergartenSchema`.`AlbumStudentRelationship` ADD FOREIGN KEY (`albumId`) REFERENCES `KindergartenSchema`.`Album` (`id`);
-
-ALTER TABLE `KindergartenSchema`.`AlbumPhoto` ADD FOREIGN KEY (`albumId`) REFERENCES `KindergartenSchema`.`Album` (`id`);
+ALTER TABLE `KindergartenSchema`.`Album` ADD FOREIGN KEY (`classId`) REFERENCES `KindergartenSchema`.`Class` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 

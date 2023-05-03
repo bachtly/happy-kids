@@ -61,7 +61,16 @@ const ParentHomeScreen = () => {
             </View>
 
             <View className={"flex-row justify-start"}>
-              <FeatureItem title={"Album ảnh"} icon={albumIcon} />
+              <FeatureItem
+                title={"Album ảnh"}
+                icon={albumIcon}
+                onPress={() =>
+                  router.push({
+                    pathname: "/parent/album/album-home-screen",
+                    params: { studentId }
+                  })
+                }
+              />
             </View>
           </View>
 

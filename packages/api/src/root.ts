@@ -10,6 +10,7 @@ import { noteRouter } from "./router/note/note-router";
 import { postRouter } from "./router/post/post-router";
 import { accountRouter } from "./router/account/account-router";
 import { notiRouter } from "./router/noti/noti-router";
+import { albumRouter } from "./router/album/album-router";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -22,7 +23,8 @@ export const appRouter = createTRPCRouter({
   note: noteRouter,
   post: postRouter,
   account: accountRouter,
-  noti: notiRouter
+  noti: notiRouter,
+  album: albumRouter
 });
 
 // export type definition of API
