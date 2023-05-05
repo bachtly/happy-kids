@@ -36,8 +36,7 @@ const PostNoteThreadParams = z.object({
   content: z.string(),
   photos: z.array(z.string()).default([]),
 
-  studentId: z.string(),
-  parentId: z.string()
+  studentId: z.string()
 });
 
 const PostNoteThreadResponse = z.object({

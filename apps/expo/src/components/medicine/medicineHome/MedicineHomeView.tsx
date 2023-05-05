@@ -1,7 +1,7 @@
 import { useNavigation, useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 import { api } from "../../../utils/api";
 import { ProgressBar } from "react-native-paper";
@@ -12,6 +12,9 @@ import DateRangeFilterBar from "../../date-picker/DateRangeFilterBar";
 import ItemListWrapper from "../../common/ItemListWrapper";
 import { MedLetterItem } from "../../../models/MedicineModels";
 import AlertModal from "../../common/AlertModal";
+import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
+import { useAuthContext } from "../../../utils/auth-context-provider";
+import { ErrorContext } from "../../../utils/error-context";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -35,6 +38,8 @@ const MedicineHomeView = ({
 }) => {
   const router = useRouter();
   const [letterList, setLetterList] = useState<MedLetterItem[]>([]);
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const DEFAULT_TIME_START = moment().startOf("day");
   const DEFAULT_TIME_END = moment().startOf("day").add(7, "d");
@@ -69,7 +74,13 @@ const MedicineHomeView = ({
             )
         );
       },
-      onError: (e) => setErrorMessage(e.message)
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
     }
   );
 

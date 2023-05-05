@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
 import { api } from "../../utils/api";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import MyImagePicker from "../ImagePicker";
 import AlertModal from "../common/AlertModal";
+import { ErrorContext } from "../../utils/error-context";
+import { trpcErrorHandler } from "../../utils/trpc-error-handler";
 
 const NewRelativeModal = ({
   visible,
@@ -13,7 +15,8 @@ const NewRelativeModal = ({
   visible: boolean;
   close: () => void;
 }) => {
-  const { userId } = useAuthContext();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [note, setNote] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
@@ -25,7 +28,13 @@ const NewRelativeModal = ({
     onSuccess: (_) => {
       close();
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   return (
@@ -100,14 +109,12 @@ const NewRelativeModal = ({
             </Button>
             <Button
               onPress={() => {
-                userId &&
-                  pickupMutation.mutate({
-                    fullname: fullname ?? "",
-                    phone: phone,
-                    note: note,
-                    avatarData: avatar,
-                    parentId: userId
-                  });
+                pickupMutation.mutate({
+                  fullname: fullname ?? "",
+                  phone: phone,
+                  note: note,
+                  avatarData: avatar
+                });
               }}
             >
               Lưu

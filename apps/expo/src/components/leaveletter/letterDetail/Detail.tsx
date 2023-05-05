@@ -1,7 +1,7 @@
 import { useNavigation } from "expo-router";
 
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Image, RefreshControl, ScrollView, View } from "react-native";
 import { ProgressBar, Text, useTheme } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
@@ -12,6 +12,9 @@ import TeacherStatus from "./TeacherStatus";
 import Body from "../../Body";
 import CustomCard from "../../CustomCard";
 import AlertModal from "../../common/AlertModal";
+import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
+import { useAuthContext } from "../../../utils/auth-context-provider";
+import { ErrorContext } from "../../../utils/error-context";
 
 const Detail = ({
   userId,
@@ -25,6 +28,8 @@ const Detail = ({
   studentName: string;
 }) => {
   const theme = useTheme();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -34,7 +39,13 @@ const Detail = ({
         leaveLetterId: id
       },
       {
-        onError: (e) => setErrorMessage(e.message)
+        onError: ({ message, data }) =>
+          trpcErrorHandler(() => {})(
+            data?.code ?? "",
+            message,
+            errorContext,
+            authContext
+          )
       }
     );
 

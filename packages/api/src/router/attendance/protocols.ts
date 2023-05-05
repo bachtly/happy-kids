@@ -125,7 +125,6 @@ const CheckInRequest = z.object({
   studentId: z.string(),
   status: AttendanceStatus,
   note: z.nullable(z.string()),
-  teacherId: z.string(),
   photos: z.nullable(z.array(z.string()))
 });
 
@@ -135,7 +134,6 @@ const CheckOutRequest = z.object({
   studentId: z.string(),
   note: z.nullable(z.string()),
   time: z.date(),
-  teacherId: z.string(),
   photos: z.nullable(z.array(z.string())),
   pickerRelativeId: z.nullable(z.string())
 });

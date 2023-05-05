@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import { ScrollView, TextInput } from "react-native";
 import { Button, Dialog, Portal, useTheme } from "react-native-paper";
 import { api } from "../../utils/api";
@@ -6,6 +6,8 @@ import moment, { Moment } from "moment";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import { PeriodRemarkModel } from "../../models/PeriodRemarkModels";
 import AlertModal from "../common/AlertModal";
+import { ErrorContext } from "../../utils/error-context";
+import { trpcErrorHandler } from "../../utils/trpc-error-handler";
 
 type AddDailyRemarkModalProps = {
   visible: boolean;
@@ -20,7 +22,8 @@ const AddPeriodRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
 
   const { colors } = useTheme();
 
-  const { userId } = useAuthContext();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [content, setContent] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -29,7 +32,13 @@ const AddPeriodRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
     onSuccess: () => {
       submit();
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const insertActivity = () => {
@@ -37,15 +46,13 @@ const AddPeriodRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
     const startOfMonth = moment(date.toDate().setDate(1));
     const endOfMonth = moment(date.toDate().setDate(1)).add(1, "month");
 
-    userId &&
-      remark.studentId &&
+    remark.studentId &&
       remarkMutation.mutate({
         period: "Month",
         content: content,
         startTime: startOfMonth.toDate(),
         endTime: endOfMonth.toDate(),
-        studentId: remark.studentId,
-        teacherId: userId
+        studentId: remark.studentId
       });
   };
 

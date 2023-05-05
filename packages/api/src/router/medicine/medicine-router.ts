@@ -10,9 +10,9 @@ import {
 export const medicineRouter = createTRPCRouter({
   postMedicineLetter: protectedProcedure
     .input(PostMedicineLetterParams)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await medicineService.createMedicineLetter(
-        input.parentId,
+        ctx.user.userId,
         input.studentId,
         input.startDate,
         input.endDate,

@@ -45,6 +45,8 @@ const getBaseUrl = () => {
  * A wrapper for your app that provides the TRPC context.
  * Use only in _app.tsx
  */
+
+let token: string;
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
@@ -54,7 +56,10 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
       transformer,
       links: [
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`
+          url: `${getBaseUrl()}/api/trpc`,
+          headers() {
+            return { authorization: token };
+          }
         })
       ]
     })
@@ -66,3 +71,5 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
     </api.Provider>
   );
 };
+
+export const setNewToken = (newToken: string) => (token = newToken);

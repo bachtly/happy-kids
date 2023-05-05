@@ -5,7 +5,6 @@ import { View } from "react-native";
 import Detail from "../../../src/components/leaveletter/letterDetail/Detail";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
-import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
 import AlertModal from "../../../src/components/common/AlertModal";
 
 const LetterDetail = () => {
@@ -13,8 +12,6 @@ const LetterDetail = () => {
   const { userId } = useAuthContext();
 
   const [errorMessage, setErrorMessage] = useState("");
-
-  if (!id || !userId || !studentName) setErrorMessage(SYSTEM_ERROR_MESSAGE);
 
   return (
     <View className="flex-1">

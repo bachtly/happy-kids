@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Text, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme, TextInput, Button } from "react-native-paper";
@@ -6,6 +6,9 @@ import { api } from "../../../src/utils/api";
 import { Portal, Dialog } from "react-native-paper";
 import { useRouter, useSearchParams } from "expo-router";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import { ErrorContext } from "../../../src/utils/error-context";
 
 const SignupInformationScreen = () => {
   const [showEmptyNameError, setShowEmptyNameError] = useState<boolean>(false);
@@ -20,6 +23,8 @@ const SignupInformationScreen = () => {
   const params = useSearchParams();
   const { email } = params;
   const { colors } = useTheme();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const showInputError = (shouldShow: boolean, text: string) => {
     return (
@@ -41,7 +46,13 @@ const SignupInformationScreen = () => {
   const passwordContainsLowercase = /[a-z]/.test(password);
   const signupMutation = api.auth.userSignup.useMutation({
     onSuccess: (_) => setShowSignupSucceededDialog(true),
-    onError: (_) => setShowSignupFailedDialog(true)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const onNextStep = () => {

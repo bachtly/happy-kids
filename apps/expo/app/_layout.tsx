@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { TRPCProvider } from "../src/utils/api";
 import { AuthContextProvider } from "../src/utils/auth-context-provider";
+import { ErrorContextProvider } from "../src/utils/error-context";
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
@@ -31,27 +32,29 @@ const RootLayout = () => {
 
   return (
     <TRPCProvider>
-      <AuthContextProvider>
-        <SafeAreaProvider>
-          {/*
-          The Stack component displays the current page.
-          It also allows you to configure your screens
-        */}
-          <StatusBar />
-          <PaperProvider theme={theme}>
-            <Stack
-              screenOptions={{
-                headerTintColor: theme.colors.background,
-                headerStyle: {
-                  backgroundColor: theme.colors.primary
-                },
-                statusBarColor: theme.colors.primary
-              }}
-              initialRouteName="temporary-dashboard"
-            />
-          </PaperProvider>
-        </SafeAreaProvider>
-      </AuthContextProvider>
+      <SafeAreaProvider>
+        {/*
+        The Stack component displays the current page.
+        It also allows you to configure your screens
+      */}
+        <StatusBar />
+        <PaperProvider theme={theme}>
+          <AuthContextProvider>
+            <ErrorContextProvider>
+              <Stack
+                screenOptions={{
+                  headerTintColor: theme.colors.background,
+                  headerStyle: {
+                    backgroundColor: theme.colors.primary
+                  },
+                  statusBarColor: theme.colors.primary
+                }}
+                initialRouteName="login/login-screen"
+              />
+            </ErrorContextProvider>
+          </AuthContextProvider>
+        </PaperProvider>
+      </SafeAreaProvider>
     </TRPCProvider>
   );
 };

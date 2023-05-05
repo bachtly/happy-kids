@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, TextInput } from "react-native";
 import {
   useTheme,
@@ -18,12 +18,15 @@ import {
   STATUS_ENUM_TO_VERBOSE
 } from "../../../src/models/AttendanceModels";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const CheckinTextEditorScreen = () => {
   const router = useRouter();
-  const { userId } = useAuthContext();
   const { colors } = useTheme();
   const { studentId } = useSearchParams();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [note, setNote] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
@@ -32,7 +35,13 @@ const CheckinTextEditorScreen = () => {
 
   const attMutation = api.attendance.checkin.useMutation({
     onSuccess: () => router.back(),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const checkin = (
@@ -40,14 +49,12 @@ const CheckinTextEditorScreen = () => {
     photos: string[],
     status: AttendanceStatus
   ) => {
-    userId &&
-      attMutation.mutate({
-        studentId: studentId,
-        status: status,
-        note: note,
-        photos: photos,
-        teacherId: userId
-      });
+    attMutation.mutate({
+      studentId: studentId,
+      status: status,
+      note: note,
+      photos: photos
+    });
   };
 
   return (

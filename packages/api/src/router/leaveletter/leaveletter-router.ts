@@ -10,9 +10,9 @@ import {
 export const leaveletterRouter = createTRPCRouter({
   postLeaveLetter: protectedProcedure
     .input(PostLeaveLetterParams)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await leaveletterService.createLeaveLetter(
-        input.parentId,
+        ctx.user.userId,
         input.studentId,
         input.startDate,
         input.endDate,
@@ -38,9 +38,9 @@ export const leaveletterRouter = createTRPCRouter({
 
   updateMedicineLetter: protectedProcedure
     .input(UpdateStatusLeaveLetterParams)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await leaveletterService.updateLeaveLetter(
-        input.teacherId,
+        ctx.user.userId,
         input.leaveLetterId,
         input.status
       );

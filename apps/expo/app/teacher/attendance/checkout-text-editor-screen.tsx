@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, TextInput } from "react-native";
 import { useTheme, Button, Divider } from "react-native-paper";
 import { Stack } from "expo-router";
@@ -9,12 +9,15 @@ import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { useRouter, useSearchParams } from "expo-router";
 import AlertModal from "../../../src/components/common/AlertModal";
 import moment from "moment";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import { ErrorContext } from "../../../src/utils/error-context";
 
 const CheckinTextEditorScreen = () => {
   const router = useRouter();
-  const { userId } = useAuthContext();
   const { colors } = useTheme();
   const { studentId, time } = useSearchParams();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [note, setNote] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
@@ -22,19 +25,23 @@ const CheckinTextEditorScreen = () => {
 
   const attMutation = api.attendance.checkout.useMutation({
     onSuccess: () => router.back(),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const checkout = (note: string, photos: string[]) => {
-    userId &&
-      attMutation.mutate({
-        studentId: studentId,
-        note: note,
-        time: moment(time).toDate(),
-        photos: photos,
-        teacherId: userId,
-        pickerRelativeId: null
-      });
+    attMutation.mutate({
+      studentId: studentId,
+      note: note,
+      time: moment(time).toDate(),
+      photos: photos,
+      pickerRelativeId: null
+    });
   };
 
   return (

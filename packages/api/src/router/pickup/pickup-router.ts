@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
   ConfirmPickupLetterRequest,
   ConfirmPickupLetterResponse,
@@ -19,7 +19,7 @@ import {
 import { pickupService } from "../../service/common-services";
 
 const pickupRouter = createTRPCRouter({
-  getPickupList: publicProcedure
+  getPickupList: protectedProcedure
     .input(GetPickupListRequest)
     .output(GetPickupListResponse)
     .mutation(
@@ -31,35 +31,35 @@ const pickupRouter = createTRPCRouter({
         )
     ),
 
-  getPickupDetail: publicProcedure
+  getPickupDetail: protectedProcedure
     .input(GetPickupDetailRequest)
     .output(GetPickupDetailResponse)
     .mutation(
       async ({ input }) => await pickupService.getPickupDetail(input.id)
     ),
 
-  getRelativeList: publicProcedure
+  getRelativeList: protectedProcedure
     .input(GetRelativeListRequest)
     // .output(GetRelativeListResponse)
     .mutation(
-      async ({ input }) => await pickupService.getRelativeList(input.parentId)
+      async ({ ctx }) => await pickupService.getRelativeList(ctx.user.userId)
     ),
 
-  insertRelative: publicProcedure
+  insertRelative: protectedProcedure
     .input(InsertRelativeRequest)
     .output(InsertRelativeResponse)
     .mutation(
-      async ({ input }) =>
+      async ({ ctx, input }) =>
         await pickupService.insertRelative(
           input.fullname,
           input.note,
           input.phone,
           input.avatarData,
-          input.parentId
+          ctx.user.userId
         )
     ),
 
-  insertPickupLetter: publicProcedure
+  insertPickupLetter: protectedProcedure
     .input(InsertPickupLetterRequest)
     .output(InsertPickupLetterResponse)
     .mutation(
@@ -72,7 +72,7 @@ const pickupRouter = createTRPCRouter({
         )
     ),
 
-  getPickupListFromClassId: publicProcedure
+  getPickupListFromClassId: protectedProcedure
     .input(GetPickupListFromClassIdRequest)
     .output(GetPickupListFromClassIdResponse)
     .mutation(
@@ -83,20 +83,20 @@ const pickupRouter = createTRPCRouter({
         )
     ),
 
-  confirmPickupLetter: publicProcedure
+  confirmPickupLetter: protectedProcedure
     .input(ConfirmPickupLetterRequest)
     .output(ConfirmPickupLetterResponse)
     .mutation(
-      async ({ input }) =>
-        await pickupService.confirmPickupLetter(input.id, input.teacherId)
+      async ({ ctx, input }) =>
+        await pickupService.confirmPickupLetter(input.id, ctx.user.userId)
     ),
 
-  rejectPickupLetter: publicProcedure
+  rejectPickupLetter: protectedProcedure
     .input(RejectPickupLetterRequest)
     .output(RejectPickupLetterResponse)
     .mutation(
-      async ({ input }) =>
-        await pickupService.rejectPickupLetter(input.id, input.teacherId)
+      async ({ ctx, input }) =>
+        await pickupService.rejectPickupLetter(input.id, ctx.user.userId)
     )
 });
 

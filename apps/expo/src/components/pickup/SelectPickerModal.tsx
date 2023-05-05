@@ -4,7 +4,6 @@ import { Button, Dialog, Portal } from "react-native-paper";
 import { api } from "../../utils/api";
 import { RelativeModel } from "../../models/PickupModels";
 import RelativeItem from "./RelativeItem";
-import { useAuthContext } from "../../utils/auth-context-provider";
 import NewRelativeModal from "./NewRelativeModal";
 
 type AddPickerModalProps = {
@@ -15,8 +14,6 @@ type AddPickerModalProps = {
 
 const SelectPickerModal: FC<AddPickerModalProps> = (props) => {
   const { visible, close, submit } = props;
-
-  const { userId } = useAuthContext();
 
   const [picker, setPicker] = useState<RelativeModel | null>(null);
   const [relativeSelectIndex, setRelativeSelectIndex] = useState<number | null>(
@@ -31,10 +28,7 @@ const SelectPickerModal: FC<AddPickerModalProps> = (props) => {
 
   useEffect(() => {
     if (visible) {
-      userId &&
-        pickupMutation.mutate({
-          parentId: userId
-        });
+      pickupMutation.mutate({});
     }
   }, [visible, newModalVisibility]);
 

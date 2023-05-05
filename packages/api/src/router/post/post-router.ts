@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
   CommentRequest,
   CommentResponse,
@@ -14,32 +14,38 @@ import {
 import { postService } from "../../service/common-services";
 
 const postRouter = createTRPCRouter({
-  getPostList: publicProcedure
+  getPostList: protectedProcedure
     .input(GetPostListRequest)
     .output(GetPostListResponse)
     .mutation(
-      async ({ input }) =>
+      async ({ ctx, input }) =>
         await postService.getPostList(
-          input.userId,
+          ctx.user.userId,
           input.page,
           input.itemsPerPage
         )
     ),
 
-  getUserInfo: publicProcedure
+  getUserInfo: protectedProcedure
     .input(GetUserInfoRequest)
     .output(GetUserInfoResponse)
-    .mutation(async ({ input }) => await postService.getUserInfo(input.userId)),
+    .mutation(
+      async ({ ctx }) => await postService.getUserInfo(ctx.user.userId)
+    ),
 
-  insertPost: publicProcedure
+  insertPost: protectedProcedure
     .input(InsertPostRequest)
     .output(InsertPostResponse)
     .mutation(
-      async ({ input }) =>
-        await postService.insertPost(input.content, input.photos, input.userId)
+      async ({ ctx, input }) =>
+        await postService.insertPost(
+          input.content,
+          input.photos,
+          ctx.user.userId
+        )
     ),
 
-  getCommentList: publicProcedure
+  getCommentList: protectedProcedure
     .input(GetCommentListRequest)
     .output(GetCommentListResponse)
     .mutation(
@@ -51,12 +57,12 @@ const postRouter = createTRPCRouter({
         )
     ),
 
-  comment: publicProcedure
+  comment: protectedProcedure
     .input(CommentRequest)
     .output(CommentResponse)
     .mutation(
-      async ({ input }) =>
-        await postService.comment(input.content, input.userId, input.postId)
+      async ({ ctx, input }) =>
+        await postService.comment(input.content, ctx.user.userId, input.postId)
     )
 });
 

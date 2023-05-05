@@ -64,8 +64,7 @@ const InsertDailyRemarkActivityRequest = z.object({
   content: z.string(),
   remarkId: z.nullable(z.string()),
   date: z.nullable(z.date()),
-  studentId: z.nullable(z.string()),
-  teacherId: z.nullable(z.string())
+  studentId: z.nullable(z.string())
 });
 
 const InsertDailyRemarkActivityResponse = z.object({});

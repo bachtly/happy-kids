@@ -5,22 +5,22 @@ import { GetAccountInfo, UpdateAccountInfo, UpdatePassword } from "./protocols";
 export const accountRouter = createTRPCRouter({
   getAccountInfo: protectedProcedure
     .input(GetAccountInfo)
-    .query(async ({ input }) => {
-      return await accountService.getAccountInfo(input.userId);
+    .query(async ({ ctx }) => {
+      return await accountService.getAccountInfo(ctx.user.userId);
     }),
   updateAccountInfo: protectedProcedure
     .input(UpdateAccountInfo)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await accountService.updateAccountInfo(
-        input.userId,
+        ctx.user.userId,
         input.accountInfo
       );
     }),
   updatePassword: protectedProcedure
     .input(UpdatePassword)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await accountService.updatePassword(
-        input.userId,
+        ctx.user.userId,
         input.oldPass,
         input.newPass
       );

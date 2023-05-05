@@ -1,6 +1,6 @@
 import { FlatList, TextInput, View } from "react-native";
 import { useTheme } from "react-native-paper";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CommentModel } from "../../../src/models/PostModels";
 import { api } from "../../../src/utils/api";
 import CommentItem from "../../../src/components/post/CommentItem";
@@ -9,13 +9,16 @@ import { Stack } from "expo-router";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import { ErrorContext } from "../../../src/utils/error-context";
 
 const ITEM_PER_PAGE = 6;
 
 const CommentScreen = () => {
   const { postId } = useSearchParams();
-  const { userId } = useAuthContext();
   const { colors } = useTheme();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [comments, setComments] = useState<CommentModel[]>([]);
   const [content, setContent] = useState("");
@@ -40,13 +43,25 @@ const CommentScreen = () => {
         setPage(tmp + 1);
       }
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
   const postCmtMutation = api.post.comment.useMutation({
     onSuccess: () => {
       refresh();
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   useEffect(() => {
@@ -68,11 +83,9 @@ const CommentScreen = () => {
   };
 
   const insertComment = () => {
-    userId &&
-      !postCmtMutation.isLoading &&
+    !postCmtMutation.isLoading &&
       postCmtMutation.mutate({
         content: content,
-        userId: userId,
         postId: postId
       });
   };

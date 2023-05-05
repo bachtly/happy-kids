@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
   GetPeriodRemarkListFromClassIdRequest,
   GetPeriodRemarkListFromClassIdResponse,
@@ -10,7 +10,7 @@ import {
 import { periodRemarkService } from "../../service/common-services";
 
 const periodRemarkRouter = createTRPCRouter({
-  getPeriodRemarkList: publicProcedure
+  getPeriodRemarkList: protectedProcedure
     .input(GetPeriodRemarkListRequest)
     .output(GetPeriodRemarkListResponse)
     .mutation(
@@ -18,7 +18,7 @@ const periodRemarkRouter = createTRPCRouter({
         await periodRemarkService.getPeriodRemarkList(input.studentId)
     ),
 
-  getPeriodRemarkListFromClassId: publicProcedure
+  getPeriodRemarkListFromClassId: protectedProcedure
     .input(GetPeriodRemarkListFromClassIdRequest)
     .output(GetPeriodRemarkListFromClassIdResponse)
     .mutation(
@@ -29,18 +29,18 @@ const periodRemarkRouter = createTRPCRouter({
         )
     ),
 
-  insertPeriodRemark: publicProcedure
+  insertPeriodRemark: protectedProcedure
     .input(InsertPeriodRemarkRequest)
     .output(InsertPeriodRemarkResponse)
     .mutation(
-      async ({ input }) =>
+      async ({ ctx, input }) =>
         await periodRemarkService.insertPeriodRemark(
           input.period,
           input.content,
           input.startTime,
           input.endTime,
           input.studentId,
-          input.teacherId
+          ctx.user.userId
         )
     )
 });

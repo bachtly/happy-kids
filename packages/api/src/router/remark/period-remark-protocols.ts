@@ -50,8 +50,7 @@ const InsertPeriodRemarkRequest = z.object({
   content: z.string(),
   startTime: z.date(),
   endTime: z.date(),
-  studentId: z.string(),
-  teacherId: z.string()
+  studentId: z.string()
 });
 
 const InsertPeriodRemarkResponse = z.object({});

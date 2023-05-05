@@ -1,7 +1,7 @@
 import { useRouter, useSearchParams } from "expo-router";
 import moment, { Moment } from "moment";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Avatar, Button, Text, TextInput } from "react-native-paper";
 import TimePicker from "../../../src/components/TimePicker";
@@ -11,12 +11,17 @@ import SelectPickerModal from "../../../src/components/pickup/SelectPickerModal"
 import { RelativeModel } from "../../../src/models/PickupModels";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const DEFAULT_TIME = moment(moment.now());
 
 const AddPickupScreen = () => {
   const { studentId } = useSearchParams();
   const router = useRouter();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [date, setDate] = useState<Moment>(DEFAULT_TIME);
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
@@ -28,7 +33,13 @@ const AddPickupScreen = () => {
 
   const pickupMutation = api.pickup.insertPickupLetter.useMutation({
     onSuccess: () => router.back(),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const closeModal = () => {

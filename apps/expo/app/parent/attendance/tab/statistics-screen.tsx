@@ -1,5 +1,5 @@
 import moment, { Moment } from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { List, ProgressBar } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
@@ -10,6 +10,9 @@ import DateRangeFilterBar from "../../../../src/components/date-picker/DateRange
 import Body from "../../../../src/components/Body";
 import AlertModal from "../../../../src/components/common/AlertModal";
 import { useIsFocused } from "@react-navigation/native";
+import { trpcErrorHandler } from "../../../../src/utils/trpc-error-handler";
+import { ErrorContext } from "../../../../src/utils/error-context";
+import { useAuthContext } from "../../../../src/utils/auth-context-provider";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -20,6 +23,8 @@ const StatisticsScreen = () => {
     studentId: null
   };
   const isFocused = useIsFocused();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   // states
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
@@ -31,7 +36,13 @@ const StatisticsScreen = () => {
     useState<AttendanceStatisticsModel | null>(null);
   const attMutation = api.attendance.getAttendanceStatistics.useMutation({
     onSuccess: (resp) => setStatistics(resp.statistics),
-    onError: (error) => setErrorMessage(error.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   // update list when search criterias change

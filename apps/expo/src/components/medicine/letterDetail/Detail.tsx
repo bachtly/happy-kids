@@ -1,7 +1,7 @@
 import { useNavigation } from "expo-router";
 
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { ProgressBar, Text, useTheme } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
@@ -13,6 +13,9 @@ import MedicineBatchList from "./MedicineBatchList";
 import ParentStatus from "./ParentStatus";
 import TeacherStatus from "./TeacherStatus";
 import AlertModal from "../../common/AlertModal";
+import { useAuthContext } from "../../../utils/auth-context-provider";
+import { ErrorContext } from "../../../utils/error-context";
+import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
 
 const Detail = ({
   userId,
@@ -26,6 +29,8 @@ const Detail = ({
   studentName: string;
 }) => {
   const theme = useTheme();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
   const [errorMessage, setErrorMessage] = useState("");
   const { data, refetch, isFetching, isSuccess } =
     api.medicine.getMedicineLetter.useQuery(
@@ -33,7 +38,13 @@ const Detail = ({
         medicineLetterId: id
       },
       {
-        onError: (e) => setErrorMessage(e.message)
+        onError: ({ message, data }) =>
+          trpcErrorHandler(() => {})(
+            data?.code ?? "",
+            message,
+            errorContext,
+            authContext
+          )
       }
     );
 

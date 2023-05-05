@@ -1,7 +1,7 @@
 import { useSearchParams } from "expo-router";
 import moment, { Moment } from "moment";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import DateRangePicker from "../../../src/components/date-picker/DateRangePicker";
@@ -16,11 +16,14 @@ import CustomCard from "../../../src/components/CustomCard";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
 import Body from "../../../src/components/Body";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import { ErrorContext } from "../../../src/utils/error-context";
 
 const AddLetter = () => {
   const now = moment();
   const { studentId } = useSearchParams();
-  const { userId } = useAuthContext();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [dateStart, setDateStart] = useState<Moment | null>(now);
   const [dateEnd, setDateEnd] = useState<Moment | null>(now);
@@ -34,7 +37,13 @@ const AddLetter = () => {
 
   const postMedicineLetterMutation =
     api.medicine.postMedicineLetter.useMutation({
-      onError: (e) => setErrorMessage(e.message)
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
     });
 
   const onSubmit = () => {
@@ -53,28 +62,26 @@ const AddLetter = () => {
       return;
     }
 
-    userId &&
-      postMedicineLetterMutation.mutate({
-        parentId: userId,
-        studentId: studentId,
-        startDate: dateStart.toDate(),
-        endDate: dateEnd.toDate(),
-        medicines: medicineList.map((item) => ({
-          id: "",
-          name: item.medItem.name,
-          amount: item.medItem.amount,
-          photo: item.medItem.photo,
-          time: GetTimeNumber(
-            batchList[item.batchNumber]?.hours() ?? 0,
-            batchList[item.batchNumber]?.minutes() ?? 0
-          ),
-          batchNumber: item.batchNumber
-        })),
-        note: note
-      });
+    postMedicineLetterMutation.mutate({
+      studentId: studentId,
+      startDate: dateStart.toDate(),
+      endDate: dateEnd.toDate(),
+      medicines: medicineList.map((item) => ({
+        id: "",
+        name: item.medItem.name,
+        amount: item.medItem.amount,
+        photo: item.medItem.photo,
+        time: GetTimeNumber(
+          batchList[item.batchNumber]?.hours() ?? 0,
+          batchList[item.batchNumber]?.minutes() ?? 0
+        ),
+        batchNumber: item.batchNumber
+      })),
+      note: note
+    });
   };
 
-  if (!userId || !studentId) setErrorMessage(SYSTEM_ERROR_MESSAGE);
+  if (!studentId) setErrorMessage(SYSTEM_ERROR_MESSAGE);
 
   return (
     <Body>

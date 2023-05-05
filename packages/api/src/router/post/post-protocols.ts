@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 const GetPostListRequest = z.object({
-  userId: z.string(),
   page: z.number(),
   itemsPerPage: z.number()
 });
@@ -24,7 +23,6 @@ export { GetPostListResponse, GetPostListRequest };
 
 const CommentRequest = z.object({
   content: z.string(),
-  userId: z.string(),
   postId: z.string()
 });
 
@@ -50,9 +48,7 @@ const User = z.object({
   avatar: z.nullable(z.string())
 });
 
-const GetUserInfoRequest = z.object({
-  userId: z.string()
-});
+const GetUserInfoRequest = z.object({});
 
 const GetUserInfoResponse = z.object({
   user: User
@@ -62,8 +58,7 @@ export { GetUserInfoRequest, GetUserInfoResponse };
 
 const InsertPostRequest = z.object({
   content: z.string(),
-  photos: z.array(z.string()),
-  userId: z.string()
+  photos: z.array(z.string())
 });
 
 const InsertPostResponse = z.object({});

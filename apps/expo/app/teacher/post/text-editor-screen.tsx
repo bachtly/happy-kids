@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, TextInput } from "react-native";
 import { useTheme, Button, Divider } from "react-native-paper";
 import { Stack } from "expo-router";
@@ -8,10 +8,13 @@ import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { useRouter } from "expo-router";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const TextEditorScreen = () => {
-  const { userId } = useAuthContext();
   const router = useRouter();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const { colors } = useTheme();
   const [content, setContent] = useState("");
@@ -20,16 +23,20 @@ const TextEditorScreen = () => {
 
   const postMutation = api.post.insertPost.useMutation({
     onSuccess: () => router.back(),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const insertPost = (content: string, photos: string[]) => {
-    userId &&
-      postMutation.mutate({
-        content: content,
-        photos: photos,
-        userId: userId
-      });
+    postMutation.mutate({
+      content: content,
+      photos: photos
+    });
   };
 
   return (

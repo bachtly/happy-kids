@@ -10,6 +10,9 @@ import Body from "../../../../src/components/Body";
 import DateFilterBar from "../../../../src/components/date-picker/DateFilterBar";
 import { useIsFocused } from "@react-navigation/native";
 import AlertModal from "../../../../src/components/common/AlertModal";
+import { useAuthContext } from "../../../../src/utils/auth-context-provider";
+import { ErrorContext } from "../../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../../src/utils/trpc-error-handler";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -17,6 +20,8 @@ const CheckoutScreen = () => {
   // properties
   const { classId } = useContext(TeacherAttendanceContext) ?? { classId: null };
   const isFocused = useIsFocused();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
   const [errorMessage, setErrorMessage] = useState("");
@@ -25,7 +30,13 @@ const CheckoutScreen = () => {
   const [studentList, setStudentList] = useState<AttendanceStudentModel[]>([]);
   const attMutation = api.attendance.getStudentList.useMutation({
     onSuccess: (resp) => setStudentList(resp.students),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   // update list when search criterias change

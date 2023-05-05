@@ -10,7 +10,6 @@ const Noti = z.object({
 });
 
 const GetNotiListRequest = z.object({
-  userId: z.string(),
   classId: z.string()
 });
 

@@ -8,17 +8,13 @@ const AccountInfo = z.object({
   avatar: z.string()
 });
 
-const GetAccountInfo = z.object({
-  userId: z.string()
-});
+const GetAccountInfo = z.object({});
 
 const UpdateAccountInfo = z.object({
-  userId: z.string(),
   accountInfo: AccountInfo
 });
 
 const UpdatePassword = z.object({
-  userId: z.string(),
   oldPass: z.string(),
   newPass: z.string()
 });

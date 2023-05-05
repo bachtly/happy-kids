@@ -1,7 +1,7 @@
 import { Text } from "react-native-paper";
 import { ScrollView, View } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import Body from "../../components/Body";
 import LoadingBar from "../../components/common/LoadingBar";
@@ -13,20 +13,23 @@ import { useAuthContext } from "../../utils/auth-context-provider";
 import { ConfirmModal } from "../../components/common/ConfirmModal";
 import AlertModal from "../../components/common/AlertModal";
 import { UNIMPLETMENTED_MESSAGE } from "../../utils/constants";
+import { ErrorContext } from "../../utils/error-context";
+import { trpcErrorHandler } from "../../utils/trpc-error-handler";
 
 const AccountHome = ({ isTeacher }: { isTeacher?: boolean }) => {
   const folderName = isTeacher ? "teacher" : "parent";
   const router = useRouter();
-  const { userId, onLogout } = useAuthContext();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
+  const { onLogout } = authContext;
+
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("");
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const { refetch, isFetching } = api.account.getAccountInfo.useQuery(
-    {
-      userId: userId ?? ""
-    },
+    {},
     {
       onSuccess: (data) => {
         const accGot = data.res;
@@ -34,15 +37,20 @@ const AccountHome = ({ isTeacher }: { isTeacher?: boolean }) => {
         setAvatar(accGot.avatar);
       },
       enabled: false,
-      onError: (e) => setErrorMessage(e.message)
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
     }
   );
 
   const fetchData = () => {
-    if (userId)
-      refetch().catch((e: Error) => {
-        console.log(e);
-      });
+    refetch().catch((e: Error) => {
+      console.log(e);
+    });
   };
 
   // fetch data when focus

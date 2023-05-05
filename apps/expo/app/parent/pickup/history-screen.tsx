@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ProgressBar } from "react-native-paper";
 import { useSearchParams, useRouter } from "expo-router";
 import moment, { Moment } from "moment/moment";
@@ -12,6 +12,9 @@ import Body from "../../../src/components/Body";
 import CustomStack from "../../../src/components/CustomStackScreen";
 import AlertModal from "../../../src/components/common/AlertModal";
 import ItemListWrapper from "../../../src/components/common/ItemListWrapper";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import { ErrorContext } from "../../../src/utils/error-context";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -20,6 +23,8 @@ const HistoryScreen = () => {
   const router = useRouter();
   const { studentId } = useSearchParams();
   const isFocused = useIsFocused();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   // states
   const [studentIdSaved, setStudentIdSaved] = useState("");
@@ -32,7 +37,13 @@ const HistoryScreen = () => {
 
   const pickupMutation = api.pickup.getPickupList.useMutation({
     onSuccess: (resp) => setPickupList(resp.pickups),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const refresh = () => {

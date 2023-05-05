@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { ProgressBar } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
@@ -9,11 +9,17 @@ import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const DEFAULT_TIME = moment(moment.now());
 
 const PeriodRemarkScreen = ({ classId }: { classId: string }) => {
   const isFocused = useIsFocused();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
+
   const [remarkList, setRemarkList] = useState<PeriodRemarkModel[]>([]);
 
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
@@ -22,7 +28,13 @@ const PeriodRemarkScreen = ({ classId }: { classId: string }) => {
   const remarkMutation =
     api.periodRemark.getPeriodRemarkListFromClassId.useMutation({
       onSuccess: (resp) => setRemarkList(resp.remarks),
-      onError: (e) => setErrorMessage(e.message)
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
     });
 
   // update list when search criterias change

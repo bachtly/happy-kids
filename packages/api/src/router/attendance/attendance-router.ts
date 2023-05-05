@@ -1,5 +1,5 @@
 import { attendanceService } from "../../service/common-services";
-import { createTRPCRouter, publicProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
   CheckInRequest,
   CheckInResponse,
@@ -16,7 +16,7 @@ import {
 } from "./protocols";
 
 const attendanceRouter = createTRPCRouter({
-  getAttendanceList: publicProcedure
+  getAttendanceList: protectedProcedure
     .input(GetAttendanceListRequest)
     .output(GetAttendanceListResponse)
     .mutation(
@@ -28,7 +28,7 @@ const attendanceRouter = createTRPCRouter({
         )
     ),
 
-  getAttendanceItemDetail: publicProcedure
+  getAttendanceItemDetail: protectedProcedure
     .input(GetAttendanceItemDetailRequest)
     .output(GetAttendanceItemDetailResponse)
     .mutation(
@@ -36,7 +36,7 @@ const attendanceRouter = createTRPCRouter({
         await attendanceService.getAttendanceItemDetail(input.id)
     ),
 
-  getAttendanceStatistics: publicProcedure
+  getAttendanceStatistics: protectedProcedure
     .input(GetAttendanceStatisticsRequest)
     .output(GetAttendanceStatisticsResponse)
     .mutation(
@@ -48,7 +48,7 @@ const attendanceRouter = createTRPCRouter({
         )
     ),
 
-  getStudentList: publicProcedure
+  getStudentList: protectedProcedure
     .input(GetStudentListRequest)
     .output(GetStudentListResponse)
     .mutation(
@@ -56,30 +56,30 @@ const attendanceRouter = createTRPCRouter({
         await attendanceService.getStudentList(input.classId, input.date)
     ),
 
-  checkin: publicProcedure
+  checkin: protectedProcedure
     .input(CheckInRequest)
     .output(CheckInResponse)
     .mutation(
-      async ({ input }) =>
+      async ({ ctx, input }) =>
         await attendanceService.checkin(
           input.studentId,
           input.status,
           input.note ?? "",
-          input.teacherId,
+          ctx.user.userId,
           input.photos ?? []
         )
     ),
 
-  checkout: publicProcedure
+  checkout: protectedProcedure
     .input(CheckOutRequest)
     .output(CheckOutResponse)
     .mutation(
-      async ({ input }) =>
+      async ({ ctx, input }) =>
         await attendanceService.checkout(
           input.studentId,
           input.note ?? "",
           input.time,
-          input.teacherId,
+          ctx.user.userId,
           input.photos ?? [],
           input.pickerRelativeId ?? ""
         )

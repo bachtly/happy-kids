@@ -22,8 +22,7 @@ const PostLeaveLetterParams = z.object({
   photos: z.array(z.string()).default([]),
   reason: z.string(),
 
-  studentId: z.string(),
-  parentId: z.string()
+  studentId: z.string()
 });
 
 const PostLeaveLetterResponse = z.object({
@@ -31,7 +30,6 @@ const PostLeaveLetterResponse = z.object({
 });
 
 const UpdateStatusLeaveLetterParams = z.object({
-  teacherId: z.string(),
   leaveLetterId: z.string(),
   status: LetterStatus
 });

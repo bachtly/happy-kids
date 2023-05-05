@@ -6,15 +6,12 @@ import Detail from "../../../src/components/leaveletter/letterDetail/Detail";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import AlertModal from "../../../src/components/common/AlertModal";
-import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
 
 const LetterDetail = () => {
   const { id, studentName } = useSearchParams();
   const { userId } = useAuthContext();
 
   const [errorMessage, setErrorMessage] = useState("");
-
-  if (!id || !userId || !studentName) setErrorMessage(SYSTEM_ERROR_MESSAGE);
 
   return (
     <View className="flex-1">

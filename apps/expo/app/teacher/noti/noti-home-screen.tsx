@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ProgressBar } from "react-native-paper";
 import { useSearchParams } from "expo-router";
 import { api } from "../../../src/utils/api";
@@ -9,11 +9,14 @@ import { NotiItemModel } from "../../../src/models/NotiModels";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import NotiItem from "../../../src/components/noti/NotiItem";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const NotiHomeScreen = () => {
-  const { userId } = useAuthContext();
   const { classId } = useSearchParams();
   const isFocused = useIsFocused();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   // data
   const [notis, setNotis] = useState<NotiItemModel[]>([]);
@@ -21,7 +24,13 @@ const NotiHomeScreen = () => {
 
   const notiMutation = api.noti.getNotiList.useMutation({
     onSuccess: (resp) => setNotis(resp.notis),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   // update list when search criterias change
@@ -30,10 +39,8 @@ const NotiHomeScreen = () => {
   }, [isFocused]);
 
   const refresh = () => {
-    userId &&
-      classId &&
+    classId &&
       notiMutation.mutate({
-        userId: userId,
         classId: classId
       });
   };

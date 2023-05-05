@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
   GetDailyRemarkListFromClassIdRequest,
   GetDailyRemarkListFromClassIdResponse,
@@ -10,7 +10,7 @@ import {
 import { dailyRemarkService } from "../../service/common-services";
 
 const dailyRemarkRouter = createTRPCRouter({
-  getDailyRemarkList: publicProcedure
+  getDailyRemarkList: protectedProcedure
     .input(GetDailyRemarkListRequest)
     .output(GetDailyRemarkListResponse)
     .mutation(
@@ -22,7 +22,7 @@ const dailyRemarkRouter = createTRPCRouter({
         )
     ),
 
-  getDailyRemarkListFromClassId: publicProcedure
+  getDailyRemarkListFromClassId: protectedProcedure
     .input(GetDailyRemarkListFromClassIdRequest)
     .output(GetDailyRemarkListFromClassIdResponse)
     .mutation(
@@ -33,18 +33,18 @@ const dailyRemarkRouter = createTRPCRouter({
         )
     ),
 
-  insertDailyRemarkActivity: publicProcedure
+  insertDailyRemarkActivity: protectedProcedure
     .input(InsertDailyRemarkActivityRequest)
     .output(InsertDailyRemarkActivityResponse)
     .mutation(
-      async ({ input }) =>
+      async ({ ctx, input }) =>
         await dailyRemarkService.insertDailyRemarkActivity(
           input.activity,
           input.content,
           input.remarkId,
           input.date,
           input.studentId,
-          input.teacherId
+          ctx.user.userId
         )
     )
 });

@@ -1,7 +1,7 @@
 import { useSearchParams } from "expo-router";
 import moment, { Moment } from "moment";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Text, TextInput, useTheme } from "react-native-paper";
 import DateRangePicker from "../../../src/components/date-picker/DateRangePicker";
@@ -13,12 +13,15 @@ import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { SYSTEM_ERROR_MESSAGE } from "../../../src/utils/constants";
 import Body from "../../../src/components/Body";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const AddLetter = () => {
   const now = moment();
   const theme = useTheme();
   const { studentId } = useSearchParams();
-  const { userId } = useAuthContext();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -30,11 +33,17 @@ const AddLetter = () => {
   const [images, setImages] = useState<string[]>([]);
 
   const postLeaveLetterMutation = api.leaveletter.postLeaveLetter.useMutation({
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const onSubmit = () => {
-    if (!studentId || !userId) {
+    if (!studentId) {
       setErrorMessage(SYSTEM_ERROR_MESSAGE);
       return;
     }
@@ -52,9 +61,7 @@ const AddLetter = () => {
     dateStart &&
       dateEnd &&
       studentId &&
-      userId &&
       postLeaveLetterMutation.mutate({
-        parentId: userId,
         studentId: studentId,
         startDate: dateStart.toDate(),
         endDate: dateEnd.toDate(),

@@ -11,6 +11,9 @@ import Body from "../../../../src/components/Body";
 import DateFilterBar from "../../../../src/components/date-picker/DateFilterBar";
 import CustomStackScreen from "../../../../src/components/CustomStackScreen";
 import AlertModal from "../../../../src/components/common/AlertModal";
+import { trpcErrorHandler } from "../../../../src/utils/trpc-error-handler";
+import { useAuthContext } from "../../../../src/utils/auth-context-provider";
+import { ErrorContext } from "../../../../src/utils/error-context";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -18,6 +21,8 @@ const CheckinScreen = () => {
   // properties
   const isFocused = useIsFocused();
   const { classId } = useContext(TeacherAttendanceContext) ?? { classId: null };
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   // states
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
@@ -29,7 +34,13 @@ const CheckinScreen = () => {
     onSuccess: (resp) => {
       setStudentList(resp.students);
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   // update list when search criterias change

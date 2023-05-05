@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ProgressBar } from "react-native-paper";
 import { useSearchParams } from "expo-router";
 import moment, { Moment } from "moment/moment";
@@ -12,12 +12,17 @@ import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import ItemListWrapper from "../../../src/components/common/ItemListWrapper";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import { ErrorContext } from "../../../src/utils/error-context";
 
 const DEFAULT_TIME = moment(moment.now());
 
 const HistoryScreen = () => {
   const { classId } = useSearchParams();
   const isFocused = useIsFocused();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   // states
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
@@ -29,7 +34,13 @@ const HistoryScreen = () => {
 
   const pickupMutation = api.pickup.getPickupListFromClassId.useMutation({
     onSuccess: (resp) => setPickupList(resp.pickups),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   // prevent the lost of studentId in searchParams when routing between tabs

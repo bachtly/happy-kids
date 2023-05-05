@@ -7,16 +7,13 @@ import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const LetterDetail = () => {
-  const { id, studentName } = useSearchParams();
+  const { id } = useSearchParams();
   const { userId } = useAuthContext();
-
-  if (!id || !userId || !studentName)
-    throw Error("missing params in note detail screen");
 
   return (
     <View className="flex-1">
       <CustomStackScreen title={"Chi tiết lời nhắn"} />
-      <Detail userId={userId} id={id} isTeacher={true} />
+      <Detail userId={userId ?? ""} id={id} isTeacher={true} />
     </View>
   );
 };

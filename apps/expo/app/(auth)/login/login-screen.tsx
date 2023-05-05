@@ -10,7 +10,7 @@ import {
   TextInput,
   useTheme
 } from "react-native-paper";
-// import { api } from "../../../src/utils/api";
+import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import { Keyboard } from "react-native";
@@ -23,15 +23,23 @@ const LoginScreen = () => {
     React.useState<boolean>(false);
   const [showFailLogin, setShowFailLogin] = React.useState<boolean>(false);
   const { colors } = useTheme();
-  // const loginMutation = api.auth.userLogin.useMutation({
-  //   onSuccess: (data) => {
-  //     if (data.userId !== null) {
-  //       onLogin(data.userId);
-  //     } else {
-  //       setShowFailLogin(true);
-  //     }
-  //   }
-  // });
+
+  const loginMutation = api.auth.userLogin.useMutation({
+    onSuccess: (data) => {
+      if (data && data.success) {
+        onLogin({
+          accessToken: data.accessToken as string,
+          userId: data.userId,
+          classId: data.classId,
+          isTeacher: data.isTeacher,
+          studentId: data.studentId
+        });
+      } else {
+        setShowFailLogin(true);
+      }
+    },
+    onError: () => setShowFailLogin(true)
+  });
 
   const router = useRouter();
   const passwordRef = useRef<RNTextInput>(null);
@@ -45,8 +53,7 @@ const LoginScreen = () => {
   );
 
   const onPressLogin = () => {
-    // loginMutation.mutate({ email: email, password });
-    onLogin("prid1000-0000-0000-0000-000000000000");
+    loginMutation.mutate({ email, password });
   };
   return (
     <>
@@ -128,7 +135,7 @@ const LoginScreen = () => {
               </Button>
             </View>
           </View>
-          <View className={"mt-auto mb-10 flex items-center"}>
+          <View className={"mb-10 mt-auto flex items-center"}>
             <Button
               mode={"text"}
               className={"w-36"}

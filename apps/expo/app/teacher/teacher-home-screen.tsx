@@ -1,6 +1,6 @@
-import { useRouter, useSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import { ScrollView, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { useAuthContext } from "../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../src/components/CustomStackScreen";
 import FeatureItem from "../../src/components/home/FeatureItem";
@@ -16,13 +16,10 @@ import pickupIcon from "../../assets/images/pickup-icon.png";
 import tuitionIcon from "../../assets/images/tuition.png";
 import feedbackIcon from "../../assets/images/feedback.png";
 import Body from "../../src/components/Body";
-import { useEffect } from "react";
 
 const TeacherHomeScreen = () => {
-  const { onLogout, onLogin } = useAuthContext();
   const router = useRouter();
-  useEffect(() => onLogin("tid10000-0000-0000-0000-000000000000"), []);
-  const { classId } = useSearchParams();
+  const { classId } = useAuthContext();
 
   return (
     <Body>
@@ -131,8 +128,6 @@ const TeacherHomeScreen = () => {
             </View>
           </View>
         </View>
-
-        <Button onPress={() => onLogout()}>LOGOUT</Button>
       </ScrollView>
     </Body>
   );

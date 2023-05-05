@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import { ScrollView, TextInput, View } from "react-native";
 import { Button, Dialog, Portal, useTheme } from "react-native-paper";
 import { api } from "../../utils/api";
@@ -14,6 +14,8 @@ import { DailyRemarkModel } from "../../models/DailyRemarkModels";
 import moment from "moment";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import AlertModal from "../common/AlertModal";
+import { ErrorContext } from "../../utils/error-context";
+import { trpcErrorHandler } from "../../utils/trpc-error-handler";
 
 type AddDailyRemarkModalProps = {
   visible: boolean;
@@ -27,7 +29,8 @@ const AddDailyRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
 
   const { colors } = useTheme();
 
-  const { userId } = useAuthContext();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [activity, setActivity] = useState<DailyRemarkActivity | null>(null);
   const [content, setContent] = useState("");
@@ -38,7 +41,13 @@ const AddDailyRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
     onSuccess: () => {
       submit();
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const insertActivity = () => {
@@ -53,8 +62,7 @@ const AddDailyRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
         content: content,
         remarkId: remark.id,
         date: remark.date ?? moment().toDate(),
-        studentId: remark.studentId ?? null,
-        teacherId: userId
+        studentId: remark.studentId ?? null
       });
   };
 

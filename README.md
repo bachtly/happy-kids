@@ -121,3 +121,7 @@ sudo pnpm kysely-codegen
 pnpm --filter nextjs build
 sudo docker-compose start
 ```
+For authentication to work, we need to generate encryption keys:
+```
+cd apps/nextjs/public/storage/secret/ && ssh-keygen -t rsa -m PEM -f jwtRS256.key
+```

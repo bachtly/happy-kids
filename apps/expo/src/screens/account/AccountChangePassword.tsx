@@ -1,5 +1,5 @@
 import { ScrollView, View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Card } from "react-native-paper";
 
 import Body from "../../components/Body";
@@ -8,13 +8,15 @@ import UpdateComponent from "../../components/common/UpdateComponent";
 import EditableFormField from "../../components/account/EditableFormField";
 
 import { api } from "../../utils/api";
-import { useAuthContext } from "../../utils/auth-context-provider";
 import { validatePassword } from "../../utils/password-validator";
 import AlertModal from "../../components/common/AlertModal";
+import { trpcErrorHandler } from "../../utils/trpc-error-handler";
+import { useAuthContext } from "../../utils/auth-context-provider";
+import { ErrorContext } from "../../utils/error-context";
 
 const AccountChangePassword = () => {
-  const { userId } = useAuthContext();
-  if (!userId) throw Error("account_change_password: missing userId");
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
@@ -35,7 +37,13 @@ const AccountChangePassword = () => {
       setNewPass("");
       setNewPassAgain("");
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const onSubmit = () => {
@@ -49,7 +57,6 @@ const AccountChangePassword = () => {
       return;
     }
     updatePass.mutate({
-      userId,
       oldPass,
       newPass
     });

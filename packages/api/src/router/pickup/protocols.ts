@@ -46,9 +46,7 @@ const Relative = z.object({
   avatarUrl: z.nullable(z.string())
 });
 
-const GetRelativeListRequest = z.object({
-  parentId: z.string()
-});
+const GetRelativeListRequest = z.object({});
 
 const GetRelativeListResponse = z.object({
   relatives: z.nullable(z.array(Relative))
@@ -58,8 +56,7 @@ const InsertRelativeRequest = z.object({
   fullname: z.string(),
   note: z.string(),
   phone: z.string(),
-  avatarData: z.string(),
-  parentId: z.string()
+  avatarData: z.string()
 });
 
 const InsertRelativeResponse = z.object({});
@@ -83,15 +80,13 @@ const GetPickupListFromClassIdResponse = z.object({
 });
 
 const ConfirmPickupLetterRequest = z.object({
-  id: z.string(),
-  teacherId: z.string()
+  id: z.string()
 });
 
 const ConfirmPickupLetterResponse = z.object({});
 
 const RejectPickupLetterRequest = z.object({
-  id: z.string(),
-  teacherId: z.string()
+  id: z.string()
 });
 
 const RejectPickupLetterResponse = z.object({});

@@ -6,10 +6,13 @@ const LoginParams = z.object({
   password: z.string()
 });
 
-const LoginStatus = z.enum(["Success", "Fail"]);
 const LoginResponse = z.object({
-  status: LoginStatus,
-  userId: z.string().nullable()
+  success: z.boolean(),
+  accessToken: z.string().nullable(),
+  userId: z.string().nullable(),
+  classId: z.string().nullable(),
+  studentId: z.string().nullable().optional(),
+  isTeacher: z.boolean()
 });
 
 const CheckEmailExistenceParams = z.object({
@@ -28,7 +31,6 @@ const SignupParams = z.object({
 
 export {
   LoginResponse,
-  LoginStatus,
   LoginParams,
   CheckEmailExistenceParams,
   CheckEmailExistenceResp,

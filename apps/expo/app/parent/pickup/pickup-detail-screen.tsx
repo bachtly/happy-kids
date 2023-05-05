@@ -1,6 +1,6 @@
 import { useSearchParams } from "expo-router";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import {
   Divider,
@@ -17,6 +17,9 @@ import {
 import Body from "../../../src/components/Body";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -33,13 +36,21 @@ const TIME_FORMAT = "hh:mm";
 const PickupDetailScreen = () => {
   const { id } = useSearchParams();
   const theme = useTheme();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [pickup, setPickup] = useState<PickupItemModel | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   const pickupMutation = api.pickup.getPickupDetail.useMutation({
     onSuccess: (resp) => setPickup(resp.pickup),
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   // update list when search criterias change

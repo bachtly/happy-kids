@@ -8,13 +8,11 @@ import LetterStatusText from "../../medicine/StatusText";
 import AlertModal from "../../common/AlertModal";
 
 const TeacherStatus = ({
-  userId,
   status,
   refetch,
   isFetching,
   leaveLetterId
 }: {
-  userId: string;
   status: LeaveLetterStatus;
   refetch: () => void;
   isFetching: boolean;
@@ -69,7 +67,6 @@ const TeacherStatus = ({
         mode={"contained"}
         onPress={() => {
           updateStatMedLetterMutation.mutate({
-            teacherId: userId,
             status: statusLetter,
             leaveLetterId
           });

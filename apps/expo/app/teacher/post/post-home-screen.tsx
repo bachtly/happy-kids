@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ProgressBar } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import { FlatList } from "react-native";
@@ -9,12 +9,16 @@ import PostItem from "../../../src/components/post/PostItem";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import PostHeader from "../../../src/components/post/PostHeader";
 import AlertModal from "../../../src/components/common/AlertModal";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 
 const ITEM_PER_PAGE = 5;
 
 const PostHomeScreen = () => {
-  const { userId } = useAuthContext();
   const isFocused = useIsFocused();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
+
   const [posts, setPosts] = useState<PostItemModel[]>([]);
   const [userInfo, setUserInfo] = useState<PostUserModel | null>(null);
   const [page, setPage] = useState(0);
@@ -38,14 +42,26 @@ const PostHomeScreen = () => {
         setPage(tmp + 1);
       }
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const postUserMutation = api.post.getUserInfo.useMutation({
     onSuccess: (resp) => {
       setUserInfo(resp.user);
     },
-    onError: (e) => setErrorMessage(e.message)
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   useEffect(() => {
@@ -58,15 +74,11 @@ const PostHomeScreen = () => {
 
     !postMutation.isLoading &&
       postMutation.mutate({
-        userId: "",
         page: 0,
         itemsPerPage: ITEM_PER_PAGE
       });
 
-    !postUserMutation.isLoading &&
-      postUserMutation.mutate({
-        userId: userId ?? ""
-      });
+    !postUserMutation.isLoading && postUserMutation.mutate({});
   };
 
   const infiniteRender = () => {
@@ -74,14 +86,11 @@ const PostHomeScreen = () => {
 
     !postMutation.isLoading &&
       postMutation.mutate({
-        userId: "",
         page: page,
         itemsPerPage: ITEM_PER_PAGE
       });
 
-    postUserMutation.mutate({
-      userId: userId ?? ""
-    });
+    postUserMutation.mutate({});
   };
 
   return (

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Text, TextInput, useTheme } from "react-native-paper";
 import { FormError } from "../../../src/components/AlertError";
-import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import SubmitComponent from "../../../src/components/common/SubmitComponent";
 import LetterSubmitAlert from "../../../src/components/common/LetterSubmitAlert";
@@ -19,9 +18,6 @@ const AddLetter = () => {
   const theme = useTheme();
 
   const { studentId } = useSearchParams();
-  const { userId } = useAuthContext();
-  if (!userId || !studentId)
-    throw Error("missing params in note add letter screen");
 
   const [alertModalVisible, setAlertModalVisible] = useState(false);
   const [message, setMessage] = useState("");
@@ -55,7 +51,6 @@ const AddLetter = () => {
       content: message,
       startDate: dateStart.toDate(),
       endDate: dateEnd.toDate(),
-      parentId: userId,
       studentId: studentId,
       photos: images.filter((item) => item !== "")
     });

@@ -1,5 +1,5 @@
 import { RefreshControl, ScrollView, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import moment, { Moment } from "moment";
 
 import Body from "../../components/Body";
@@ -16,10 +16,12 @@ import { AccountInfoModel } from "../../models/AccountModels";
 import { api } from "../../utils/api";
 import { useAuthContext } from "../../utils/auth-context-provider";
 import AlertModal from "../../components/common/AlertModal";
+import { trpcErrorHandler } from "../../utils/trpc-error-handler";
+import { ErrorContext } from "../../utils/error-context";
 
 const AccountInfo = () => {
-  const { userId } = useAuthContext();
-  if (!userId) throw Error("account_info: missing userId");
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [name, setName] = useState("");
   const [mail, setMail] = useState("");
@@ -52,9 +54,7 @@ const AccountInfo = () => {
   useEffect(() => resetToDefault(), [accountInfo]);
 
   const { refetch, isFetching } = api.account.getAccountInfo.useQuery(
-    {
-      userId
-    },
+    {},
     {
       onSuccess: (data) => {
         const accGot = data.res;
@@ -68,7 +68,13 @@ const AccountInfo = () => {
           avatar: accGot.avatar
         }));
       },
-      onError: (e) => setErrorMessage(e.message)
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
     }
   );
 
@@ -139,7 +145,7 @@ const AccountInfo = () => {
               fetchData={fetchData}
               isAnyChanged={isAnyChanged}
               isFetching={isFetching}
-              userId={userId}
+              // userId={userId}
             />
           </View>
         </View>
