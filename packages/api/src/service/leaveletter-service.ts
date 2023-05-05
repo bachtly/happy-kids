@@ -54,7 +54,7 @@ class LeaveLetterService {
     leaveLetterId: string,
     photos: string[]
   ) => {
-    if (photos.length == 0) throw "Vui lòng tải lên hình ảnh";
+    if (photos.length == 0) return;
 
     void (await this.mysqlDB
       .insertInto("LeaveLetterPhoto")
