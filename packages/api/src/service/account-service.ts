@@ -3,7 +3,10 @@ import { DB } from "kysely-codegen";
 import { inject, injectable } from "tsyringe";
 import { z } from "zod";
 import { AccountInfo } from "../router/account/protocols";
-import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
+import {
+  SYSTEM_ERROR_MESSAGE,
+  WRONG_ERROR_MESSAGE
+} from "../utils/errorHelper";
 import type { PhotoServiceInterface } from "../utils/PhotoService";
 import * as bcrypt from "bcryptjs";
 
@@ -83,7 +86,7 @@ class AccountService {
 
   updatePassword = async (userId: string, oldPass: string, newPass: string) => {
     const { match } = await this.checkPassword(userId, oldPass);
-    if (!match) throw "Mật khẩu hiện tại không chính xác. Vui lòng thử lại.";
+    if (!match) throw WRONG_ERROR_MESSAGE;
     const hashedPassword = await bcrypt.hash(newPass, 10);
 
     const res = await this.mysqlDB

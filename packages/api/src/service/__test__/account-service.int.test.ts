@@ -5,6 +5,10 @@ import { DB } from "kysely-codegen";
 import { PhotoService } from "../../utils/PhotoService";
 import { FileService } from "../../utils/FileService";
 import { getTestDB } from "@acme/db";
+import {
+  SYSTEM_ERROR_MESSAGE,
+  WRONG_ERROR_MESSAGE
+} from "../../utils/errorHelper";
 
 describe("AccountService", () => {
   let accountService: AccountService;
@@ -54,15 +58,18 @@ describe("AccountService", () => {
         userId: "blahblah",
         password: "password123",
         expected: {
-          errMess: "no result",
+          errMess: SYSTEM_ERROR_MESSAGE,
           match: false
         }
       }
     ];
     it.each(dataSet)("$testName", async ({ userId, password, expected }) => {
-      expect(await accountService.checkPassword(userId, password)).toEqual(
-        expected
-      );
+      await accountService
+        .checkPassword(userId, password)
+        .then((got) => {
+          expect(got.match).toBe(expected.match);
+        })
+        .catch((e: unknown) => expect(e).toBe(expected.errMess));
     });
   });
 
@@ -93,15 +100,18 @@ describe("AccountService", () => {
         testName: "not exist userId",
         userId: "blahblah",
         expected: {
-          errMess: "no result"
+          errMess: SYSTEM_ERROR_MESSAGE
         }
       }
     ];
     it.each(dataSet)("$testName", async ({ userId, expected }) => {
-      const got = await accountService.getAccountInfo(userId);
-      expect(got.errMess).toBe(expected.errMess);
-      if (expected.email) expect(got.res?.email).toBe(expected.email);
-      if (expected.phone) expect(got.res?.phone).toBe(expected.phone);
+      await accountService
+        .getAccountInfo(userId)
+        .then((got) => {
+          if (expected.email) expect(got.res?.email).toBe(expected.email);
+          if (expected.phone) expect(got.res?.phone).toBe(expected.phone);
+        })
+        .catch((e: unknown) => expect(e).toBe(expected.errMess));
     });
   });
 
@@ -126,7 +136,7 @@ describe("AccountService", () => {
         oldPass: "blahblah",
         newPass: "blahblah",
         expected: {
-          errMess: "wrong_pass",
+          errMess: WRONG_ERROR_MESSAGE,
           newPass: "newpass123"
         }
       },
@@ -136,19 +146,17 @@ describe("AccountService", () => {
         oldPass: "blahblah",
         newPass: "blahblah",
         expected: {
-          errMess: "other"
+          errMess: SYSTEM_ERROR_MESSAGE
         }
       }
     ];
     it.each(dataSet)(
       "$testName",
       async ({ userId, oldPass, newPass, expected }) => {
-        const got = await accountService.updatePassword(
-          userId,
-          oldPass,
-          newPass
-        );
-        expect(got).toBe(expected.errMess);
+        await accountService
+          .updatePassword(userId, oldPass, newPass)
+          .catch((e: unknown) => expect(e).toBe(expected.errMess));
+
         if (expected.newPass) {
           const gotCheck = await accountService.checkPassword(
             userId,
@@ -188,8 +196,10 @@ describe("AccountService", () => {
       }
     ];
     it.each(dataSet)("$testName", async ({ userId, accountInfo, expected }) => {
-      const got = await accountService.updateAccountInfo(userId, accountInfo);
-      expect(got.errMess).toBe(expected.errMess);
+      await accountService
+        .updateAccountInfo(userId, accountInfo)
+        .catch((e: unknown) => expect(e).toBe(expected.errMess));
+
       if (expected.newAccountInfo) {
         const gotAccInfo = await accountService.getAccountInfo(userId);
         expect(gotAccInfo.res).toEqual(expected.newAccountInfo);

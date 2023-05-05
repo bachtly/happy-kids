@@ -3,6 +3,10 @@ import AccountService from "../account-service";
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import { PhotoServiceInterface } from "../../utils/PhotoService";
+import {
+  SYSTEM_ERROR_MESSAGE,
+  WRONG_ERROR_MESSAGE
+} from "../../utils/errorHelper";
 
 jest.mock("bcryptjs", () => {
   return {
@@ -59,7 +63,7 @@ describe("AccountService", () => {
         userId: "notAId",
         password: "noneed",
         expected: {
-          errMess: "no result",
+          errMess: SYSTEM_ERROR_MESSAGE,
           match: false
         }
       }
@@ -70,15 +74,19 @@ describe("AccountService", () => {
         {
           ...mockQueryBuilder,
           executeTakeFirstOrThrow: jest.fn().mockImplementation(() => {
-            if (userId !== "user1") throw Error("no result");
-            return { password: "rightpass" };
+            if (userId !== "user1")
+              return Promise.reject(new Error("no result"));
+            return Promise.resolve({ password: "rightpass" });
           })
         } as unknown as Kysely<DB>,
         mockPhotoService
       );
-      expect(await accountService.checkPassword(userId, password)).toEqual(
-        expected
-      );
+      await accountService
+        .checkPassword(userId, password)
+        .then((got) => {
+          expect(got.match).toBe(expected.match);
+        })
+        .catch((e: unknown) => expect(e).toBe(expected.errMess));
     });
   });
 
@@ -100,7 +108,7 @@ describe("AccountService", () => {
         testName: "not exist userId",
         userId: "blahblah",
         expected: {
-          errMess: "no result"
+          errMess: SYSTEM_ERROR_MESSAGE
         }
       }
     ];
@@ -110,19 +118,23 @@ describe("AccountService", () => {
         {
           ...mockQueryBuilder,
           executeTakeFirstOrThrow: jest.fn().mockImplementation(() => {
-            if (userId !== "user1") throw Error("no result");
-            return {
+            if (userId !== "user1")
+              return Promise.reject(new Error("no result"));
+            return Promise.resolve({
               email: expected.email,
               phone: expected.phone
-            };
+            });
           })
         } as unknown as Kysely<DB>,
         mockPhotoService
       );
-      const got = await accountService.getAccountInfo(userId);
-      expect(got.errMess).toBe(expected.errMess);
-      if (expected.email) expect(got.res?.email).toBe(expected.email);
-      if (expected.phone) expect(got.res?.phone).toBe(expected.phone);
+      await accountService
+        .getAccountInfo(userId)
+        .then((got) => {
+          if (expected.email) expect(got.res?.email).toBe(expected.email);
+          if (expected.phone) expect(got.res?.phone).toBe(expected.phone);
+        })
+        .catch((e: unknown) => expect(e).toBe(expected.errMess));
     });
   });
 
@@ -146,7 +158,7 @@ describe("AccountService", () => {
         oldPass: "wrongpass",
         newPass: "newpass",
         expected: {
-          errMess: "wrong_pass"
+          errMess: WRONG_ERROR_MESSAGE
         }
       },
       {
@@ -155,7 +167,7 @@ describe("AccountService", () => {
         oldPass: "blahblah",
         newPass: "blahblah",
         expected: {
-          errMess: "other"
+          errMess: SYSTEM_ERROR_MESSAGE
         }
       }
     ];
@@ -168,19 +180,17 @@ describe("AccountService", () => {
             executeTakeFirstOrThrow: jest
               .fn()
               .mockImplementationOnce(() => {
-                if (userId !== "user1") throw Error("no result");
-                return { password: "rightpass" };
+                if (userId !== "user1")
+                  return Promise.reject(new Error("no result"));
+                return Promise.resolve({ password: "rightpass" });
               })
-              .mockReturnValue({ numUpdatedRows: BigInt(1) })
+              .mockResolvedValue({ numUpdatedRows: BigInt(1) })
           } as unknown as Kysely<DB>,
           mockPhotoService
         );
-        const got = await accountService.updatePassword(
-          userId,
-          oldPass,
-          newPass
-        );
-        expect(got).toBe(expected.errMess);
+        await accountService
+          .updatePassword(userId, oldPass, newPass)
+          .catch((e: unknown) => expect(e).toBe(expected.errMess));
       }
     );
   });
@@ -211,12 +221,13 @@ describe("AccountService", () => {
           ...mockQueryBuilder,
           executeTakeFirstOrThrow: jest
             .fn()
-            .mockReturnValue({ numUpdatedRows: BigInt(1) })
+            .mockResolvedValue({ numUpdatedRows: BigInt(1) })
         } as unknown as Kysely<DB>,
         mockPhotoService
       );
-      const got = await accountService.updateAccountInfo(userId, accountInfo);
-      expect(got.errMess).toBe(expected.errMess);
+      await accountService
+        .updateAccountInfo(userId, accountInfo)
+        .catch((e: unknown) => expect(e).toBe(expected.errMess));
     });
   });
 });
