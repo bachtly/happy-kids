@@ -63,7 +63,7 @@ const CheckoutItem = (props: CheckoutItemProps) => {
       </View>
 
       {props.attendance.attendanceStatus == AttendanceStatus.CheckedOut && (
-        <MultipleImageView images={props.attendance.checkinPhotos ?? []} />
+        <MultipleImageView images={props.attendance.checkoutPhotos ?? []} />
       )}
 
       {props.attendance.pickupLetterStatus && (
