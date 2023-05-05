@@ -2,17 +2,12 @@ import { useSearchParams } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import {
-  Divider,
-  Text,
-  TextInput,
-  useTheme,
-  ProgressBar
-} from "react-native-paper";
+import { Divider, Text, TextInput, useTheme } from "react-native-paper";
 import { AttendanceItemModel } from "../../../src/models/AttendanceModels";
 import { api } from "../../../src/utils/api";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import MultipleImageView from "../../../src/components/common/MultiImageView";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -60,7 +55,7 @@ const DetailScreen = () => {
     <ScrollView>
       <CustomStackScreen title={"Chi tiết diểm danh"} />
 
-      {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={attMutation.isLoading} />
 
       <View className={"flex-1 bg-white p-5"}>
         <View className={"mb-5"}>

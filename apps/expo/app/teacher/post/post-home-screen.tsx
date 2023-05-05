@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ProgressBar } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import { FlatList } from "react-native";
 import Body from "../../../src/components/Body";
@@ -11,6 +10,7 @@ import PostHeader from "../../../src/components/post/PostHeader";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const ITEM_PER_PAGE = 5;
 
@@ -95,7 +95,7 @@ const PostHomeScreen = () => {
 
   return (
     <Body>
-      {postMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={postMutation.isLoading} />
 
       <FlatList
         onRefresh={() => refresh()}

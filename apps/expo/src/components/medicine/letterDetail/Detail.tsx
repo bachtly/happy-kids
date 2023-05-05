@@ -3,7 +3,7 @@ import { useNavigation } from "expo-router";
 import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
-import { ProgressBar, Text, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import MuiIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { api } from "../../../utils/api";
@@ -16,6 +16,7 @@ import AlertModal from "../../common/AlertModal";
 import { useAuthContext } from "../../../utils/auth-context-provider";
 import { ErrorContext } from "../../../utils/error-context";
 import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
+import LoadingBar from "../../common/LoadingBar";
 
 const Detail = ({
   userId,
@@ -64,7 +65,8 @@ const Detail = ({
 
   return (
     <Body>
-      {isFetching && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={isFetching} />
+
       <ScrollView
         className="flex-1"
         refreshControl={

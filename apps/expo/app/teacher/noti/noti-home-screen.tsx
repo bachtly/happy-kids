@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ProgressBar } from "react-native-paper";
 import { useSearchParams } from "expo-router";
 import { api } from "../../../src/utils/api";
 import { FlatList, View } from "react-native";
@@ -11,6 +10,7 @@ import NotiItem from "../../../src/components/noti/NotiItem";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const NotiHomeScreen = () => {
   const { classId } = useSearchParams();
@@ -47,7 +47,7 @@ const NotiHomeScreen = () => {
 
   return (
     <Body>
-      {notiMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={notiMutation.isLoading} />
 
       <View style={{}}>
         <FlatList

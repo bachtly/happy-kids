@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ProgressBar } from "react-native-paper";
 import { useSearchParams } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
@@ -15,6 +14,7 @@ import AlertModal from "../../../src/components/common/AlertModal";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -63,7 +63,7 @@ const HistoryScreen = () => {
   return (
     <Body>
       <CustomStackScreen title={"Đón về"} />
-      {pickupMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={pickupMutation.isLoading} />
 
       <DateFilterBar time={time} setTime={setTime} />
 

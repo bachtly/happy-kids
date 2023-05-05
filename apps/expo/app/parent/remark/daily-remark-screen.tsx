@@ -1,5 +1,4 @@
 import { ScrollView, View } from "react-native";
-import { ProgressBar } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import React, { useContext, useEffect, useState } from "react";
 import { DailyRemarkModel } from "../../../src/models/DailyRemarkModels";
@@ -12,6 +11,7 @@ import AlertModal from "../../../src/components/common/AlertModal";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -48,7 +48,7 @@ const DailyRemarkScreen = ({ studentId }: { studentId: string }) => {
 
   return (
     <Body>
-      {remarkMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={remarkMutation.isLoading} />
 
       <DateRangeFilterBar
         timeStart={timeStart}

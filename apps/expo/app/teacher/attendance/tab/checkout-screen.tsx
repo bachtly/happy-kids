@@ -1,7 +1,6 @@
 import moment, { Moment } from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { FlatList } from "react-native";
-import { ProgressBar } from "react-native-paper";
 import CheckoutItem from "../../../../src/components/attendance/CheckoutItem";
 import { AttendanceStudentModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
@@ -13,6 +12,7 @@ import AlertModal from "../../../../src/components/common/AlertModal";
 import { useAuthContext } from "../../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../../src/utils/trpc-error-handler";
+import LoadingBar from "../../../../src/components/common/LoadingBar";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -58,7 +58,7 @@ const CheckoutScreen = () => {
 
   return (
     <Body>
-      {isLoading() && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={isLoading()} />
 
       <DateFilterBar time={time} setTime={setTime} />
 

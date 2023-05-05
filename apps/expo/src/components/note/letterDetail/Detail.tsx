@@ -2,7 +2,7 @@ import { useNavigation } from "expo-router";
 
 import React, { useEffect } from "react";
 import { Image, RefreshControl, ScrollView, View } from "react-native";
-import { ProgressBar, Text, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import { api } from "../../../utils/api";
 import Body from "../../Body";
 import { NoteMessageList } from "./NoteMessageList";
@@ -13,6 +13,7 @@ import moment from "moment";
 import CustomCard from "../../CustomCard";
 import TeacherStatus from "./TeacherStatus";
 import ParentStatus from "./ParentStatus";
+import LoadingBar from "../../common/LoadingBar";
 
 const Detail = ({
   userId,
@@ -55,7 +56,8 @@ const Detail = ({
   const photoList = data?.noteThread?.photos;
   return (
     <Body>
-      {isFetching && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={isFetching} />
+
       <ScrollView
         className="flex-1"
         refreshControl={

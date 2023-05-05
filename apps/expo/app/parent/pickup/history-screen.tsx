@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ProgressBar } from "react-native-paper";
 import { useSearchParams, useRouter } from "expo-router";
 import moment, { Moment } from "moment/moment";
 import { api } from "../../../src/utils/api";
@@ -15,6 +14,7 @@ import ItemListWrapper from "../../../src/components/common/ItemListWrapper";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -77,9 +77,7 @@ const HistoryScreen = () => {
           }}
         />
 
-        {pickupMutation.isLoading && (
-          <ProgressBar indeterminate visible={true} />
-        )}
+        <LoadingBar isFetching={pickupMutation.isLoading} />
 
         <DateRangeFilterBar
           timeStart={timeStart}

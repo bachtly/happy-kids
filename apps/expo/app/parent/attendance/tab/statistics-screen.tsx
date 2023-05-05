@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { List, ProgressBar } from "react-native-paper";
+import { List } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import { AttendanceStatisticsModel } from "../../../../src/models/AttendanceModels";
 import { api } from "../../../../src/utils/api";
@@ -13,6 +13,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { trpcErrorHandler } from "../../../../src/utils/trpc-error-handler";
 import { ErrorContext } from "../../../../src/utils/error-context";
 import { useAuthContext } from "../../../../src/utils/auth-context-provider";
+import LoadingBar from "../../../../src/components/common/LoadingBar";
 
 const DEFAULT_TIME_END = moment(moment.now());
 const DEFAULT_TIME_START = moment(moment.now()).subtract(7, "days");
@@ -61,7 +62,7 @@ const StatisticsScreen = () => {
   return (
     <>
       <Body>
-        {attMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+        <LoadingBar isFetching={attMutation.isLoading} />
         <DateRangeFilterBar
           timeStart={timeStart}
           setTimeStart={setTimeStart}

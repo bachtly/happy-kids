@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { ProgressBar } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { PeriodRemarkModel } from "../../../src/models/PeriodRemarkModels";
 import PeriodRemarkItem from "../../../src/components/remark/PeriodRemarkItem";
@@ -12,6 +11,7 @@ import AlertModal from "../../../src/components/common/AlertModal";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -54,7 +54,7 @@ const PeriodRemarkScreen = ({ classId }: { classId: string }) => {
 
   return (
     <Body>
-      {remarkMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={remarkMutation.isLoading} />
 
       <DateFilterBar time={time} setTime={setTime} />
 

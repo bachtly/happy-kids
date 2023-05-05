@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../src/utils/api";
 import { ScrollView, View } from "react-native";
-import { ProgressBar } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { PeriodRemarkModel } from "../../../src/models/PeriodRemarkModels";
 import PeriodRemarkItem from "../../../src/components/remark/PeriodRemarkItem";
@@ -11,6 +10,7 @@ import AlertModal from "../../../src/components/common/AlertModal";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const PeriodRemarkScreen = ({ studentId }: { studentId: string }) => {
   const isFocused = useIsFocused();
@@ -40,7 +40,7 @@ const PeriodRemarkScreen = ({ studentId }: { studentId: string }) => {
 
   return (
     <Body>
-      {remarkMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={remarkMutation.isLoading} />
 
       <ScrollView>
         <View className={"space-y-3 p-2"}>

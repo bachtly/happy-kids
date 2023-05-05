@@ -10,6 +10,7 @@ import DateRangeFilterBar from "../../date-picker/DateRangeFilterBar";
 import ItemListWrapper from "../../common/ItemListWrapper";
 import { NoteThread } from "../../../models/NoteModels";
 import { api } from "../../../utils/api";
+import LoadingBar from "../../common/LoadingBar";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -120,6 +121,8 @@ const NoteHomeView = ({
 
   return (
     <View className="flex-1">
+      <LoadingBar isFetching={isFetching} />
+
       <CustomStackScreen
         title={"Lời nhắn"}
         addButtonHandler={

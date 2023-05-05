@@ -4,7 +4,6 @@ import moment, { Moment } from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 import { api } from "../../../utils/api";
-import { ProgressBar } from "react-native-paper";
 
 import { MedicineLetterList } from "./MedicineLetterList";
 import CustomStackScreen from "../../CustomStackScreen";
@@ -15,6 +14,7 @@ import AlertModal from "../../common/AlertModal";
 import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
 import { useAuthContext } from "../../../utils/auth-context-provider";
 import { ErrorContext } from "../../../utils/error-context";
+import LoadingBar from "../../common/LoadingBar";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -131,7 +131,7 @@ const MedicineHomeView = ({
 
   return (
     <View className="flex-1">
-      {isFetching && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={isFetching} />
 
       <CustomStackScreen
         title={"Dặn thuốc"}

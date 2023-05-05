@@ -3,7 +3,7 @@ import { useNavigation } from "expo-router";
 import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { Image, RefreshControl, ScrollView, View } from "react-native";
-import { ProgressBar, Text, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import MuiIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { api } from "../../../utils/api";
@@ -15,14 +15,13 @@ import AlertModal from "../../common/AlertModal";
 import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
 import { useAuthContext } from "../../../utils/auth-context-provider";
 import { ErrorContext } from "../../../utils/error-context";
+import LoadingBar from "../../common/LoadingBar";
 
 const Detail = ({
-  userId,
   id,
   isTeacher,
   studentName
 }: {
-  userId: string;
   id: string;
   isTeacher: boolean;
   studentName: string;
@@ -65,7 +64,7 @@ const Detail = ({
 
   return (
     <Body>
-      {isFetching && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={isFetching} />
       <ScrollView
         className="flex-1"
         refreshControl={
@@ -163,7 +162,6 @@ const Detail = ({
             )}
             {isTeacher ? (
               <TeacherStatus
-                userId={userId}
                 status={data.leaveLetter.status}
                 refetch={fetchData}
                 isFetching={isFetching}

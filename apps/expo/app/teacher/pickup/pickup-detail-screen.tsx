@@ -2,14 +2,7 @@ import { useSearchParams } from "expo-router";
 import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import {
-  Divider,
-  Text,
-  TextInput,
-  useTheme,
-  Button,
-  ProgressBar
-} from "react-native-paper";
+import { Divider, Text, TextInput, useTheme, Button } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import {
   PickupItemModel,
@@ -21,6 +14,7 @@ import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -100,7 +94,7 @@ const PickupDetailScreen = () => {
   return (
     <Body>
       <CustomStackScreen title={"Chi tiết đón về"} />
-      {pickupMutation.isLoading && <ProgressBar indeterminate visible={true} />}
+      <LoadingBar isFetching={pickupMutation.isLoading} />
 
       <ScrollView className={"flex-1 bg-white p-5"}>
         <View className={"mb-5"}>
