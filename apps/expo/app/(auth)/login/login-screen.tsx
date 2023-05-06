@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import React, { useContext, useRef, useState } from "react";
 import {
   Image,
@@ -11,8 +10,7 @@ import {
   Dialog,
   Portal,
   Text,
-  TextInput,
-  useTheme
+  TextInput
 } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
@@ -26,7 +24,6 @@ const LoginScreen = () => {
   const [username, setUsername] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [showFailLogin, setShowFailLogin] = React.useState<boolean>(false);
-  const { colors } = useTheme();
   const { setGlobalErrorMessage } = useContext(ErrorContext);
 
   const loginMutation = api.auth.userLogin.useMutation({
@@ -46,7 +43,6 @@ const LoginScreen = () => {
     onError: () => setShowFailLogin(true)
   });
 
-  const router = useRouter();
   const passwordRef = useRef<RNTextInput>(null);
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -130,16 +126,6 @@ const LoginScreen = () => {
                 Đăng nhập
               </Button>
             </View>
-          </View>
-          <View className={"mt-5 flex items-center"}>
-            <Button
-              mode={"text"}
-              buttonColor={colors.background}
-              style={{ borderColor: colors.outline }}
-              onPress={() => router.push("/signup/signup-email-screen")}
-            >
-              Tạo tài khoản mới
-            </Button>
           </View>
         </View>
       </ScrollView>
