@@ -1,9 +1,13 @@
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
-import { Image, TextInput as RNTextInput, View } from "react-native";
+import React, { useContext, useRef, useState } from "react";
+import {
+  Image,
+  ScrollView,
+  TextInput as RNTextInput,
+  View
+} from "react-native";
 import {
   Button,
-  Checkbox,
   Dialog,
   Portal,
   Text,
@@ -14,15 +18,16 @@ import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import { Keyboard } from "react-native";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { UNIMPLETMENTED_MESSAGE } from "../../../src/utils/constants";
 
 const LoginScreen = () => {
   const { onLogin } = useAuthContext();
-  const [email, setEmail] = React.useState<string>("");
+  const [username, setUsername] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
-  const [shouldSavePassword, setShouldSavePassword] =
-    React.useState<boolean>(false);
   const [showFailLogin, setShowFailLogin] = React.useState<boolean>(false);
   const { colors } = useTheme();
+  const { setGlobalErrorMessage } = useContext(ErrorContext);
 
   const loginMutation = api.auth.userLogin.useMutation({
     onSuccess: (data) => {
@@ -53,7 +58,7 @@ const LoginScreen = () => {
   );
 
   const onPressLogin = () => {
-    loginMutation.mutate({ email, password });
+    loginMutation.mutate({ username, password });
   };
   return (
     <>
@@ -75,7 +80,7 @@ const LoginScreen = () => {
         </Dialog>
       </Portal>
 
-      <View className={"bg-white"}>
+      <ScrollView className={"bg-white"}>
         <View className={"h-full w-full flex-col px-4"}>
           <Image
             /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
@@ -89,9 +94,9 @@ const LoginScreen = () => {
           />
           <View>
             <TextInput
-              label={"Email"}
-              value={email}
-              onChangeText={setEmail}
+              label={"Tên đăng nhập"}
+              value={username}
+              onChangeText={setUsername}
               mode={"outlined"}
               left={<TextInput.Icon icon={"account"} />}
               onSubmitEditing={() => passwordRef.current?.focus()}
@@ -108,19 +113,10 @@ const LoginScreen = () => {
                 onSubmitEditing={onPressLogin}
               />
             </View>
-            <View className={"mt-4 flex-row items-center justify-between"}>
-              <View className={"flex-row items-center"}>
-                <Checkbox
-                  status={shouldSavePassword ? "checked" : "unchecked"}
-                  onPress={() => setShouldSavePassword((prev) => !prev)}
-                />
-                <Text>Lưu mật khẩu</Text>
-              </View>
+            <View className={"mt-4 flex-row items-center justify-end"}>
               <Button
                 mode={"text"}
-                onPress={() =>
-                  router.push("/forget-password/forget-password-screen")
-                }
+                onPress={() => setGlobalErrorMessage(UNIMPLETMENTED_MESSAGE)}
               >
                 <Text className={"underline"}>Quên mật khẩu?</Text>
               </Button>
@@ -135,10 +131,9 @@ const LoginScreen = () => {
               </Button>
             </View>
           </View>
-          <View className={"mb-10 mt-auto flex items-center"}>
+          <View className={"mt-5 flex items-center"}>
             <Button
               mode={"text"}
-              className={"w-36"}
               buttonColor={colors.background}
               style={{ borderColor: colors.outline }}
               onPress={() => router.push("/signup/signup-email-screen")}
@@ -147,7 +142,7 @@ const LoginScreen = () => {
             </Button>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   );
 };

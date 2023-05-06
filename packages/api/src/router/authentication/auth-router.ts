@@ -9,7 +9,6 @@ import {
   CheckEmailExistenceParams,
   CheckEmailExistenceResp,
   LoginParams,
-  LoginResponse,
   SignupParams
 } from "./protocols";
 
@@ -24,7 +23,7 @@ export const authRouter = createTRPCRouter({
     .input(LoginParams)
     .mutation(
       async ({ ctx, input }) =>
-        await loginService.loginUser(ctx, input.email, input.password)
+        await loginService.loginUser(ctx, input.username, input.password)
     ),
   checkEmailExistence: publicProcedure
     .input(CheckEmailExistenceParams)

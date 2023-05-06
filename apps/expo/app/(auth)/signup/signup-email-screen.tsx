@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Text, View } from "react-native";
 import {
   Button,
@@ -11,9 +11,12 @@ import { api } from "../../../src/utils/api";
 import emailValidatorUtils from "../../../src/utils/email-validator-utils";
 import { useRouter } from "expo-router";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
+import { ErrorContext } from "../../../src/utils/error-context";
+import { UNIMPLETMENTED_MESSAGE } from "../../../src/utils/constants";
 
 const SignupEmailScreen = () => {
   const { colors } = useTheme();
+  const { setGlobalErrorMessage } = useContext(ErrorContext);
   const router = useRouter();
   const [showConfirmExitSignupModal, setShowConfirmExitSignupModal] =
     useState<boolean>(false);
@@ -75,9 +78,10 @@ const SignupEmailScreen = () => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              onPress={() =>
-                router.push("/forget-password/forget-password-screen")
-              }
+              onPress={() => {
+                setGlobalErrorMessage(UNIMPLETMENTED_MESSAGE);
+                setShowEmailExistedModal(false);
+              }}
             >
               Quên mật khẩu
             </Button>
@@ -125,7 +129,7 @@ const SignupEmailScreen = () => {
           Tiếp
         </Button>
         <Button
-          className={"mt-auto mb-10"}
+          className={"mb-10 mt-auto"}
           onPress={() => setShowConfirmExitSignupModal(true)}
         >
           Bạn đã có tài khoản rồi sao?

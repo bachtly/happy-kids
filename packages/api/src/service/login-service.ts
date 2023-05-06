@@ -13,13 +13,13 @@ class LoginService {
     private mysqlDB: Kysely<DB>,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
-  loginUser = async (ctx: Context, email: string, password: string) => {
-    console.log(`User ${email} is logging in`);
+  loginUser = async (ctx: Context, username: string, password: string) => {
+    console.log(`User ${username} is logging in`);
 
     const [isMatch, userGroup] = await this.mysqlDB
       .selectFrom("User")
       .select(["userGroup", "username", "password"])
-      .where("username", "=", email)
+      .where("username", "=", username)
       .executeTakeFirstOrThrow()
       .then((resp) => {
         return bcrypt
@@ -58,7 +58,7 @@ class LoginService {
           "StudentClassRelationship.classId as classId",
           "Student.id as studentId"
         ])
-        .where("username", "=", email)
+        .where("username", "=", username)
         .executeTakeFirstOrThrow()
         .then(async (resp) => {
           const accessTokenPrivateKey = await this.fileService.asyncReadFile(
@@ -95,7 +95,7 @@ class LoginService {
           "User.id as userId",
           "TeacherClassRelationship.classId as classId"
         ])
-        .where("username", "=", email)
+        .where("username", "=", username)
         .executeTakeFirstOrThrow()
         .then(async (resp) => {
           const accessTokenPrivateKey = await this.fileService.asyncReadFile(

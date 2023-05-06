@@ -2,7 +2,7 @@ import { z } from "zod";
 // Define the params and response format for auth-router
 
 const LoginParams = z.object({
-  email: z.string(),
+  username: z.string(),
   password: z.string()
 });
 
