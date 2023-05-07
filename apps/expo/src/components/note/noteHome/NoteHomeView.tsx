@@ -1,7 +1,7 @@
 import { useNavigation, useRouter } from "expo-router";
 import moment, { Moment } from "moment";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 
 import { NoteThreadList } from "./NoteThreadList";
@@ -11,6 +11,9 @@ import ItemListWrapper from "../../common/ItemListWrapper";
 import { NoteThread } from "../../../models/NoteModels";
 import { api } from "../../../utils/api";
 import LoadingBar from "../../common/LoadingBar";
+import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
+import { ErrorContext } from "../../../utils/error-context";
+import { useAuthContext } from "../../../utils/auth-context-provider";
 
 const CheckOverlapDate = (
   xFrom: Moment,
@@ -33,6 +36,8 @@ const NoteHomeView = ({
   studentId: string;
 }) => {
   const router = useRouter();
+  const errorContext = useContext(ErrorContext);
+  const authContext = useAuthContext();
   const [threadList, setThreadList] = useState<NoteThread[]>([]);
 
   const DEFAULT_TIME_START = moment().startOf("day");
@@ -51,26 +56,29 @@ const NoteHomeView = ({
         },
     {
       onSuccess: (resp) => {
-        if (resp.status !== "Success") {
-          console.log("getNoteThread error", resp.message);
-        } else {
-          setThreadList(
-            resp.noteThreadList
-              .map((item) => ({
-                id: item.id,
-                createdAt: item.createdAt,
-                status: item.status,
-                startDate: item.startDate,
-                endDate: item.endDate,
-                studentName: item.studentName,
-                content: item.content
-              }))
-              .sort((item1, item2) =>
-                moment(item2.createdAt).diff(moment(item1.createdAt))
-              )
-          );
-        }
-      }
+        setThreadList(
+          resp.noteThreadList
+            .map((item) => ({
+              id: item.id,
+              createdAt: item.createdAt,
+              status: item.status,
+              startDate: item.startDate,
+              endDate: item.endDate,
+              studentName: item.studentName,
+              content: item.content
+            }))
+            .sort((item1, item2) =>
+              moment(item2.createdAt).diff(moment(item1.createdAt))
+            )
+        );
+      },
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
     }
   );
 

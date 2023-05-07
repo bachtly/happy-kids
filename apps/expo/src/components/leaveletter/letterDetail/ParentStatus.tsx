@@ -14,9 +14,7 @@ const ParentStatus = ({
   return (
     <View>
       <View className="my-3 flex-row items-center">
-        <Text className="font-bold" variant={"bodyMedium"}>
-          Trạng thái đơn
-        </Text>
+        <Text variant={"labelLarge"}>Trạng thái đơn</Text>
         <View className={"flex-grow text-right"}>
           <LetterStatusText status={status} />
         </View>

@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
-import { Button, IconButton, Text, useTheme } from "react-native-paper";
+import {
+  Button,
+  IconButton,
+  Text,
+  useTheme,
+  Divider
+} from "react-native-paper";
 import {
   MedicineLetterStatus,
   MedUseTime
@@ -9,7 +15,9 @@ import { api } from "../../../utils/api";
 import LetterStatusDialog from "../modals/OptionDialog";
 import LetterStatusText from "../StatusText";
 import MedicineUseTabTable from "./MedicineUseTabTable";
-import AlertModal from "../../common/AlertModal";
+import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
+import { useAuthContext } from "../../../utils/auth-context-provider";
+import { ErrorContext } from "../../../utils/error-context";
 
 const TeacherStatus = ({
   userId,
@@ -27,12 +35,13 @@ const TeacherStatus = ({
   medUseTimes: MedUseTime[];
 }) => {
   const theme = useTheme();
+  const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
   const [visibleStatusDialog, setVisibleStatusDialog] = useState(false);
   const [statusLetter, setStatusLetter] = useState(status);
   const [curMedUseTimes, setCurMedUseTimes] = useState(medUseTimes);
   const [curBatchNumber, setCurBatchNumber] = useState(0);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const isChangedLetterStatus = statusLetter != status;
   const isChangedUseStatus =
@@ -41,7 +50,13 @@ const TeacherStatus = ({
   const updateStatMedLetterMutation =
     api.medicine.updateMedicineLetter.useMutation({
       onSuccess: (_) => refetch(),
-      onError: (e) => setErrorMessage(e.message)
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
     });
 
   useEffect(() => {
@@ -55,32 +70,23 @@ const TeacherStatus = ({
       <View className="mt-2 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <Text variant={"labelLarge"}>Trạng thái đơn</Text>
+        </View>
+        <View className={"flex-row items-center justify-end text-right"}>
           <IconButton
             icon={"pencil"}
             iconColor={theme.colors.primary}
-            containerColor={"rgba(0,0,0,0)"}
             size={16}
-            mode={"contained"}
+            mode={"outlined"}
             onPress={() => {
               setVisibleStatusDialog(true);
             }}
           />
-        </View>
-        <View className={"flex-row items-center justify-end text-right"}>
-          {isChangedLetterStatus && (
-            <IconButton
-              icon={"undo-variant"}
-              iconColor={theme.colors.backdrop}
-              size={16}
-              className={"-mr-1"}
-              onPress={() => setStatusLetter(status)}
-            />
-          )}
           <LetterStatusText status={statusLetter} />
         </View>
       </View>
 
-      <View className="mb-3">
+      <Divider />
+      <View className={"space-y-1 py-3"}>
         <View className="flex-row items-baseline justify-between">
           <Text className="mb-3" variant={"labelLarge"}>
             Trạng thái uống thuốc
@@ -129,16 +135,17 @@ const TeacherStatus = ({
       </Button>
       <LetterStatusDialog
         origValue={statusLetter}
-        setOrigValue={setStatusLetter}
+        setOrigValue={(value) => {
+          updateStatMedLetterMutation.mutate({
+            teacherId: userId,
+            status: value,
+            useDiary: [],
+            medicineLetterId
+          });
+          setStatusLetter(value);
+        }}
         visible={visibleStatusDialog}
         close={() => setVisibleStatusDialog(false)}
-      />
-
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
       />
     </View>
   );

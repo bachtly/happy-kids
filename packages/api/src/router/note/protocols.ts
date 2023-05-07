@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-const ResponseStatus = z.enum(["Success", "Fail"]);
-
 const ThreadStatus = z.enum(["Confirmed", "NotConfirmed", "Rejected"]);
 
 const NoteMessage = z.object({
@@ -40,8 +38,6 @@ const PostNoteThreadParams = z.object({
 });
 
 const PostNoteThreadResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   noteThreadId: z.string()
 });
 
@@ -50,10 +46,7 @@ const PostNoteMessageParams = z.object({
   noteThreadId: z.string()
 });
 
-const PostNoteMessageResponse = z.object({
-  status: ResponseStatus,
-  message: z.string()
-});
+const PostNoteMessageResponse = z.object({});
 
 const UpdateStatusNoteThreadParams = z.object({
   noteThreadId: z.string(),
@@ -66,8 +59,6 @@ const GetNoteThreadListParams = z.object({
 });
 
 const GetNoteThreadListResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   noteThreadList: z.array(NoteThread)
 });
 
@@ -76,8 +67,6 @@ const GetNoteThreadParams = z.object({
 });
 
 const GetNoteThreadResponse = z.object({
-  status: ResponseStatus,
-  message: z.string(),
   noteThread: NoteThread.nullable()
 });
 
@@ -92,7 +81,6 @@ export {
   GetNoteThreadListResponse,
   GetNoteThreadParams,
   GetNoteThreadResponse,
-  ResponseStatus,
   ThreadStatus,
   NoteMessage
 };

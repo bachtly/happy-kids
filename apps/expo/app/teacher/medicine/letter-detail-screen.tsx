@@ -1,16 +1,14 @@
 import { useSearchParams } from "expo-router";
 
-import React, { useState } from "react";
+import React from "react";
 import { View } from "react-native";
 import Detail from "../../../src/components/medicine/letterDetail/Detail";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
-import AlertModal from "../../../src/components/common/AlertModal";
 
 const LetterDetail = () => {
   const { id, studentName } = useSearchParams();
   const { userId } = useAuthContext();
-  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <View className="flex-1">
@@ -21,13 +19,6 @@ const LetterDetail = () => {
         userId={userId ?? ""}
         isTeacher={true}
         id={id}
-      />
-
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
       />
     </View>
   );

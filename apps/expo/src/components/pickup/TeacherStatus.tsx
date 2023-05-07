@@ -1,33 +1,34 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
-import { api } from "../../../utils/api";
-import LetterStatusDialog from "../../medicine/modals/OptionDialog";
-import LetterStatusText from "../../medicine/StatusText";
-import { NoteThreadStatus } from "../../../models/NoteModels";
-import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
-import { ErrorContext } from "../../../utils/error-context";
-import { useAuthContext } from "../../../utils/auth-context-provider";
+import { api } from "../../utils/api";
+import LetterStatusDialog from "../medicine/modals/OptionDialog";
+import LetterStatusText from "../medicine/StatusText";
+import { MedicineLetterStatus } from "../../models/MedicineModels";
+import { trpcErrorHandler } from "../../utils/trpc-error-handler";
+import { useAuthContext } from "../../utils/auth-context-provider";
+import { ErrorContext } from "../../utils/error-context";
 
 const TeacherStatus = ({
   status,
   refetch,
-  noteThreadId
+  id
 }: {
   userId: string;
-  status: NoteThreadStatus;
+  status: MedicineLetterStatus;
   refetch: () => void;
-  noteThreadId: string;
+  id: string;
 }) => {
   const theme = useTheme();
-  const errorContext = useContext(ErrorContext);
   const authContext = useAuthContext();
+  const errorContext = useContext(ErrorContext);
 
+  const [changed, setChanged] = useState(false);
   const [visibleStatusDialog, setVisibleStatusDialog] = useState(false);
   const [statusLetter, setStatusLetter] = useState(status);
 
-  const updateStatMutation = api.note.updateNoteStatus.useMutation({
-    onSuccess: () => refetch(),
+  const confirmMutation = api.pickup.confirmPickupLetter.useMutation({
+    onSuccess: () => setChanged(!changed),
     onError: ({ message, data }) =>
       trpcErrorHandler(() => {})(
         data?.code ?? "",
@@ -36,6 +37,19 @@ const TeacherStatus = ({
         authContext
       )
   });
+
+  const rejectMutation = api.pickup.rejectPickupLetter.useMutation({
+    onSuccess: () => setChanged(!changed),
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
+  });
+
+  useEffect(() => refetch(), [changed]);
 
   return (
     <View>
@@ -59,11 +73,12 @@ const TeacherStatus = ({
 
       <LetterStatusDialog
         origValue={statusLetter}
-        setOrigValue={(value: NoteThreadStatus) => {
-          updateStatMutation.mutate({
-            noteThreadId: noteThreadId,
-            status: value
-          });
+        setOrigValue={(value: MedicineLetterStatus) => {
+          if (value == "Confirmed") {
+            confirmMutation.mutate({ id });
+          } else if (value == "Rejected") {
+            rejectMutation.mutate({ id });
+          }
           setStatusLetter(value);
         }}
         visible={visibleStatusDialog}

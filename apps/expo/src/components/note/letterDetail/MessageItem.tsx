@@ -43,14 +43,16 @@ const MessageItem = ({
   onPress: () => void;
 }) => {
   const Ava = () => {
-    if (item.sendUser === "") return <View style={{ width: 42 }} />;
-    return <Avatar.Text size={42} label={item.sendUser[0]} />;
+    if (item.sendUser === "") return <View style={{ width: 36 }} />;
+    return <Avatar.Text size={36} label={item.sendUser[0]} />;
   };
   return (
     <>
       <View
         className="flex-row"
-        style={{ justifyContent: isRight ? "flex-end" : "flex-start" }}
+        style={{
+          justifyContent: isRight ? "flex-end" : "flex-start"
+        }}
       >
         {!isRight && (
           <View className="mr-2">
@@ -59,7 +61,7 @@ const MessageItem = ({
         )}
         <View
           className="mx-1 flex-shrink"
-          style={{ marginTop: item.sendUser === "" ? -8 : 0 }}
+          style={{ marginTop: item.sendUser === "" ? -8 : 0, maxWidth: "70%" }}
         >
           <ChatContentCard isRight={isRight} item={item} onPress={onPress} />
         </View>

@@ -1,21 +1,19 @@
 import { useNavigation } from "expo-router";
 
 import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
-import { Image, RefreshControl, ScrollView, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
-import MuiIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import React, { useContext, useEffect } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
+import { Text, Divider } from "react-native-paper";
 import { api } from "../../../utils/api";
 import ParentStatus from "./ParentStatus";
 import TeacherStatus from "./TeacherStatus";
 import Body from "../../Body";
-import CustomCard from "../../CustomCard";
-import AlertModal from "../../common/AlertModal";
 import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
 import { useAuthContext } from "../../../utils/auth-context-provider";
 import { ErrorContext } from "../../../utils/error-context";
 import LoadingBar from "../../common/LoadingBar";
+import EllipsedText from "../../common/EllipsedText";
+import MultiImageView from "../../common/MultiImageView";
 
 const Detail = ({
   id,
@@ -26,11 +24,8 @@ const Detail = ({
   isTeacher: boolean;
   studentName: string;
 }) => {
-  const theme = useTheme();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
-
-  const [errorMessage, setErrorMessage] = useState("");
 
   const { data, refetch, isFetching, isSuccess } =
     api.leaveletter.getLeaveLetter.useQuery(
@@ -66,100 +61,13 @@ const Detail = ({
     <Body>
       <LoadingBar isFetching={isFetching} />
       <ScrollView
-        className="flex-1"
+        className="flex-1 bg-white"
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={fetchData} />
         }
       >
         {isSuccess && data.leaveLetter && (
-          <View className="m-2 flex-1 p-3">
-            <Text className="mb-3 text-center" variant={"titleMedium"}>
-              {`Đơn xin nghỉ cho bé ${studentName}`}
-            </Text>
-            <View className="mb-3 flex-row">
-              <Text className="font-bold" variant={"bodyMedium"}>
-                Từ ngày
-              </Text>
-              <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
-                <FontAwesomeIcon
-                  name="calendar"
-                  size={16}
-                  color={theme.colors.primary}
-                />{" "}
-                {moment(data.leaveLetter.startDate).format("DD/MM/YY")}
-              </Text>
-            </View>
-
-            <View className="mb-3 flex-row">
-              <Text className="font-bold" variant={"bodyMedium"}>
-                Đến ngày
-              </Text>
-              <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
-                <FontAwesomeIcon
-                  name="calendar"
-                  size={16}
-                  color={theme.colors.primary}
-                />{" "}
-                {moment(data.leaveLetter.endDate).format("DD/MM/YY")}
-              </Text>
-            </View>
-
-            <View className="mb-3 flex-row">
-              <Text className="font-bold" variant={"bodyMedium"}>
-                Đơn tạo bởi
-              </Text>
-              <Text
-                className={"flex-grow items-center text-right"}
-                variant={"bodyMedium"}
-              >
-                <MuiIcons
-                  name="account"
-                  size={16}
-                  color={theme.colors.primary}
-                />{" "}
-                {data.leaveLetter.createdByParent}
-              </Text>
-            </View>
-
-            <Text className="mb-3" variant={"labelLarge"}>
-              Lý do
-            </Text>
-            <CustomCard>
-              <Text style={{ fontSize: theme.fonts.bodyMedium.fontSize }}>
-                {data.leaveLetter.reason ?? "Không có ghi chú"}
-              </Text>
-            </CustomCard>
-
-            <View className="my-3 flex flex-row items-end justify-between">
-              <Text variant={"labelLarge"}>Ảnh đính kèm</Text>
-            </View>
-            {photoList && photoList.length > 0 ? (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8 }}
-              >
-                {photoList.map((image, index) => (
-                  <Image
-                    source={{ uri: `data:image/jpeg;base64,${image}` }}
-                    className="h-32 w-32"
-                    key={index}
-                  />
-                ))}
-              </ScrollView>
-            ) : (
-              <View
-                className="rounded-sm border p-4"
-                style={{
-                  backgroundColor: theme.colors.background,
-                  borderColor: theme.colors.outline
-                }}
-              >
-                <Text className={"text-center leading-6"}>
-                  Đơn này không có ảnh!
-                </Text>
-              </View>
-            )}
+          <View className="flex-1 px-5 pb-5">
             {isTeacher ? (
               <TeacherStatus
                 status={data.leaveLetter.status}
@@ -173,16 +81,67 @@ const Detail = ({
                 updatedByTeacher={data.leaveLetter.updatedByTeacher}
               />
             )}
+
+            <Divider />
+            <View className={"space-y-1 py-3"}>
+              <Text className={"mb-2"} variant={"labelLarge"}>
+                Chi tiết đơn
+              </Text>
+
+              <View className="flex-row justify-between">
+                <Text>Học sinh</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {studentName}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between">
+                <Text>Từ ngày</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {moment(data.leaveLetter.startDate).format("DD/MM/YY")}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between">
+                <Text>Đến ngày</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {moment(data.leaveLetter.endDate).format("DD/MM/YY")}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between">
+                <Text>Đơn tạo bởi</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {data.leaveLetter.createdByParent}
+                </Text>
+              </View>
+            </View>
+
+            <Divider />
+            <View className={"space-y-1 py-3"}>
+              <Text className="mb-3" variant={"labelLarge"}>
+                Lý do
+              </Text>
+              <EllipsedText
+                lines={10}
+                content={data.leaveLetter.reason ?? "Không có ghi chú"}
+              />
+            </View>
+
+            {photoList && photoList.length > 0 && (
+              <>
+                <Divider />
+                <View className={"space-y-1 py-3"}>
+                  <Text className="mb-3" variant={"labelLarge"}>
+                    Ảnh đính kèm
+                  </Text>
+                  <MultiImageView images={photoList} />
+                </View>
+              </>
+            )}
           </View>
         )}
       </ScrollView>
-
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
-      />
     </Body>
   );
 };

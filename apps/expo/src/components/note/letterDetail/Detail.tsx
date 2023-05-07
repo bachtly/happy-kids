@@ -1,19 +1,19 @@
-import { useNavigation } from "expo-router";
-
-import React, { useEffect } from "react";
-import { Image, RefreshControl, ScrollView, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { useNavigation, useRouter } from "expo-router";
+import React, { useContext, useEffect } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
+import { Text, Divider } from "react-native-paper";
 import { api } from "../../../utils/api";
 import Body from "../../Body";
-import { NoteMessageList } from "./NoteMessageList";
-import MessageComponent from "./MessageComponent";
-import MuiIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import moment from "moment";
-import CustomCard from "../../CustomCard";
 import TeacherStatus from "./TeacherStatus";
 import ParentStatus from "./ParentStatus";
 import LoadingBar from "../../common/LoadingBar";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import EllipsedText from "../../common/EllipsedText";
+import MultiImageView from "../../common/MultiImageView";
+import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
+import { ErrorContext } from "../../../utils/error-context";
+import { useAuthContext } from "../../../utils/auth-context-provider";
 
 const Detail = ({
   userId,
@@ -24,7 +24,9 @@ const Detail = ({
   id: string;
   isTeacher: boolean;
 }) => {
-  const theme = useTheme();
+  const router = useRouter();
+  const errorContext = useContext(ErrorContext);
+  const authContext = useAuthContext();
 
   const { data, refetch, isFetching, isSuccess } =
     api.note.getNoteThread.useQuery(
@@ -32,12 +34,13 @@ const Detail = ({
         noteThreadId: id
       },
       {
-        onSuccess: (data) => {
-          if (data.status !== "Success") console.log(data.message);
-          else {
-            // console.log(data.noteThread);
-          }
-        }
+        onError: ({ message, data }) =>
+          trpcErrorHandler(() => {})(
+            data?.code ?? "",
+            message,
+            errorContext,
+            authContext
+          )
       }
     );
 
@@ -53,101 +56,28 @@ const Detail = ({
     return focusListener;
   }, []);
 
+  const routeThreadScreen = () => {
+    router.push({
+      pathname: isTeacher
+        ? "teacher/note/thread-screen"
+        : "parent/note/thread-screen",
+      params: { userId, id }
+    });
+  };
+
   const photoList = data?.noteThread?.photos;
   return (
     <Body>
       <LoadingBar isFetching={isFetching} />
 
       <ScrollView
-        className="flex-1"
+        className="flex-1 bg-white"
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={fetchData} />
         }
       >
         {isSuccess && data.noteThread && (
-          <View className="m-2 flex-1 p-3 pb-0">
-            <Text className="mb-3 text-center" variant={"titleMedium"}>
-              {`Lời nhắn cho bé ${data.noteThread.studentName}`}
-            </Text>
-            <View className="mb-3 flex-row">
-              <Text variant={"labelLarge"}>Từ ngày</Text>
-              <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
-                <FontAwesomeIcon
-                  name="calendar"
-                  size={16}
-                  color={theme.colors.primary}
-                />{" "}
-                {moment(data.noteThread.startDate).format("DD/MM/YY")}
-              </Text>
-            </View>
-
-            <View className="mb-3 flex-row">
-              <Text variant={"labelLarge"}>Đến ngày</Text>
-              <Text className={"flex-grow text-right"} variant={"bodyMedium"}>
-                <FontAwesomeIcon
-                  name="calendar"
-                  size={16}
-                  color={theme.colors.primary}
-                />{" "}
-                {moment(data.noteThread.endDate).format("DD/MM/YY")}
-              </Text>
-            </View>
-
-            <View className="mb-3 flex-row">
-              <Text variant={"labelLarge"}>Đơn tạo bởi</Text>
-              <Text
-                className={"flex-grow items-center text-right"}
-                variant={"bodyMedium"}
-              >
-                <MuiIcons
-                  name="account"
-                  size={16}
-                  color={theme.colors.primary}
-                />{" "}
-                {data.noteThread.createdByParent}
-              </Text>
-            </View>
-
-            <Text className="mb-3" variant={"labelLarge"}>
-              Nội dung
-            </Text>
-            <CustomCard>
-              <Text style={{ fontSize: theme.fonts.bodyMedium.fontSize }}>
-                {data.noteThread.content ?? "Không có noi dung"}
-              </Text>
-            </CustomCard>
-
-            <Text className="my-3" variant={"labelLarge"}>
-              Ảnh đính kèm
-            </Text>
-            {photoList && photoList.length > 0 ? (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8 }}
-              >
-                {photoList.map((image, index) => (
-                  <Image
-                    source={{ uri: `data:image/jpeg;base64,${image}` }}
-                    className="h-32 w-32"
-                    key={index}
-                  />
-                ))}
-              </ScrollView>
-            ) : (
-              <View
-                className="rounded-sm border p-4"
-                style={{
-                  backgroundColor: theme.colors.background,
-                  borderColor: theme.colors.outline
-                }}
-              >
-                <Text className={"text-center leading-6"}>
-                  Đơn này không có ảnh!
-                </Text>
-              </View>
-            )}
-
+          <View className="flex-1 px-5 pb-5">
             {isTeacher ? (
               <TeacherStatus
                 userId={userId}
@@ -158,41 +88,77 @@ const Detail = ({
             ) : (
               <ParentStatus status={data.noteThread.status} />
             )}
-            <Text className="mb-3" variant={"labelLarge"}>
-              Các bình luận
-            </Text>
 
-            {data.noteThread.messages.length > 0 ? (
-              <NoteMessageList
-                userId={userId}
-                items={data.noteThread.messages.map((item) => {
-                  // console.log(item.userId);
-                  return {
-                    sendUser: item.user,
-                    content: item.content,
-                    id: item.id,
-                    sendTime: item.createdAt,
-                    sendUserId: item.userId
-                  };
-                })}
+            <Divider />
+            <View className="flex-row justify-between py-3">
+              <Text variant={"labelLarge"}>Phản hồi</Text>
+              <AntDesign
+                name={"message1"}
+                size={25}
+                onPress={() => routeThreadScreen()}
               />
-            ) : (
-              <View
-                className="rounded-sm border p-4"
-                style={{
-                  backgroundColor: theme.colors.background,
-                  borderColor: theme.colors.outline
-                }}
-              >
-                <Text className={"text-center leading-6"}>
-                  Đơn này chưa có bình luận!
+            </View>
+            <Divider />
+
+            <View className={"space-y-1 py-3"}>
+              <Text className={"mb-2"} variant={"labelLarge"}>
+                Chi tiết đơn
+              </Text>
+
+              <View className="flex-row justify-between">
+                <Text>Học sinh</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {data.noteThread.studentName}
                 </Text>
               </View>
+
+              <View className="flex-row justify-between">
+                <Text>Từ ngày</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {moment(data.noteThread.startDate).format("DD/MM/YY")}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between">
+                <Text>Đến ngày</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {moment(data.noteThread.endDate).format("DD/MM/YY")}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between">
+                <Text>Đơn tạo bởi</Text>
+                <Text className={"text-right"} variant={"bodyMedium"}>
+                  {data.noteThread.createdByParent}
+                </Text>
+              </View>
+            </View>
+
+            <Divider />
+            <View className={"space-y-1 py-3"}>
+              <Text className="mb-3" variant={"labelLarge"}>
+                Nội dung
+              </Text>
+              <EllipsedText
+                lines={10}
+                content={data.noteThread.content ?? "Không có nội dung"}
+              />
+            </View>
+
+            {photoList && photoList.length > 0 && (
+              <>
+                <Divider />
+                <View className={"space-y-1 py-3"}>
+                  <Text className="mb-3" variant={"labelLarge"}>
+                    Ảnh đính kèm
+                  </Text>
+                  <MultiImageView images={photoList} />
+                </View>
+              </>
             )}
           </View>
         )}
       </ScrollView>
-      <MessageComponent userId={userId} noteThreadId={id} refetch={fetchData} />
     </Body>
   );
 };

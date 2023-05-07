@@ -1,69 +1,31 @@
 import { useSearchParams } from "expo-router";
 import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
-import { Divider, Text, TextInput, useTheme, Button } from "react-native-paper";
+import { RefreshControl, ScrollView, View } from "react-native";
+import { Divider, Text } from "react-native-paper";
 import { api } from "../../../src/utils/api";
-import {
-  PickupItemModel,
-  STATUS_ENUM_TO_VERBOSE
-} from "../../../src/models/PickupModels";
+import { PickupItemModel } from "../../../src/models/PickupModels";
 import Body from "../../../src/components/Body";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
-import AlertModal from "../../../src/components/common/AlertModal";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import LoadingBar from "../../../src/components/common/LoadingBar";
-
-const DATE_OF_WEEK = [
-  "Chủ nhật",
-  "Thứ hai",
-  "Thứ ba",
-  "Thứ tư",
-  "Thứ năm",
-  "Thứ sáu",
-  "Thứ bảy"
-];
-const DATE_FORMAT = "DD/MM/YYYY";
-const TIME_FORMAT = "hh:mm";
+import EllipsedText from "../../../src/components/common/EllipsedText";
+import TeacherStatus from "../../../src/components/pickup/TeacherStatus";
 
 const PickupDetailScreen = () => {
   const { id } = useSearchParams();
-  const theme = useTheme();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
 
   // just to trigger
-  const [changed, setChanged] = useState(false);
-
   const [pickup, setPickup] = useState<PickupItemModel | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const pickupMutation = api.pickup.getPickupDetail.useMutation({
-    onSuccess: (resp) => setPickup(resp.pickup),
-    onError: ({ message, data }) =>
-      trpcErrorHandler(() => {})(
-        data?.code ?? "",
-        message,
-        errorContext,
-        authContext
-      )
-  });
-
-  const confirmMutation = api.pickup.confirmPickupLetter.useMutation({
-    onSuccess: () => setChanged(!changed),
-    onError: ({ message, data }) =>
-      trpcErrorHandler(() => {})(
-        data?.code ?? "",
-        message,
-        errorContext,
-        authContext
-      )
-  });
-
-  const rejectMutation = api.pickup.rejectPickupLetter.useMutation({
-    onSuccess: () => setChanged(!changed),
+    onSuccess: (resp) => {
+      setPickup(resp.pickup);
+    },
     onError: ({ message, data }) =>
       trpcErrorHandler(() => {})(
         data?.code ?? "",
@@ -75,20 +37,14 @@ const PickupDetailScreen = () => {
 
   // update list when search criterias change
   useEffect(() => {
+    refresh();
+  }, []);
+
+  const refresh = () => {
     id != null &&
       pickupMutation.mutate({
         id: id
       });
-  }, [changed]);
-
-  const getDateString = (date: Date, format: string) => {
-    return `${DATE_OF_WEEK[date.getDay()] ?? ""}, ${moment(date)
-      .format(format)
-      .toString()}`;
-  };
-
-  const getTimeString = (time: Date | null | undefined, format: string) => {
-    return time ? `${moment(time).format(format).toString()}` : "" ?? "";
   };
 
   return (
@@ -96,81 +52,69 @@ const PickupDetailScreen = () => {
       <CustomStackScreen title={"Chi tiết đón về"} />
       <LoadingBar isFetching={pickupMutation.isLoading} />
 
-      <ScrollView className={"flex-1 bg-white p-5"}>
-        <View className={"mb-5"}>
-          {pickup && pickup.time && (
-            <Text variant={"titleLarge"}>
-              {getDateString(pickup.time, DATE_FORMAT)}
-            </Text>
+      <ScrollView
+        className={"flex-1 bg-white"}
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={refresh} />
+        }
+      >
+        <View className="flex-1 px-5 pb-5">
+          {pickup?.status && (
+            <TeacherStatus
+              userId={authContext.userId ?? ""}
+              status={pickup.status}
+              refetch={refresh}
+              id={pickup?.id ?? ""}
+            />
           )}
-        </View>
 
-        <View className={"mb-5"}>
-          <View className={"mb-2 flex-row justify-between"}>
-            <Text>Tình trạng đơn: </Text>
-            <Text>
-              {pickup?.status && STATUS_ENUM_TO_VERBOSE.get(pickup.status)}
+          <Divider />
+          <View className={"space-y-1 py-3"}>
+            <Text className={"mb-2"} variant={"labelLarge"}>
+              Chi tiết đơn
             </Text>
-          </View>
-          <Divider className={"mb-2"} />
 
-          <View className={"mb-2 flex-row justify-between"}>
-            <Text>Người đón: </Text>
-            <Text>{pickup?.pickerFullname ?? ""}</Text>
-          </View>
-          <Divider className={"mb-2"} />
+            <View className="flex-row justify-between">
+              <Text>Học sinh</Text>
+              <Text className={"text-right"} variant={"bodyMedium"}>
+                {pickup?.studentFullname}
+              </Text>
+            </View>
 
-          <View className={"mb-2 flex-row justify-between"}>
-            <Text>Thời gian đón: </Text>
-            <Text>{getTimeString(pickup?.time, TIME_FORMAT)}</Text>
-          </View>
-          <Divider className={"mb-2"} />
+            <View className="flex-row justify-between">
+              <Text>Thời gian đón</Text>
+              <Text className={"text-right"} variant={"bodyMedium"}>
+                {moment(pickup?.time).format("DD/MM/YY")}
+              </Text>
+            </View>
 
-          <View className={""}>
-            <Text className={"mb-2"}>Ghi chú của phụ huynh: </Text>
-            <TextInput
-              disabled={true}
-              style={{ fontSize: theme.fonts.bodyMedium.fontSize }}
-            >
-              {pickup?.note ?? "Không có ghi chú"}
-            </TextInput>
-          </View>
-        </View>
+            <View className="flex-row justify-between">
+              <Text>Người đón</Text>
+              <Text className={"text-right"} variant={"bodyMedium"}>
+                {pickup?.pickerFullname}
+              </Text>
+            </View>
 
-        <View className={"flex-row space-x-2"}>
-          <Button
-            className={"flex-1"}
-            mode={"contained"}
-            onPress={() =>
-              confirmMutation.mutate({
-                id: id
-              })
-            }
-            disabled={pickup?.status != "NotConfirmed"}
-          >
-            Xác nhận
-          </Button>
-          <Button
-            className={"flex-1"}
-            mode={"contained-tonal"}
-            onPress={() =>
-              rejectMutation.mutate({
-                id: id
-              })
-            }
-            disabled={pickup?.status != "NotConfirmed"}
-          >
-            Từ chối
-          </Button>
+            <View className="flex-row justify-between">
+              <Text>Giáo viên</Text>
+              <Text className={"text-right"} variant={"bodyMedium"}>
+                {pickup?.teacherFullname}
+              </Text>
+            </View>
+          </View>
+
+          <Divider />
+          <View className={"space-y-1 py-3"}>
+            <Text className="mb-3" variant={"labelLarge"}>
+              Nội dung
+            </Text>
+            <EllipsedText
+              lines={10}
+              content={pickup?.note ?? "Không có nội dung"}
+            />
+          </View>
         </View>
       </ScrollView>
-
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
-      />
     </Body>
   );
 };

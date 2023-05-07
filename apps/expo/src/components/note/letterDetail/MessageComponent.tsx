@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, TextInput } from "react-native";
-import { Button } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { api } from "../../../utils/api";
+import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
+import { ErrorContext } from "../../../utils/error-context";
+import { useAuthContext } from "../../../utils/auth-context-provider";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const MessageComponent = ({
   userId,
@@ -12,15 +16,22 @@ const MessageComponent = ({
   refetch: () => void;
   noteThreadId: string;
 }) => {
+  const errorContext = useContext(ErrorContext);
+  const authContext = useAuthContext();
+  const { colors } = useTheme();
+
   const [mess, setMess] = useState("");
   const postNoteMessageMutation = api.note.postNoteMessage.useMutation({
-    onSuccess: (err) => {
-      if (err !== null) {
-        console.log(err.message);
-      } else {
-        refetch();
-      }
-    }
+    onSuccess: () => {
+      refetch();
+    },
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
   });
 
   const onSubmit = () => {
@@ -38,17 +49,42 @@ const MessageComponent = ({
   };
 
   return (
-    <View className="flex-row items-center border-t">
-      <TextInput
-        className="max-h-24 w-1 flex-grow border-r px-2"
-        multiline
-        value={mess}
-        onChangeText={setMess}
-        placeholder="Nhập bình luận"
+    <View
+      className={"flex-row space-x-2"}
+      style={{
+        borderTopWidth: 1,
+        borderTopColor: colors.outline,
+        paddingVertical: 8,
+        paddingHorizontal: 16
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          borderRadius: 28,
+          borderWidth: 1,
+          borderColor: colors.outline,
+          paddingVertical: 8,
+          paddingHorizontal: 12
+        }}
+      >
+        <TextInput
+          placeholder={"Viết bình luận..."}
+          multiline
+          style={{ maxHeight: 200 }}
+          onChangeText={(text) => setMess(text)}
+          value={mess}
+        />
+      </View>
+      <Ionicons
+        name={"send-sharp"}
+        size={30}
+        color={colors.primary}
+        style={{ paddingTop: 8 }}
+        onPress={() => {
+          onSubmit();
+        }}
       />
-      <Button mode="text" onPress={onSubmit}>
-        Gửi
-      </Button>
     </View>
   );
 };

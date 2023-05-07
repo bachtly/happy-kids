@@ -65,12 +65,14 @@ class PickupService {
         "Teacher.id"
       )
       .leftJoin("Relative", "PickupLetter.pickerRelativeId", "Relative.id")
+      .innerJoin("Student", "PickupLetter.studentId", "Student.id")
       .select([
         "PickupLetter.id",
         "PickupLetter.note",
         "PickupLetter.pickupTime as time",
         "PickupLetter.status",
         "PickupLetter.createdAt",
+        "Student.fullname as studentFullname",
         "Teacher.fullname as teacherFullname",
         "Relative.fullname as pickerFullname"
       ])

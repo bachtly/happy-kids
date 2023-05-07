@@ -1,3 +1,5 @@
+import { MedicineLetterStatus } from "./MedicineModels";
+
 type PickupLetterStatus = "NotConfirmed" | "Confirmed" | "Rejected";
 
 const STATUS_ENUM_TO_VERBOSE = new Map([
@@ -8,7 +10,7 @@ const STATUS_ENUM_TO_VERBOSE = new Map([
 
 interface PickupItemModel {
   id: string;
-  status?: string | null;
+  status?: MedicineLetterStatus | null;
   time?: Date | null;
   pickerFullname?: string | null;
   studentFullname?: string | null;

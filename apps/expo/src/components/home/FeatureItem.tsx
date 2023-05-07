@@ -11,7 +11,7 @@ const FeatureItem = (props: {
     <View className={"mr-1"}>
       <Pressable onPress={props.onPress} className={"w-20 flex-col"}>
         <Image
-          className={"m-auto aspect-square h-10 w-10 w-1/6"}
+          className={"m-auto aspect-square h-10 w-1/6 w-10"}
           source={props.icon}
         />
         <Text className={"text-center"}>{props.title}</Text>

@@ -30,6 +30,7 @@ const PickupDetail = z.object({
   time: z.nullable(z.date()),
   status: z.nullable(PickupLetterStatus),
   createdAt: z.nullable(z.date()),
+  studentFullname: z.nullable(z.string()),
   teacherFullname: z.nullable(z.string()),
   pickerFullname: z.nullable(z.string())
 });

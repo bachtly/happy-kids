@@ -9,12 +9,11 @@ import {
   GetNoteThreadResponse,
   NoteMessage,
   NoteThread,
-  PostNoteThreadResponse,
-  ResponseStatus,
   ThreadStatus
 } from "../router/note/protocols";
-import { getErrorMessage } from "../utils/errorHelper";
+import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
+import { TRPCError } from "@trpc/server";
 
 @injectable()
 class NoteService {
@@ -26,7 +25,7 @@ class NoteService {
   insertNoteMessage = async (
     noteThreadId: string,
     message: z.infer<typeof NoteMessage>
-  ): Promise<Error | null> => {
+  ) => {
     try {
       const id = uuidv4();
       await this.mysqlDB
@@ -38,10 +37,20 @@ class NoteService {
           userId: message.userId,
           createdAt: new Date()
         })
-        .execute();
-      return null;
+        .execute()
+        .catch((err: Error) => {
+          console.log(err);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: SYSTEM_ERROR_MESSAGE
+          });
+        });
     } catch (error: unknown) {
-      return Error(getErrorMessage(error));
+      console.log(error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: SYSTEM_ERROR_MESSAGE
+      });
     }
   };
 
@@ -51,11 +60,19 @@ class NoteService {
       .where("id", "=", noteThreadId)
       .executeTakeFirstOrThrow()
       .then((resp) => {
-        if (resp.numDeletedRows == BigInt(0)) throw Error("delete failed");
+        if (resp.numDeletedRows == BigInt(0))
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: SYSTEM_ERROR_MESSAGE
+          });
         return true;
       })
-      .catch((_) => {
-        return false;
+      .catch((err: Error) => {
+        console.log(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: SYSTEM_ERROR_MESSAGE
+        });
       });
   };
 
@@ -66,17 +83,13 @@ class NoteService {
     endDate: Date,
     content: string,
     photos: string[]
-  ): Promise<z.input<typeof PostNoteThreadResponse>> => {
+  ) => {
     const id = uuidv4();
     const photoPaths = photos.map((photoB64) => {
       const getPhotoPath = (photoB64: string) => {
         if (photoB64 === "") return "";
         const filename = "./note/" + uuidv4();
-        this.fileService
-          .asyncWriteFile(filename, photoB64)
-          .catch((e: Error) =>
-            console.log("failed to write image note, error", e.message)
-          );
+        void this.fileService.asyncWriteFile(filename, photoB64);
         return filename;
       };
       return getPhotoPath(photoB64);
@@ -98,23 +111,19 @@ class NoteService {
       .executeTakeFirstOrThrow()
       .then((_) => {
         return {
-          status: ResponseStatus.enum.Success,
-          message: "create success",
           noteThreadId: id
         };
       })
       .catch((err: Error) => {
-        return {
-          status: ResponseStatus.enum.Fail,
-          message: err.message,
-          noteThreadId: ""
-        };
+        console.log(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: SYSTEM_ERROR_MESSAGE
+        });
       });
   };
 
-  private getNoteThreadListByStudent = async (
-    studentId: string
-  ): Promise<z.infer<typeof GetNoteThreadListResponse>> => {
+  private getNoteThreadListByStudent = async (studentId: string) => {
     return this.mysqlDB
       .selectFrom("NoteThread")
       .innerJoin("Student", "Student.id", "NoteThread.studentId")
@@ -136,25 +145,21 @@ class NoteService {
         // console.log(resp);
 
         const res = z.array(NoteThread).safeParse(resp);
-        if (!res.success) {
-          return {
-            status: ResponseStatus.enum.Fail,
-            message: res.error.message,
-            noteThreadList: []
-          };
-        }
+        if (!res.success)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: SYSTEM_ERROR_MESSAGE
+          });
         return {
-          status: ResponseStatus.Enum.Success,
-          message: "",
           noteThreadList: res.data
         };
       })
       .catch((e: Error) => {
-        return {
-          status: ResponseStatus.Enum.Fail,
-          message: e.message,
-          noteThreadList: []
-        };
+        console.log(e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: SYSTEM_ERROR_MESSAGE
+        });
       });
   };
 
@@ -188,25 +193,21 @@ class NoteService {
         // console.log(resp);
 
         const res = z.array(NoteThread).safeParse(resp);
-        if (!res.success) {
-          return {
-            status: ResponseStatus.enum.Fail,
-            message: res.error.message,
-            noteThreadList: []
-          };
-        }
+        if (!res.success)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: SYSTEM_ERROR_MESSAGE
+          });
         return {
-          status: ResponseStatus.Enum.Success,
-          message: "",
           noteThreadList: res.data
         };
       })
       .catch((e: Error) => {
-        return {
-          status: ResponseStatus.Enum.Fail,
-          message: e.message,
-          noteThreadList: []
-        };
+        console.log(e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: SYSTEM_ERROR_MESSAGE
+        });
       });
   };
   getNoteThreadList = async (
@@ -215,11 +216,11 @@ class NoteService {
   ): Promise<z.infer<typeof GetNoteThreadListResponse>> => {
     if (studentId) return this.getNoteThreadListByStudent(studentId);
     if (classId) return this.getNoteThreadListByClass(classId);
-    return {
-      status: ResponseStatus.Enum.Fail,
-      message: "both classId and studentId missing",
-      noteThreadList: []
-    };
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: SYSTEM_ERROR_MESSAGE
+    });
   };
 
   getNoteThread = async (
@@ -260,13 +261,21 @@ class NoteService {
         ])
         .orderBy("NoteMessage.createdAt", "asc")
         .where("NoteThread.id", "=", noteThreadId)
-        .execute();
+        .execute()
+        .catch((err: Error) => {
+          console.log(err);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: SYSTEM_ERROR_MESSAGE
+          });
+        });
+
       if (resp.length == 0)
-        return {
-          status: ResponseStatus.Enum.Fail,
-          message: "not exist note thread",
-          noteThread: null
-        };
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: SYSTEM_ERROR_MESSAGE
+        });
+
       const messages = resp
         .filter((item) => item.messId !== null)
         .map((item) => ({
@@ -279,11 +288,7 @@ class NoteService {
 
       const getPhoto = async (photoPath: string) => {
         if (photoPath === "") return "";
-        try {
-          return await this.fileService.asyncReadFile(photoPath);
-        } catch (_) {
-          return "";
-        }
+        return await this.fileService.asyncReadFile(photoPath);
       };
 
       const getPhotos = async (): Promise<string[]> => {
@@ -313,31 +318,27 @@ class NoteService {
         createdByParent: resp[0].createdByParent
       };
       const res = NoteThread.safeParse(noteThread);
-      if (!res.success) {
-        return {
-          status: ResponseStatus.enum.Fail,
-          message: res.error.message,
-          noteThread: null
-        };
-      }
+      if (!res.success)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: SYSTEM_ERROR_MESSAGE
+        });
       return {
-        status: ResponseStatus.Enum.Success,
-        message: "",
         noteThread: res.data
       };
     } catch (err: unknown) {
-      return {
-        status: ResponseStatus.Enum.Fail,
-        message: getErrorMessage(err),
-        noteThread: null
-      };
+      console.log(err);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: SYSTEM_ERROR_MESSAGE
+      });
     }
   };
 
   updateNoteStatus = async (
     noteThreadId: string,
     status: z.infer<typeof ThreadStatus>
-  ): Promise<Error | null> => {
+  ) => {
     return this.mysqlDB
       .updateTable("NoteThread")
       .set({
@@ -346,11 +347,18 @@ class NoteService {
       .where("id", "=", noteThreadId)
       .executeTakeFirstOrThrow()
       .then((res) => {
-        if (res.numUpdatedRows <= 0) throw Error("Update failed");
-        return null;
+        if (res.numUpdatedRows <= 0)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: SYSTEM_ERROR_MESSAGE
+          });
       })
       .catch((err: Error) => {
-        return err;
+        console.log(err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: SYSTEM_ERROR_MESSAGE
+        });
       });
   };
 }
