@@ -6,13 +6,15 @@ import moment from "moment";
 import type { FileServiceInterface } from "../utils/FileService";
 import NotiService from "./noti-service";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
+import type { TimeServiceInterface } from "../utils/TimeService";
 
 @injectable()
 class PickupService {
   constructor(
     private mysqlDB: Kysely<DB>,
     @inject("FileService") private fileService: FileServiceInterface,
-    private notiService: NotiService
+    private notiService: NotiService,
+    @inject("TimeService") private timeService: TimeServiceInterface
   ) {}
 
   getPickupList = async (timeStart: Date, timeEnd: Date, studentId: string) => {
@@ -267,18 +269,18 @@ class PickupService {
     return {};
   };
 
-  getPickupListFromStudentIds = async (time: Date, classId: string) => {
+  getPickupListFromStudentIds = async (
+    timeStart: Date,
+    timeEnd: Date,
+    classId: string
+  ) => {
     console.log(
       `getPickupListFromStudentIds receive request ${JSON.stringify({
-        time: time,
+        timeStart: timeStart,
+        timeEnd: timeEnd,
         classId: classId
       })}`
     );
-
-    const startOfDate = moment(moment(time).format("MM/DD/YYYY")).toDate();
-    const endOfDate = moment(moment(time).format("MM/DD/YYYY"))
-      .add(1, "day")
-      .toDate();
 
     const pickups = await this.mysqlDB
       .selectFrom("PickupLetter")
@@ -296,8 +298,8 @@ class PickupService {
         "Relative.fullname as pickerFullname",
         "Student.fullname as studentFullname"
       ])
-      .where("pickupTime", "<=", endOfDate)
-      .where("pickupTime", ">=", startOfDate)
+      .where("pickupTime", "<=", this.timeService.getEndOfDay(timeEnd))
+      .where("pickupTime", ">=", this.timeService.getStartOfDay(timeStart))
       .where("StudentClassRelationship.classId", "=", classId)
       .execute()
       .then((resp) => resp.flat())

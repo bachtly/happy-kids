@@ -7,7 +7,6 @@ import PickupItem from "../../../src/components/pickup/PickupItem";
 import { PickupItemModel } from "../../../src/models/PickupModels";
 import { useIsFocused } from "@react-navigation/native";
 import Body from "../../../src/components/Body";
-import DateFilterBar from "../../../src/components/date-picker/DateFilterBar";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import ItemListWrapper from "../../../src/components/common/ItemListWrapper";
 import AlertModal from "../../../src/components/common/AlertModal";
@@ -15,8 +14,10 @@ import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
 import LoadingBar from "../../../src/components/common/LoadingBar";
+import DateRangeFilterBar from "../../../src/components/date-picker/DateRangeFilterBar";
 
-const DEFAULT_TIME = moment(moment.now());
+const DEFAULT_TIME_START = moment().startOf("day");
+const DEFAULT_TIME_END = moment().startOf("day").add(7, "d");
 
 const HistoryScreen = () => {
   const { classId } = useSearchParams();
@@ -25,7 +26,8 @@ const HistoryScreen = () => {
   const errorContext = useContext(ErrorContext);
 
   // states
-  const [time, setTime] = useState<Moment>(DEFAULT_TIME);
+  const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
+  const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
 
   // data
   const [classIdSaved, setClassIdSaved] = useState("");
@@ -51,11 +53,12 @@ const HistoryScreen = () => {
   // update list when search criterias change
   useEffect(() => {
     refresh();
-  }, [classIdSaved, time, isFocused]);
+  }, [classIdSaved, timeStart, timeEnd, isFocused]);
 
   const refresh = () => {
     pickupMutation.mutate({
-      time: time.toDate(),
+      timeStart: timeStart.toDate(),
+      timeEnd: timeEnd.toDate(),
       classId: classIdSaved ?? ""
     });
   };
@@ -65,7 +68,12 @@ const HistoryScreen = () => {
       <CustomStackScreen title={"Đón về"} />
       <LoadingBar isFetching={pickupMutation.isLoading} />
 
-      <DateFilterBar time={time} setTime={setTime} />
+      <DateRangeFilterBar
+        timeStart={timeStart}
+        timeEnd={timeEnd}
+        setTimeStart={setTimeStart}
+        setTimeEnd={setTimeEnd}
+      />
 
       <ItemListWrapper
         fetchData={() => refresh()}

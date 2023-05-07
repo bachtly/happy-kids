@@ -72,7 +72,8 @@ const InsertPickupLetterRequest = z.object({
 const InsertPickupLetterResponse = z.object({});
 
 const GetPickupListFromClassIdRequest = z.object({
-  time: z.date(),
+  timeStart: z.date(),
+  timeEnd: z.date(),
   classId: z.string()
 });
 

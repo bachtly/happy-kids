@@ -78,7 +78,8 @@ const pickupRouter = createTRPCRouter({
     .mutation(
       async ({ input }) =>
         await pickupService.getPickupListFromStudentIds(
-          input.time,
+          input.timeStart,
+          input.timeEnd,
           input.classId
         )
     ),

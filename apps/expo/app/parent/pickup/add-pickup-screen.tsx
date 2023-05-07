@@ -88,7 +88,11 @@ const AddPickupScreen = () => {
               <Avatar.Image
                 className={"my-auto"}
                 size={42}
-                source={{ uri: picker.avatarUrl ?? "" }}
+                source={{
+                  uri: picker.avatar
+                    ? `data:image/jpeg;base64,${picker.avatar}`
+                    : ""
+                }}
               />
               <View>
                 <Text className={""} variant={"titleSmall"}>

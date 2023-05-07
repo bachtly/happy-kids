@@ -78,7 +78,7 @@ const PickupDetailScreen = () => {
             <View className="flex-row justify-between">
               <Text>Thời gian đón</Text>
               <Text className={"text-right"} variant={"bodyMedium"}>
-                {moment(pickup?.time).format("DD/MM/YY")}
+                {moment(pickup?.time).format("hh:mm DD/MM/YY")}
               </Text>
             </View>
 
