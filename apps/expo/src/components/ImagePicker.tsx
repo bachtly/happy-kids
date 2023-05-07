@@ -8,6 +8,7 @@ interface MyImagePickerProps {
   imageData: string;
   setImageData: (imageData: string) => void;
   disabled?: boolean;
+  onPress?: () => void;
 }
 
 const MyImagePicker = (props: MyImagePickerProps) => {
@@ -33,7 +34,7 @@ const MyImagePicker = (props: MyImagePickerProps) => {
     <View className="h-full w-full items-center">
       <TouchableOpacity
         className={"h-full w-full"}
-        onPress={pickImage}
+        onPress={props.onPress ?? pickImage}
         disabled={props.disabled ?? false}
       >
         {imageData !== "" ? (

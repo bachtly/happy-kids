@@ -3,7 +3,7 @@ import { FlatList, Image, View } from "react-native";
 import { Text } from "react-native-paper";
 import medicineIcon from "../../../../assets/images/medicine-icon.png";
 import CustomCard from "../../CustomCard";
-
+import SingleImageView from "../../common/SingleImageView";
 export type Item = {
   id: string;
   name: string;
@@ -22,10 +22,9 @@ export default function DetailMedicineList({
     <CustomCard mode={"outlined"}>
       <View className={"flex-row justify-between"}>
         {item.photo !== "" ? (
-          <Image
-            className={"aspect-square w-1/3"}
-            source={{ uri: `data:image/jpeg;base64,${item.photo}` }}
-          />
+          <View className={"aspect-square w-1/3"}>
+            <SingleImageView image={item.photo} />
+          </View>
         ) : (
           <View className={"aspect-square w-1/3 items-center justify-center "}>
             <Image className={"h-16 w-16"} source={medicineIcon} />
@@ -40,7 +39,6 @@ export default function DetailMedicineList({
       </View>
     </CustomCard>
   );
-
   return (
     <FlatList
       contentContainerStyle={{ gap: 8 }}

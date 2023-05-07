@@ -3,11 +3,13 @@ import {
   RefreshControl,
   View,
   Image,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from "react-native";
 import React, { useState } from "react";
 import { useSearchParams } from "expo-router";
-import { Card, Text } from "react-native-paper";
+import { Card, Portal, Text } from "react-native-paper";
+import ImageView from "react-native-image-viewing";
 
 import LoadingBar from "../../components/common/LoadingBar";
 import Body from "../../components/Body";
@@ -17,17 +19,23 @@ import AlbumIcon from "assets/images/album.png";
 
 import { api } from "../../utils/api";
 
-const ImageItem = ({ item }: { item: string }) => {
+const ImageItem = ({
+  item,
+  onPress
+}: {
+  item: string;
+  onPress: () => void;
+}) => {
   return (
     <View className="max-w-[50%] flex-1 p-1">
-      <View className="aspect-square bg-blue-300">
+      <TouchableOpacity className="aspect-square" onPress={onPress}>
         <Image
           source={
             item === "" ? AlbumIcon : { uri: `data:image/jpeg;base64,${item}` }
           }
           className={"h-full w-full"}
         />
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -38,6 +46,8 @@ const AlbumDetail = () => {
   const { id } = useSearchParams();
 
   const [photoList, setPhotoList] = useState<string[]>([]);
+  const [imgVisible, setImgVisible] = useState(false);
+  const [imgIdx, setImgIdx] = useState(0);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -87,10 +97,30 @@ const AlbumDetail = () => {
           numColumns={2}
           contentContainerStyle={{ padding: 4 }}
           data={photoList}
-          renderItem={({ item }: { item: string }) => <ImageItem item={item} />}
+          renderItem={({ item, index }: { item: string; index: number }) => (
+            <ImageItem
+              item={item}
+              onPress={() => {
+                setImgIdx(index);
+                setImgVisible(true);
+              }}
+            />
+          )}
           scrollEnabled={false}
         />
       </ScrollView>
+
+      <Portal>
+        <ImageView
+          images={photoList.map((item) => ({
+            uri: `data:image/jpeg;base64,${item}`
+          }))}
+          keyExtractor={(_, index) => String(index)}
+          imageIndex={imgIdx}
+          visible={imgVisible}
+          onRequestClose={() => setImgVisible(false)}
+        />
+      </Portal>
 
       <AlertModal
         visible={errorMessage != ""}

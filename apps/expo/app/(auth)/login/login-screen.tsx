@@ -27,7 +27,8 @@ const LoginScreen = () => {
           accessToken: data.accessToken as string,
           userId: data.userId,
           classId: data.classId,
-          isTeacher: data.isTeacher
+          isTeacher: data.isTeacher,
+          studentId: data.studentId
         });
       } else {
         setShowFailLogin(true);

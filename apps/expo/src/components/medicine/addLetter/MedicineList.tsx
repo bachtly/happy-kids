@@ -4,6 +4,7 @@ import { IconButton, Text, useTheme } from "react-native-paper";
 import medicineIcon from "../../../../assets/images/medicine-icon.png";
 import { MedicineModel } from "../../../models/MedicineModels";
 import CustomCard from "../../CustomCard";
+import SingleImageView from "../../common/SingleImageView";
 
 export type Item = {
   id: string;
@@ -25,10 +26,9 @@ export default function MedicineList({
     <CustomCard mode="outlined">
       <View className={"flex-row justify-between"}>
         {item.medItem.photo !== "" ? (
-          <Image
-            className={"aspect-square w-1/3"}
-            source={{ uri: `data:image/jpeg;base64,${item.medItem.photo}` }}
-          />
+          <View className={"aspect-square w-1/3"}>
+            <SingleImageView image={item.medItem.photo} />
+          </View>
         ) : (
           <View className={"aspect-square w-1/3 items-center justify-center "}>
             <Image className={"h-16 w-16"} source={medicineIcon} />
