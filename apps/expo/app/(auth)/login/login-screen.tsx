@@ -1,23 +1,17 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef } from "react";
 import {
   Image,
   ScrollView,
   TextInput as RNTextInput,
   View
 } from "react-native";
-import {
-  Button,
-  Dialog,
-  Portal,
-  Text,
-  TextInput
-} from "react-native-paper";
+import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import CustomStackScreen from "../../../src/components/CustomStackScreen";
-import { Keyboard } from "react-native";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { UNIMPLETMENTED_MESSAGE } from "../../../src/utils/constants";
+import Logo from "assets/images/happy-kids-logo.png";
 
 const LoginScreen = () => {
   const { onLogin } = useAuthContext();
@@ -33,8 +27,7 @@ const LoginScreen = () => {
           accessToken: data.accessToken as string,
           userId: data.userId,
           classId: data.classId,
-          isTeacher: data.isTeacher,
-          studentId: data.studentId
+          isTeacher: data.isTeacher
         });
       } else {
         setShowFailLogin(true);
@@ -45,19 +38,11 @@ const LoginScreen = () => {
 
   const passwordRef = useRef<RNTextInput>(null);
 
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-  Keyboard.addListener("keyboardDidShow", () =>
-    setKeyboardVisible(Keyboard.isVisible())
-  );
-  Keyboard.addListener("keyboardDidHide", () =>
-    setKeyboardVisible(Keyboard.isVisible())
-  );
-
   const onPressLogin = () => {
     loginMutation.mutate({ username, password });
   };
   return (
-    <>
+    <View className="flex-1 bg-white">
       <CustomStackScreen title={"Đăng nhập"} />
       <Portal>
         <Dialog
@@ -76,19 +61,14 @@ const LoginScreen = () => {
         </Dialog>
       </Portal>
 
-      <ScrollView className={"bg-white"}>
-        <View className={"h-full w-full flex-col px-4"}>
-          <Image
-            /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-            source={require("../../../assets/images/happy-kids-logo.png")}
-            className={"h-32 w-96"}
-            style={{
-              marginTop: keyboardVisible ? 48 : 96,
-              marginBottom: keyboardVisible ? 40 : 80
-            }}
-            resizeMode={"cover"}
-          />
+      <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
+        <View className={"px-4"}>
           <View>
+            <Image
+              source={Logo}
+              className={"h-64 w-full self-center"}
+              resizeMode={"contain"}
+            />
             <TextInput
               label={"Tên đăng nhập"}
               value={username}
@@ -129,7 +109,7 @@ const LoginScreen = () => {
           </View>
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 };
 
