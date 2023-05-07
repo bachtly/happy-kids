@@ -9,6 +9,7 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { authService } from "./service/common-services";
+import { CreateNextContextOptions } from "@trpc/server/dist/adapters/next";
 
 /**
  * 1. CONTEXT
@@ -35,17 +36,7 @@ import { authService } from "./service/common-services";
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = ({
-  req,
-  res
-}: {
-  req: Request;
-  res: Response;
-}): {
-  req: Request;
-  res: Response;
-  user: { userId: string };
-} => {
+export const createTRPCContext = ({ req, res }: CreateNextContextOptions) => {
   return { req, res, user: { userId: "" } };
 };
 

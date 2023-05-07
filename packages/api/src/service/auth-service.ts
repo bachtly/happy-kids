@@ -2,10 +2,13 @@ import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import { inject, injectable } from "tsyringe";
 import { Context } from "../trpc";
-// @ts-ignore
 import jwt from "jsonwebtoken";
 import type { FileServiceInterface } from "../utils/FileService";
 import { TRPCError } from "@trpc/server";
+
+interface JwtContent {
+  id: string;
+}
 
 @injectable()
 class AuthService {
@@ -17,16 +20,15 @@ class AuthService {
     let id: string;
 
     try {
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const accessToken: string = ctx.req.headers["authorization"];
+      const accessToken = ctx.req.headers["authorization"] ?? "";
       const accessTokenPublicKey = await this.fileService.asyncReadFile(
         process.env.JWT_ACCESS_PUBLIC_KEY_DIR as string
       );
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-      id = jwt.verify(accessToken, accessTokenPublicKey, {
+
+      const content = jwt.verify(accessToken, accessTokenPublicKey, {
         algorithms: ["RS256"]
-      }).id as string;
+      }) as JwtContent;
+      id = content.id;
     } catch {
       throw new TRPCError({
         code: "UNAUTHORIZED",

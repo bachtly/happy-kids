@@ -113,7 +113,8 @@ class LoginService {
             ...resp,
             success: true,
             accessToken: accessToken,
-            isTeacher: true
+            isTeacher: true,
+            studentId: null
           };
         })
         .catch((err: Error) => {
