@@ -16,11 +16,13 @@ import {
 import { sortAndUnique } from "../utils/arrayHelper";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
+import NotiService from "./noti-service";
 
 @injectable()
 class MedicineService {
   constructor(
     private mysqlDB: Kysely<DB>,
+    private notiService: NotiService,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
   private createMedicineLetterOnly = async (
@@ -47,6 +49,7 @@ class MedicineService {
       })
       .executeTakeFirstOrThrow()
       .then((_) => {
+        void this.notiCreateLetter(studentId, id);
         return { id: id };
       })
       .catch((err: Error) => {
@@ -167,37 +170,41 @@ class MedicineService {
   updateMedicineLetter = async (
     teacherId: string,
     medicineLetterId: string,
-    status: z.infer<typeof LetterStatus>,
-    useDiary: z.infer<typeof MedicineUseTime>[]
+    status?: z.infer<typeof LetterStatus>,
+    useDiary?: z.infer<typeof MedicineUseTime>[]
   ): Promise<z.infer<typeof UpdateStatusMedicineLetterResponse>> => {
-    await this.deleteMedicineLetterUseDiary(medicineLetterId).catch((_) => {
-      console.log(
-        `delete medicine use diary failed, medletid=${medicineLetterId}`
-      );
-    });
-
-    await this.createMedicineLetterUseDiary(medicineLetterId, useDiary).catch(
-      (_) => {
-        console.log(`insert medicine use diary failed`);
-      }
-    );
-
-    return this.mysqlDB
-      .updateTable("MedicineLetter")
-      .set({
-        status,
-        updatedByTeacherId: teacherId
-      })
-      .where("id", "=", medicineLetterId)
-      .executeTakeFirstOrThrow()
-      .then((res) => {
-        if (res.numUpdatedRows <= 0) throw Error("Update failed");
-        return {};
-      })
-      .catch((err: Error) => {
-        console.log(err);
-        throw SYSTEM_ERROR_MESSAGE;
+    if (useDiary) {
+      await this.deleteMedicineLetterUseDiary(medicineLetterId).catch((_) => {
+        console.log(
+          `delete medicine use diary failed, medletid=${medicineLetterId}`
+        );
       });
+      await this.createMedicineLetterUseDiary(medicineLetterId, useDiary).catch(
+        (_) => {
+          console.log(`insert medicine use diary failed`);
+        }
+      );
+    }
+
+    if (status)
+      await this.mysqlDB
+        .updateTable("MedicineLetter")
+        .set({
+          status,
+          updatedByTeacherId: teacherId
+        })
+        .where("id", "=", medicineLetterId)
+        .executeTakeFirstOrThrow()
+        .then((res) => {
+          if (res.numUpdatedRows <= 0) throw Error("Update failed");
+        })
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        });
+
+    void this.notiUpdateLetter(teacherId, medicineLetterId, status, useDiary);
+    return {};
   };
 
   private getMedicineLetterListByStudent = async (
@@ -407,6 +414,108 @@ class MedicineService {
     return {
       useDiary: res.data
     };
+  };
+
+  private notiCreateLetter = async (studentId: string, letterId: string) => {
+    const letterInfo = await this.mysqlDB
+      .selectFrom("User as Teacher")
+      .innerJoin(
+        "TeacherClassRelationship",
+        "Teacher.id",
+        "TeacherClassRelationship.teacherId"
+      )
+      .innerJoin(
+        "StudentClassRelationship",
+        "TeacherClassRelationship.classId",
+        "StudentClassRelationship.classId"
+      )
+      .innerJoin("Student", "Student.id", "StudentClassRelationship.studentId")
+      .select([
+        "Student.fullname as studentFullname",
+        "Teacher.id as teacherId"
+      ])
+      .where("Student.id", "=", studentId)
+      .execute()
+      .then((resp) => resp)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
+    letterInfo.map((item) => {
+      void this.notiService.insertNoti(
+        "Bạn có đơn dặn thuốc mới",
+        `Phụ huynh của bé ${
+          item.studentFullname ?? ""
+        } vừa tạo đơn dặn thuốc mới.`,
+        JSON.stringify({
+          pathname: "teacher/medicine/letter-detail-screen",
+          params: { id: letterId, studentName: item.studentFullname }
+        }),
+        "icons/medicine-icon.png",
+        item.teacherId
+      );
+    });
+  };
+
+  private notiUpdateLetter = async (
+    teacherId: string,
+    letterId: string,
+    status?: z.infer<typeof LetterStatus>,
+    useDiary?: z.infer<typeof MedicineUseTime>[]
+  ) => {
+    const parentId = await this.mysqlDB
+      .selectFrom("MedicineLetter")
+      .innerJoin("Student", "Student.id", "MedicineLetter.studentId")
+      .innerJoin("User as Parent", "Student.parentId", "Parent.id")
+      .select(["Parent.id as parentId"])
+      .where("MedicineLetter.id", "=", letterId)
+      .executeTakeFirst()
+      .then((resp) => resp?.parentId);
+
+    const teacherFullname = await this.mysqlDB
+      .selectFrom("User as Teacher")
+      .select(["Teacher.fullname"])
+      .where("Teacher.id", "=", teacherId)
+      .executeTakeFirst()
+      .then((resp) => resp?.fullname)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
+    if (status) {
+      const updateText =
+        status === "Confirmed" ? "được xác nhận" : "bị từ chối";
+
+      parentId &&
+        void this.notiService.insertNoti(
+          `Đơn dặn thuốc của bạn được phản hồi`,
+          `Đơn dặn thuốc đã ${updateText} bởi giáo viên ${
+            teacherFullname ?? ""
+          }`,
+          JSON.stringify({
+            pathname: "parent/medicine/letter-detail-screen",
+            params: { id: letterId }
+          }),
+          "icons/medicine-icon.png",
+          parentId
+        );
+    }
+
+    if (useDiary) {
+      parentId &&
+        void this.notiService.insertNoti(
+          `Đơn dặn thuốc của bạn được phản hồi`,
+          `Giáo viên ${teacherFullname ?? ""} vừa cập nhật nhật ký uống thuốc`,
+          JSON.stringify({
+            pathname: "parent/medicine/letter-detail-screen",
+            params: { id: letterId }
+          }),
+          "icons/medicine-icon.png",
+          parentId
+        );
+    }
   };
 }
 

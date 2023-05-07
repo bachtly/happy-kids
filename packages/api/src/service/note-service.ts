@@ -14,17 +14,20 @@ import {
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
 import { TRPCError } from "@trpc/server";
+import NotiService from "./noti-service";
 
 @injectable()
 class NoteService {
   constructor(
     private mysqlDB: Kysely<DB>,
+    private notiService: NotiService,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
 
   insertNoteMessage = async (
     noteThreadId: string,
-    message: z.infer<typeof NoteMessage>
+    message: z.infer<typeof NoteMessage>,
+    studentId: string | null
   ) => {
     try {
       const id = uuidv4();
@@ -45,6 +48,20 @@ class NoteService {
             message: SYSTEM_ERROR_MESSAGE
           });
         });
+      if (!studentId)
+        void this.notiForParent(
+          message.userId,
+          noteThreadId,
+          "Lời nhắn của bạn được phản hồi",
+          "Giáo viên $teacherName vừa thêm một phản hồi"
+        );
+      else
+        void this.notiForTeacher(
+          studentId,
+          noteThreadId,
+          "Lời nhắn có phản hồi mới",
+          "Phụ huynh của bé $studentName vừa thêm một phản hồi"
+        );
     } catch (error: unknown) {
       console.log(error);
       throw new TRPCError({
@@ -110,6 +127,12 @@ class NoteService {
       })
       .executeTakeFirstOrThrow()
       .then((_) => {
+        void this.notiForTeacher(
+          studentId,
+          id,
+          "Bạn có lời nhắn mới",
+          "Phụ huynh của bé $studentName vừa tạo lời nhắn mới."
+        );
         return {
           noteThreadId: id
         };
@@ -337,6 +360,7 @@ class NoteService {
 
   updateNoteStatus = async (
     noteThreadId: string,
+    userId: string,
     status: z.infer<typeof ThreadStatus>
   ) => {
     return this.mysqlDB
@@ -352,6 +376,15 @@ class NoteService {
             code: "INTERNAL_SERVER_ERROR",
             message: SYSTEM_ERROR_MESSAGE
           });
+
+        const updateText =
+          status === "Confirmed" ? "được xác nhận" : "bị từ chối";
+        void this.notiForParent(
+          userId,
+          noteThreadId,
+          `Lời nhắn của bạn được phản hồi`,
+          `Lời nhắn ${updateText} bởi giáo viên $teacherName`
+        );
       })
       .catch((err: Error) => {
         console.log(err);
@@ -360,6 +393,90 @@ class NoteService {
           message: SYSTEM_ERROR_MESSAGE
         });
       });
+  };
+
+  private notiForTeacher = async (
+    studentId: string,
+    letterId: string,
+    title: string,
+    message: string
+  ) => {
+    const letterInfo = await this.mysqlDB
+      .selectFrom("User as Teacher")
+      .innerJoin(
+        "TeacherClassRelationship",
+        "Teacher.id",
+        "TeacherClassRelationship.teacherId"
+      )
+      .innerJoin(
+        "StudentClassRelationship",
+        "TeacherClassRelationship.classId",
+        "StudentClassRelationship.classId"
+      )
+      .innerJoin("Student", "Student.id", "StudentClassRelationship.studentId")
+      .select([
+        "Student.fullname as studentFullname",
+        "Teacher.id as teacherId"
+      ])
+      .where("Student.id", "=", studentId)
+      .execute()
+      .then((resp) => resp)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
+    letterInfo.map((item) => {
+      void this.notiService.insertNoti(
+        title,
+        message.replaceAll("$studentName", item.studentFullname ?? ""),
+        JSON.stringify({
+          pathname: "teacher/note/letter-detail-screen",
+          params: { id: letterId }
+        }),
+        "icons/note.png",
+        item.teacherId
+      );
+    });
+  };
+
+  private notiForParent = async (
+    teacherId: string,
+    letterId: string,
+    title: string,
+    message: string
+  ) => {
+    const parentId = await this.mysqlDB
+      .selectFrom("NoteThread")
+      .innerJoin("Student", "Student.id", "NoteThread.studentId")
+      .innerJoin("User as Parent", "Student.parentId", "Parent.id")
+      .select(["Parent.id as parentId"])
+      .where("NoteThread.id", "=", letterId)
+      .executeTakeFirst()
+      .then((resp) => resp?.parentId);
+
+    const teacherFullname = await this.mysqlDB
+      .selectFrom("User as Teacher")
+      .select(["Teacher.fullname"])
+      .where("Teacher.id", "=", teacherId)
+      .executeTakeFirst()
+      .then((resp) => resp?.fullname)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
+    parentId &&
+      void this.notiService.insertNoti(
+        title,
+        message.replaceAll("$teacherName", teacherFullname ?? ""),
+        JSON.stringify({
+          pathname: "parent/note/letter-detail-screen",
+          params: { id: letterId }
+        }),
+        "icons/note.png",
+        parentId
+      );
   };
 }
 

@@ -43,7 +43,8 @@ const PostNoteThreadResponse = z.object({
 
 const PostNoteMessageParams = z.object({
   message: NoteMessage,
-  noteThreadId: z.string()
+  noteThreadId: z.string(),
+  studentId: z.string().nullable()
 });
 
 const PostNoteMessageResponse = z.object({});

@@ -114,12 +114,12 @@ const TeacherStatus = ({
         className={"my-3 w-36 self-center"}
         mode={"contained"}
         onPress={() => {
-          updateStatMedLetterMutation.mutate({
-            teacherId: userId,
-            status: statusLetter,
-            useDiary: curMedUseTimes,
-            medicineLetterId
-          });
+          isChangedUseStatus &&
+            updateStatMedLetterMutation.mutate({
+              teacherId: userId,
+              useDiary: curMedUseTimes,
+              medicineLetterId
+            });
         }}
         disabled={
           !isAnyChanged || updateStatMedLetterMutation.isLoading || isFetching
@@ -139,7 +139,6 @@ const TeacherStatus = ({
           updateStatMedLetterMutation.mutate({
             teacherId: userId,
             status: value,
-            useDiary: [],
             medicineLetterId
           });
           setStatusLetter(value);

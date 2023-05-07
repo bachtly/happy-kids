@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useSearchParams } from "expo-router";
 import { api } from "../../../src/utils/api";
 import { FlatList, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -13,10 +12,10 @@ import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const NotiHomeScreen = () => {
-  const { classId } = useSearchParams();
   const isFocused = useIsFocused();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
+  const { classId } = authContext;
 
   // data
   const [notis, setNotis] = useState<NotiItemModel[]>([]);

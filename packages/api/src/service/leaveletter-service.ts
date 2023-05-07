@@ -13,11 +13,13 @@ import {
 } from "../router/leaveletter/protocols";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
+import NotiService from "./noti-service";
 
 @injectable()
 class LeaveLetterService {
   constructor(
     private mysqlDB: Kysely<DB>,
+    private notiService: NotiService,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
   private createLeaveLetterOnly = async (
@@ -104,24 +106,37 @@ class LeaveLetterService {
     reason: string,
     photos: string[]
   ): Promise<z.infer<typeof PostLeaveLetterResponse>> => {
-    const { id } = await this.createLeaveLetterOnly(
-      parentId,
-      studentId,
-      startDate,
-      endDate,
-      reason
-    );
+    try {
+      const { id } = await this.createLeaveLetterOnly(
+        parentId,
+        studentId,
+        startDate,
+        endDate,
+        reason
+      );
 
-    await this.createLeaveLetterPhotoOnly(id, photos);
+      await this.createLeaveLetterPhotoOnly(id, photos).catch(async (err) => {
+        // cleaning if possible
+        void (await this.deleteLeaveLetter(id).catch((_) =>
+          console.log("clean leaveletter failed")
+        ));
+        throw err;
+      });
 
-    // cleaning if possible
-    void (await this.deleteLeaveLetter(id).catch((_) =>
-      console.log("clean leaveletter failed")
-    ));
+      void this.notiForTeacher(
+        studentId,
+        id,
+        "Bạn có đơn xin nghỉ mới",
+        "Phụ huynh của bé $studentName vừa tạo đơn xin nghỉ mới."
+      );
 
-    return {
-      leaveLetterId: id
-    };
+      return {
+        leaveLetterId: id
+      };
+    } catch (err: unknown) {
+      console.log(err);
+      throw SYSTEM_ERROR_MESSAGE;
+    }
   };
 
   updateLeaveLetter = async (
@@ -139,6 +154,14 @@ class LeaveLetterService {
       .executeTakeFirstOrThrow()
       .then((res) => {
         if (res.numUpdatedRows <= 0) throw SYSTEM_ERROR_MESSAGE;
+        const updateText =
+          status === "Confirmed" ? "được xác nhận" : "bị từ chối";
+        void this.notiForParent(
+          teacherId,
+          leaveLetterId,
+          `Đơn xin nghỉ của bạn được phản hồi`,
+          `Đơn xin nghỉ ${updateText} bởi giáo viên $teacherName`
+        );
       })
       .catch((err: Error) => {
         console.log(err);
@@ -297,6 +320,90 @@ class LeaveLetterService {
     return {
       leaveLetter: leaveLetter
     };
+  };
+
+  private notiForTeacher = async (
+    studentId: string,
+    letterId: string,
+    title: string,
+    message: string
+  ) => {
+    const letterInfo = await this.mysqlDB
+      .selectFrom("User as Teacher")
+      .innerJoin(
+        "TeacherClassRelationship",
+        "Teacher.id",
+        "TeacherClassRelationship.teacherId"
+      )
+      .innerJoin(
+        "StudentClassRelationship",
+        "TeacherClassRelationship.classId",
+        "StudentClassRelationship.classId"
+      )
+      .innerJoin("Student", "Student.id", "StudentClassRelationship.studentId")
+      .select([
+        "Student.fullname as studentFullname",
+        "Teacher.id as teacherId"
+      ])
+      .where("Student.id", "=", studentId)
+      .execute()
+      .then((resp) => resp)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
+    letterInfo.map((item) => {
+      void this.notiService.insertNoti(
+        title,
+        message.replaceAll("$studentName", item.studentFullname ?? ""),
+        JSON.stringify({
+          pathname: "teacher/leaveletter/letter-detail-screen",
+          params: { id: letterId }
+        }),
+        "icons/leave-letter-icon.png",
+        item.teacherId
+      );
+    });
+  };
+
+  private notiForParent = async (
+    teacherId: string,
+    letterId: string,
+    title: string,
+    message: string
+  ) => {
+    const parentId = await this.mysqlDB
+      .selectFrom("LeaveLetter")
+      .innerJoin("Student", "Student.id", "LeaveLetter.studentId")
+      .innerJoin("User as Parent", "Student.parentId", "Parent.id")
+      .select(["Parent.id as parentId"])
+      .where("LeaveLetter.id", "=", letterId)
+      .executeTakeFirst()
+      .then((resp) => resp?.parentId);
+
+    const teacherFullname = await this.mysqlDB
+      .selectFrom("User as Teacher")
+      .select(["Teacher.fullname"])
+      .where("Teacher.id", "=", teacherId)
+      .executeTakeFirst()
+      .then((resp) => resp?.fullname)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+
+    parentId &&
+      void this.notiService.insertNoti(
+        title,
+        message.replaceAll("$teacherName", teacherFullname ?? ""),
+        JSON.stringify({
+          pathname: "parent/leaveletter/letter-detail-screen",
+          params: { id: letterId }
+        }),
+        "icons/leave-letter-icon.png",
+        parentId
+      );
   };
 }
 

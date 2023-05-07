@@ -59,8 +59,8 @@ const GetMedicineLetterResponse = z.object({
 const UpdateStatusMedicineLetterParams = z.object({
   teacherId: z.string(),
   medicineLetterId: z.string(),
-  status: LetterStatus,
-  useDiary: z.array(MedicineUseTime).default([])
+  status: LetterStatus.optional(),
+  useDiary: z.array(MedicineUseTime).optional()
 });
 
 const UpdateStatusMedicineLetterResponse = z.object({});

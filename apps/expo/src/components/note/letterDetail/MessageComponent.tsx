@@ -43,7 +43,8 @@ const MessageComponent = ({
         id: "",
         userId: userId
       },
-      noteThreadId: noteThreadId
+      noteThreadId: noteThreadId,
+      studentId: authContext.studentId
     });
     setMess("");
   };

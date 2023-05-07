@@ -31,7 +31,6 @@ const AddLetter = () => {
   const postNoteThreadMutation = api.note.postNoteThread.useMutation({
     onSuccess: (data) => {
       if (data.noteThreadId === "") {
-        console.log(data.message);
         setSubmitError(["other"]);
       }
       setAlertModalVisible(true);

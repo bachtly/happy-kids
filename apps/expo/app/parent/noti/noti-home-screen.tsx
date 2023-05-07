@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useSearchParams } from "expo-router";
 import { api } from "../../../src/utils/api";
 import { FlatList, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -13,11 +12,9 @@ import { ErrorContext } from "../../../src/utils/error-context";
 import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const NotiHomeScreen = () => {
-  const { classId } = useSearchParams();
   const isFocused = useIsFocused();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
-
   // data
   const [notis, setNotis] = useState<NotiItemModel[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -39,10 +36,9 @@ const NotiHomeScreen = () => {
   }, [isFocused]);
 
   const refresh = () => {
-    classId &&
-      notiMutation.mutate({
-        classId: classId
-      });
+    notiMutation.mutate({
+      classId: ""
+    });
   };
 
   return (
