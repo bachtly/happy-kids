@@ -11,7 +11,7 @@ const DateFilterBar = (props: {
 }) => {
   return (
     <>
-      <View className={"fixed flex-row justify-between bg-white py-4 px-2"}>
+      <View className={"fixed flex-row justify-between bg-white px-4 py-4"}>
         <View className={""}>
           <DatePicker initTime={props.time} setTime={props.setTime} />
         </View>

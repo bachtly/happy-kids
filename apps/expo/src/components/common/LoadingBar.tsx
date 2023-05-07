@@ -7,7 +7,7 @@ interface PropsType {
 
 const LoadingBar = (props: PropsType) => {
   return (
-    <View className="relative h-1">
+    <View className="relative z-10">
       {props.isFetching && (
         <ProgressBar className="absolute top-0" indeterminate visible={true} />
       )}

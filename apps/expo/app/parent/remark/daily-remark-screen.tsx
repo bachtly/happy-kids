@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { FlatList } from "react-native";
 import { api } from "../../../src/utils/api";
 import React, { useContext, useEffect, useState } from "react";
 import { DailyRemarkModel } from "../../../src/models/DailyRemarkModels";
@@ -7,7 +7,6 @@ import moment, { Moment } from "moment";
 import DailyRemarkItem from "../../../src/components/remark/DailyRemarkItem";
 import DateRangeFilterBar from "../../../src/components/date-picker/DateRangeFilterBar";
 import Body from "../../../src/components/Body";
-import AlertModal from "../../../src/components/common/AlertModal";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
@@ -24,7 +23,6 @@ const DailyRemarkScreen = ({ studentId }: { studentId: string }) => {
   const [remarkList, setRemarkList] = useState<DailyRemarkModel[]>([]);
   const [timeStart, setTimeStart] = useState<Moment>(DEFAULT_TIME_START);
   const [timeEnd, setTimeEnd] = useState<Moment>(DEFAULT_TIME_END);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const remarkMutation = api.dailyRemark.getDailyRemarkList.useMutation({
     onSuccess: (resp) => setRemarkList(resp.remarks),
@@ -37,18 +35,24 @@ const DailyRemarkScreen = ({ studentId }: { studentId: string }) => {
       )
   });
 
-  // update list when search criterias change
-  useEffect(() => {
+  const refresh = () => {
     remarkMutation.mutate({
       timeStart: timeStart.toDate(),
       timeEnd: timeEnd.toDate(),
       studentId: studentId ?? ""
     });
+  };
+
+  // update list when search criterias change
+  useEffect(() => {
+    refresh();
   }, [studentId, timeStart, timeEnd, isFocused]);
+
+  const isLoading = () => remarkMutation.isLoading;
 
   return (
     <Body>
-      <LoadingBar isFetching={remarkMutation.isLoading} />
+      <LoadingBar isFetching={isLoading()} />
 
       <DateRangeFilterBar
         timeStart={timeStart}
@@ -57,21 +61,14 @@ const DailyRemarkScreen = ({ studentId }: { studentId: string }) => {
         setTimeEnd={setTimeEnd}
       />
 
-      <ScrollView>
-        <View className={"space-y-3 p-2"}>
-          {remarkList.map((item, key) => (
-            <View key={key}>
-              <DailyRemarkItem item={item} isTeacher={false} />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
+      <FlatList
+        onRefresh={() => refresh()}
+        refreshing={isLoading()}
+        contentContainerStyle={{ gap: 8, paddingBottom: 8, paddingTop: 8 }}
+        data={remarkList}
+        renderItem={({ item }: { item: DailyRemarkModel }) => (
+          <DailyRemarkItem item={item} isTeacher={false} />
+        )}
       />
     </Body>
   );
