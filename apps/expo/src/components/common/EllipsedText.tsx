@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
+import { Text } from "react-native-paper";
 import UnderlineButton from "./UnderlineButton";
 
 const EllipsedText = (props: { lines: number; content: string }) => {

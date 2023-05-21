@@ -7,7 +7,6 @@ import {
   RadioButton,
   Text
 } from "react-native-paper";
-import { Stack } from "expo-router";
 import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
 import "querystring";
 import { api } from "../../../src/utils/api";
@@ -20,6 +19,7 @@ import {
 import AlertModal from "../../../src/components/common/AlertModal";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
 
 const CheckinTextEditorScreen = () => {
   const router = useRouter();
@@ -59,15 +59,7 @@ const CheckinTextEditorScreen = () => {
 
   return (
     <View style={{ padding: 20, backgroundColor: colors.background, flex: 1 }}>
-      <Stack.Screen
-        options={{
-          title: "Điểm danh đến",
-          animation: "slide_from_bottom",
-          headerStyle: { backgroundColor: colors.background },
-          headerTintColor: colors.onBackground,
-          statusBarColor: colors.onSurfaceDisabled
-        }}
-      />
+      <CustomWhiteStackScreen title={"Điểm danh đến"} />
 
       <View style={{ marginBottom: 12 }}>
         <TextInput
@@ -93,7 +85,7 @@ const CheckinTextEditorScreen = () => {
                 status={status == itemStatus ? "checked" : "unchecked"}
                 onPress={() => setStatus(itemStatus)}
               />
-              <Text className={"m-auto"}>
+              <Text variant={"labelMedium"} className={"m-auto"}>
                 {STATUS_ENUM_TO_VERBOSE.get(itemStatus.toString())}
               </Text>
             </View>

@@ -42,7 +42,7 @@ const CheckoutItem = (props: CheckoutItemProps) => {
           <Text className={""} variant={"titleSmall"}>
             {props.attendance.fullname}
           </Text>
-          <Text className={"italic"} variant={"bodyMedium"}>
+          <Text className={""} variant={"labelMedium"}>
             {props.attendance.attendanceStatus &&
               STATUS_ENUM_TO_VERBOSE.get(props.attendance.attendanceStatus)}
           </Text>

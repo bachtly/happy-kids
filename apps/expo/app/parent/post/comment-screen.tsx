@@ -5,18 +5,19 @@ import { CommentModel } from "../../../src/models/PostModels";
 import { api } from "../../../src/utils/api";
 import CommentItem from "../../../src/components/post/CommentItem";
 import { useSearchParams } from "expo-router";
-import { Stack } from "expo-router";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import AlertModal from "../../../src/components/common/AlertModal";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { ErrorContext } from "../../../src/utils/error-context";
+import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
 
 const ITEM_PER_PAGE = 6;
 
 const CommentScreen = () => {
   const { postId } = useSearchParams();
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
 
@@ -102,15 +103,7 @@ const CommentScreen = () => {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: "Bình luận",
-          animation: "slide_from_bottom",
-          headerStyle: { backgroundColor: colors.background },
-          headerTintColor: colors.onBackground,
-          statusBarColor: colors.onSurfaceDisabled
-        }}
-      />
+      <CustomWhiteStackScreen title={"Bình luận"} />
 
       <View style={{ backgroundColor: colors.background, flex: 1 }}>
         <View style={{ flex: 1 }}>

@@ -12,9 +12,15 @@ const Tab = createMaterialTopTabNavigator();
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 const AttendanceLayout = () => {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
   const { studentId } = useSearchParams();
   const [studentIdSaved, setStudentIdSaved] = useState("");
+
+  const headerTitleStyle = {
+    fontFamily: fonts.labelMedium.fontFamily,
+    fontSize: fonts.labelMedium.fontSize,
+    fontWeight: fonts.labelMedium.fontWeight
+  };
 
   // prevent the lost of studentId in searchParams when routing between tabs
   useEffect(() => {
@@ -29,6 +35,7 @@ const AttendanceLayout = () => {
           tabBarStyle: { backgroundColor: colors.primary },
           tabBarActiveTintColor: colors.onPrimary,
           tabBarLabelStyle: {
+            ...headerTitleStyle,
             textTransform: "capitalize"
           },
           tabBarIndicatorStyle: {

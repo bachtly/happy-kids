@@ -22,7 +22,7 @@ const ChatContentCard = (props: {
       <Card.Content>
         <View style={{ margin: -4 }}>
           {props.item.sendUser !== "" && (
-            <Text variant={"titleSmall"}>{props.item.sendUser}</Text>
+            <Text variant={"labelLarge"}>{props.item.sendUser}</Text>
           )}
           <Text variant={"bodyMedium"}>{props.item.content}</Text>
         </View>
@@ -72,7 +72,7 @@ const MessageItem = ({
         )}
       </View>
       {showTime && (
-        <Text variant="bodySmall" className="mt-2 text-center italic">
+        <Text variant="bodySmall" className="mt-2 text-center">
           {moment(item.sendTime).format("HH:mm - DD/MM")}
         </Text>
       )}

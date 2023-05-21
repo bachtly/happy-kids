@@ -40,7 +40,7 @@ const NotiItem = ({ item }: { item: NotiItemModel }) => {
             <Text className={""}>{item.content}</Text>
 
             {item.time && (
-              <Text className={"text-right italic"}>
+              <Text className={"text-right"}>
                 {moment(item.time).format(DATETIME_FORMAT).toString()}
               </Text>
             )}

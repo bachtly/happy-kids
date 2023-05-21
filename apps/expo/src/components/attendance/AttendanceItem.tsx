@@ -26,7 +26,7 @@ const AttendanceItem = (props: AttendanceItemModel) => {
   return (
     <CustomCard>
       <View className={"mb-2"}>
-        <Text variant={"titleSmall"}>{`${
+        <Text variant={"titleMedium"}>{`${
           DATE_OF_WEEK[props.date?.getDay() as number] ?? ""
         }, ${moment(props.date).format(DATE_FORMAT).toString()}`}</Text>
       </View>
@@ -46,7 +46,7 @@ const AttendanceItem = (props: AttendanceItemModel) => {
       </View>
       {props.status && STATUS_ENUM_TO_VERBOSE.has(props.status) && (
         <View className={"flex-row justify-between"}>
-          <Text className={"my-auto italic"}>
+          <Text variant={"labelMedium"} className={"my-auto"}>
             {STATUS_ENUM_TO_VERBOSE.get(props.status)}
           </Text>
           <Button

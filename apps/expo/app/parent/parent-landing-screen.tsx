@@ -11,7 +11,14 @@ import AccountHomeScreen from "./account/account-home-screen";
 const Tab = createBottomTabNavigator();
 
 const ParentLandingScreen = () => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
+
+  const headerTitleStyle = {
+    fontFamily: theme.fonts.headlineSmall.fontFamily,
+    fontSize: theme.fonts.headlineSmall.fontSize,
+    fontWeight: theme.fonts.headlineSmall.fontWeight
+  };
 
   const getIcon = (name: string, color: string, focused: boolean) => {
     return <Ionicons name={name} size={focused ? 27 : 25} color={color} />;
@@ -39,10 +46,12 @@ const ParentLandingScreen = () => {
           name="Trang chủ"
           component={ParentHomeScreen}
           options={{
+            headerTitleAlign: "center",
             tabBarIcon: ({ color, focused }) =>
               getIcon("home-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
-              getLabel("Trang chủ", color, focused)
+              getLabel("Trang chủ", color, focused),
+            headerTitleStyle: headerTitleStyle
           }}
         />
         <Tab.Screen
@@ -52,7 +61,8 @@ const ParentLandingScreen = () => {
             tabBarIcon: ({ color, focused }) =>
               getIcon("newspaper-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
-              getLabel("Bảng tin", color, focused)
+              getLabel("Bảng tin", color, focused),
+            headerTitleStyle: headerTitleStyle
           }}
         />
         <Tab.Screen
@@ -62,7 +72,8 @@ const ParentLandingScreen = () => {
             tabBarIcon: ({ color, focused }) =>
               getIcon("notifications-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
-              getLabel("Thông báo", color, focused)
+              getLabel("Thông báo", color, focused),
+            headerTitleStyle: headerTitleStyle
           }}
         />
         <Tab.Screen
@@ -72,7 +83,8 @@ const ParentLandingScreen = () => {
             tabBarIcon: ({ color, focused }) =>
               getIcon("person-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
-              getLabel("Tài khoản", color, focused)
+              getLabel("Tài khoản", color, focused),
+            headerTitleStyle: headerTitleStyle
           }}
         />
       </Tab.Navigator>

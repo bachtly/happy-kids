@@ -34,11 +34,7 @@ const CommentItem = ({ item }: { item: CommentModel }) => {
         </View>
 
         {item.time && (
-          <Text
-            className={"italic"}
-            variant={"bodySmall"}
-            style={{ paddingLeft: 8 }}
-          >
+          <Text className={""} variant={"bodySmall"} style={{ paddingLeft: 8 }}>
             {moment(item.time).format("HH:mm DD/MM/YY")}
           </Text>
         )}

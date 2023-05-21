@@ -47,10 +47,10 @@ const CheckinItem = (props: CheckinItemProps) => {
           }
         />
         <View>
-          <Text className={""} variant={"titleSmall"}>
+          <Text className={""} variant={"labelLarge"}>
             {props.attendance.fullname}
           </Text>
-          <Text className={"italic"} variant={"bodyMedium"}>
+          <Text className={""} variant={"labelMedium"}>
             {props.attendance.attendanceStatus &&
               STATUS_ENUM_TO_VERBOSE.get(props.attendance.attendanceStatus)}
           </Text>

@@ -53,7 +53,7 @@ const DetailScreen = () => {
 
   return (
     <ScrollView>
-      <CustomStackScreen title={"Chi tiết diểm danh"} />
+      <CustomStackScreen title={"Chi tiết điểm danh"} />
 
       <LoadingBar isFetching={attMutation.isLoading} />
 

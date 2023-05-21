@@ -3,8 +3,8 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import moment, { Moment } from "moment";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
-import { useTheme } from "react-native-paper";
+import { Pressable, View } from "react-native";
+import { useTheme, Text } from "react-native-paper";
 import Icons from "react-native-vector-icons/FontAwesome5";
 
 interface TimePickerProps {

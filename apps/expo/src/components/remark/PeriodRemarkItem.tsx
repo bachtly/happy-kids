@@ -1,5 +1,5 @@
 import { Text, useTheme, Avatar } from "react-native-paper";
-import { View, TextInput } from "react-native";
+import { View } from "react-native";
 import moment, { Moment } from "moment";
 import defaultAvatar from "../../../assets/images/default-user-avatar.png";
 import { PeriodRemarkModel } from "../../models/PeriodRemarkModels";
@@ -46,7 +46,7 @@ const PeriodRemarkItem = ({
           <Text className={""} variant={"titleSmall"}>
             {isTeacher ? item.studentFullname : item.teacherFullname}
           </Text>
-          <Text className={"italic"} variant={"bodyMedium"}>
+          <Text className={""} variant={"bodyMedium"}>
             Tháng{" "}
             {item.startTime
               ? moment(item.startTime).format(MONTH_FORMAT)
@@ -56,19 +56,9 @@ const PeriodRemarkItem = ({
       </View>
 
       {item.id ? (
-        <TextInput
-          value={item.content ?? ""}
-          multiline={true}
-          editable={false}
-          style={{ color: colors.onBackground }}
-        />
+        <Text style={{ color: colors.onBackground }}>{item.content ?? ""}</Text>
       ) : (
-        <TextInput
-          value={"Chưa có nhận xét"}
-          multiline={true}
-          editable={false}
-          style={{ color: colors.onBackground }}
-        />
+        <Text style={{ color: colors.onBackground }}>Chưa có nhận xét</Text>
       )}
 
       {isTeacher && !item.id && (

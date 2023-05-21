@@ -10,6 +10,7 @@ import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import LoadingBar from "../../../src/components/common/LoadingBar";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const ITEM_PER_PAGE = 5;
 
@@ -76,6 +77,7 @@ const PostHomeScreen = () => {
 
   return (
     <Body>
+      <CustomStackScreen title={"Bảng tin"} />
       <LoadingBar isFetching={postMutation.isLoading} />
 
       <FlatList

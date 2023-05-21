@@ -95,10 +95,10 @@ const AddPickupScreen = () => {
                 }}
               />
               <View>
-                <Text className={""} variant={"titleSmall"}>
+                <Text className={""} variant={"labelLarge"}>
                   {picker.fullname}
                 </Text>
-                <Text className={"italic"} variant={"bodyMedium"}>
+                <Text className={""} variant={"bodyMedium"}>
                   {picker.phone}
                 </Text>
               </View>

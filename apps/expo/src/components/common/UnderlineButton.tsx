@@ -17,7 +17,8 @@ const UnderlineButton = (props: {
             <Icon name={props.icon} size={22} color={theme.colors.primary} />
           )}
           <Text
-            className="m-auto text-center text-xs font-bold"
+            className="m-auto text-center"
+            variant={"labelMedium"}
             style={{
               ...(pressed ? { textDecorationLine: "underline" } : {}),
               color: theme.colors.primary

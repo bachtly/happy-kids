@@ -40,7 +40,7 @@ const PostItem = ({
               <Text className={""} variant={"titleSmall"}>
                 {item.userFullname}
               </Text>
-              <Text className={"italic"} variant={"bodyMedium"}>
+              <Text className={""} variant={"bodyMedium"}>
                 {moment(item.createdAt).format(TIME_FORMAT)}
               </Text>
             </View>
@@ -96,7 +96,7 @@ const PostItem = ({
                 style={{ textAlign: "center" }}
                 size={25}
               />
-              <Text className={"text-center"} variant={"labelSmall"}>
+              <Text className={"text-center"} variant={"labelMedium"}>
                 Bình luận
               </Text>
             </Pressable>

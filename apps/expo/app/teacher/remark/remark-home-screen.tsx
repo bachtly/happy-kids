@@ -1,16 +1,17 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "react-native-paper";
-import { Stack, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import DailyRemarkScreen from "./daily-remark-screen";
 import PeriodRemarkScreen from "./period-remark-screen";
+import CustomStackScreen from "../../../src/components/CustomStackScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 const RemarkHomeScreen = () => {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
   const { classId } = useSearchParams();
   const [classIdSaved, setClassIdSaved] = useState("");
 
@@ -19,14 +20,22 @@ const RemarkHomeScreen = () => {
     classId && setClassIdSaved(classId);
   }, [classId]);
 
+  const headerTitleStyle = {
+    fontFamily: fonts.labelMedium.fontFamily,
+    fontSize: fonts.labelMedium.fontSize,
+    fontWeight: fonts.labelMedium.fontWeight
+  };
+
   return (
     <>
-      <Stack.Screen options={{ title: "Nhận xét" }} />
+      <CustomStackScreen title={"Nhận xét"} />
+
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: { backgroundColor: colors.primary },
           tabBarActiveTintColor: colors.onPrimary,
           tabBarLabelStyle: {
+            ...headerTitleStyle,
             textTransform: "capitalize"
           },
           tabBarIndicatorStyle: {

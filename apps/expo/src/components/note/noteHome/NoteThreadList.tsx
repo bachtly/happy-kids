@@ -40,7 +40,7 @@ export function NoteThreadList({
       >
         <Text variant={"labelLarge"} className={"mb-2"}>
           Lời nhắn {`cho bé ${item.studentName} `}
-          <Text className={"italic"}>
+          <Text className={""}>
             ({startDate.format("DD/MM/YYYY")}
             {diffDate == 0 ? "" : ` đến ${endDate.format("DD/MM/YYYY")}`})
           </Text>{" "}
@@ -59,7 +59,7 @@ export function NoteThreadList({
             >
               {item.content}
             </Text>
-            <Text variant={"bodyMedium"} className={"italic"}>
+            <Text variant={"bodyMedium"} className={""}>
               Ngày tạo: {createdAt.format("DD/MM/YYYY")}
             </Text>
             <LetterStatusText status={item.status} />

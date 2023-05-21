@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
+import { Text } from "react-native-paper";
 
 interface MyImagePickerProps {
   // React State passed from outside
@@ -46,7 +46,7 @@ const MyImagePicker = (props: MyImagePickerProps) => {
           <View
             className={"h-full w-full items-center justify-center bg-gray-300"}
           >
-            <Text className={"text-sm text-gray-500"}>Chọn ảnh</Text>
+            <Text className={"text-gray-500"}>Chọn ảnh</Text>
           </View>
         )}
       </TouchableOpacity>

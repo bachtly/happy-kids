@@ -1,6 +1,6 @@
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View } from "react-native";
 import React, { useContext, useState } from "react";
-import { Card } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 
 import Body from "../../components/Body";
 import CustomStackScreen from "../../components/CustomStackScreen";

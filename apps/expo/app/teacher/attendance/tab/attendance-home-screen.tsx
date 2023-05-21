@@ -12,9 +12,16 @@ const Tab = createMaterialTopTabNavigator();
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 const AttendanceHomeScreen = () => {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
   const { classId } = useSearchParams();
   const [classIdSaved, setClassIdSaved] = useState("");
+
+  const headerTitleStyle = {
+    fontFamily: fonts.labelMedium.fontFamily,
+    fontSize: fonts.labelMedium.fontSize,
+    fontWeight: fonts.labelMedium.fontWeight,
+    textTransform: "capitalize" as "capitalize" | "none"
+  };
 
   useEffect(() => {
     classId && setClassIdSaved(classId);
@@ -29,6 +36,7 @@ const AttendanceHomeScreen = () => {
             tabBarStyle: { backgroundColor: colors.primary },
             tabBarActiveTintColor: colors.onPrimary,
             tabBarLabelStyle: {
+              ...headerTitleStyle,
               textTransform: "capitalize"
             },
             tabBarIndicatorStyle: {
@@ -39,10 +47,16 @@ const AttendanceHomeScreen = () => {
           <Tab.Screen
             name={"Điểm danh đến"}
             component={CheckinScreen}
+            options={{
+              tabBarLabelStyle: headerTitleStyle
+            }}
           ></Tab.Screen>
           <Tab.Screen
             name={"Điểm danh về"}
             component={CheckoutScreen}
+            options={{
+              tabBarLabelStyle: headerTitleStyle
+            }}
           ></Tab.Screen>
         </Tab.Navigator>
       </TeacherAttendanceContext.Provider>

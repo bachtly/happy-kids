@@ -65,7 +65,7 @@ const DailyRemarkItem = ({
           <Text className={""} variant={"titleSmall"}>
             {isTeacher ? item.studentFullname : item.teacherFullname}
           </Text>
-          <Text className={"italic"} variant={"bodyMedium"}>
+          <Text className={""} variant={"bodyMedium"}>
             {item.date
               ? getDateString(item.date, DATE_FORMAT)
               : getDateString(date, DATE_FORMAT)}

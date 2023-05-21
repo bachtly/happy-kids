@@ -21,10 +21,10 @@ const RelativeItem = ({
           }}
         />
         <View>
-          <Text className={""} variant={"titleSmall"}>
+          <Text className={""} variant={"labelLarge"}>
             {item.fullname}
           </Text>
-          <Text className={"italic"} variant={"bodyMedium"}>
+          <Text className={""} variant={"bodyMedium"}>
             {item.phone}
           </Text>
         </View>

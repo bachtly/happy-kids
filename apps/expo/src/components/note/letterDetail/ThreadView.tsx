@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { View, ScrollView, RefreshControl } from "react-native";
 import { useTheme } from "react-native-paper";
-import { Stack, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import "querystring";
 import { api } from "../../../utils/api";
 import { useAuthContext } from "../../../utils/auth-context-provider";
@@ -10,6 +10,7 @@ import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
 import MessageComponent from "./MessageComponent";
 import LoadingBar from "../../common/LoadingBar";
 import { NoteMessageList } from "./NoteMessageList";
+import CustomWhiteStackScreen from "../../CustomWhiteStackScreen";
 
 const ThreadView = ({ userId, id }: { userId: string; id: string }) => {
   const authContext = useAuthContext();
@@ -46,15 +47,8 @@ const ThreadView = ({ userId, id }: { userId: string; id: string }) => {
     <View className={"flex-1"} style={{ backgroundColor: colors.background }}>
       <LoadingBar isFetching={isFetching} />
 
-      <Stack.Screen
-        options={{
-          title: "Phản hồi",
-          animation: "slide_from_bottom",
-          headerStyle: { backgroundColor: colors.background },
-          headerTintColor: colors.onBackground,
-          statusBarColor: colors.onSurfaceDisabled
-        }}
-      />
+      <CustomWhiteStackScreen title={"Phản hồi"} />
+
       <View style={{ padding: 10, flex: 1 }}>
         <ScrollView
           refreshControl={
