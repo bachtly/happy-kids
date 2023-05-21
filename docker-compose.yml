@@ -1,8 +1,22 @@
 services:
   nextjs:
     image: nospy/pnpm:18-alpine
+    container_name: nextjs
     volumes:
       - ./:/app
     ports:
       - 3000:3000
     command: "pnpm --filter nextjs start"
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_volume:/var/lib/mysql/
+    env_file:
+      - docker-configs/mysql.conf
+
+volumes:
+  mysql_volume:

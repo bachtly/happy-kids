@@ -1,17 +1,10 @@
 {
   "build": {
     "preview": {
-      "env": {
-        "API_URL": "http://38.54.15.167:8000"
-      },
       "android": {
         "buildType": "apk",
         "channel": "preview"
-      },
-      "channel": "preview"
-    },
-    "production": {
-      "channel": "production"
+      }
     }
   }
 }
