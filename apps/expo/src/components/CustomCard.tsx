@@ -1,7 +1,7 @@
 import { Card, useTheme } from "react-native-paper";
 
 const CustomCard = (props: {
-  mode?: "outlined" | "elevated";
+  mode?: "outlined" | "elevated" | "contained";
   children: React.ReactNode;
   onPress?: () => void;
 }) => {
@@ -9,7 +9,7 @@ const CustomCard = (props: {
 
   return (
     <Card
-      mode={props.mode ?? "elevated"}
+      mode={props.mode ?? "contained"}
       style={{ backgroundColor: colors.background, borderRadius: 2 }}
       onPress={props.onPress}
     >

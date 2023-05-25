@@ -213,7 +213,7 @@ SET @stid5 = 'stid5000-0000-0000-0000-000000000000';
 SET @stid6 = 'stid6000-0000-0000-0000-000000000000';
 INSERT INTO Student (id, fullname, birthdate, parentId, avatarUrl)
 VALUES
-    (@stid1, 'Lý Thanh Bách Student1', '2001-04-14', @prid1, @avatar),
+    (@stid1, 'Lý Thanh Bách Student1', '2001-04-14', @prid1, './bothui/bothui1.jpeg'),
     (@stid2, 'Lý Thanh Bách Student2', '2001-04-14', @prid2, @avatar),
     (@stid3, 'Lý Thanh Bách Student3', '2001-04-14', @prid2, @avatar),
     (@stid4, 'Lý Thanh Bách Student4', '2001-04-14', @prid3, @avatar),
@@ -229,9 +229,6 @@ VALUES
     (@stid3, @clid1),
     (@stid4, @clid1),
     (@stid6, @clid1),
-    (@stid1, @clid2),
-    (@stid2, @clid2),
-    (@stid4, @clid2),
     (@stid5, @clid3)
 ;
 
@@ -359,57 +356,46 @@ INSERT INTO Album (id, title, description,photos, createdAt, classId)
 VALUES (@albumid1, 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', @multi_avatar, '2023-01-02T17:00:00', @clid1);
 
 -- Attendance T2 2023-01-02
-INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId)
+INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)
 VALUES
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithPermission', @stid1, @tid1, @tid1),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid2),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1),
-    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2)
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', '[]', '[]', 'AbsenseWithPermission', @stid1, @tid1, @tid1, 36.5),
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid2, 36.5),
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2, 36.5),
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, 36.5),
+    ('2023-01-02', '2023-01-02T7:00:00', '2023-01-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, 36.5)
 ;
 
 -- Attendance T5 2023-01-05
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkoutNote, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, pickerRelativeId)
+(date, checkinTime, checkoutTime, checkoutNote, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, pickerRelativeId, thermo)
 VALUES
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid1, @tid1, @tid1, null),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1, null),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2, null),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', 'Bé được chú Tư rước', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, @rlid1),
-    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, null)
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, '["./bothui/bothui1.jpeg"]', '["./bothui/bothui5.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, null, 36.5),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1, null, 36.5),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2, null, 36.5),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', 'Bé được chú Tư rước', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, @rlid1, 36.5),
+    ('2023-01-05', '2023-01-05T7:00:00', '2023-01-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, null, 36.5)
 ;
 
 -- Attendance T4 2023-01-11
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId)
+(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)
 VALUES
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid1, @tid1, @tid1),
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1),
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithoutPermission', @stid3, @tid2, @tid2),
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1),
-    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2)
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', '["./bothui/bothui3.jpeg"]', '["./bothui/bothui2.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, 36.5),
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1, 36.5),
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithoutPermission', @stid3, @tid2, @tid2, 36.5),
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, 36.5),
+    ('2023-01-11', '2023-01-11T7:00:00', '2023-01-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, 36.5)
 ;
 
 -- Attendance more for student @stid1
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId)
+(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)
 VALUES
-    ('2023-01-12', '2023-01-12T7:00:00', '2023-01-12T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid1, @tid1, @tid1),
-    ('2023-01-13', '2023-01-13T7:00:00', '2023-01-13T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid1, @tid1, @tid1),
-    ('2023-01-14', '2023-01-14T7:00:00', '2023-01-14T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithoutPermission', @stid1, @tid2, @tid2),
-    ('2023-01-15', '2023-01-15T7:00:00', '2023-01-15T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithPermission', @stid1, @tid1, @tid1),
-    ('2023-01-16', '2023-01-16T7:00:00', '2023-01-16T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithPermission', @stid1, @tid2, @tid2)
-;
-
--- Attendance more for student @stid1
-INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId)
-VALUES
-    ('2023-01-12', '2023-01-12T7:00:00', '2023-01-12T17:00:00', @multi_avatar, @multi_avatar, 'CheckedIn', @stid1, @tid1, @tid1),
-    ('2023-01-13', '2023-01-13T7:00:00', '2023-01-13T17:00:00', @multi_avatar, @multi_avatar, 'CheckedIn', @stid1, @tid1, @tid1),
-    ('2023-01-14', '2023-01-14T7:00:00', '2023-01-14T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithoutPermission', @stid1, @tid2, @tid1),
-    ('2023-01-15', '2023-01-15T7:00:00', '2023-01-15T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithPermission', @stid1, @tid1, @tid1),
-    ('2023-01-16', '2023-01-16T7:00:00', '2023-01-16T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithPermission', @stid1, @tid2, @tid1)
+    ('2023-01-12', '2023-01-12T7:00:00', '2023-01-12T17:00:00', concat('["./bothui/bothui3.jpeg"]'), concat('["./bothui/bothui5.jpeg"]'), 'CheckedOut', @stid1, @tid1, @tid1, 36.5),
+    ('2023-01-13', '2023-01-13T7:00:00', '2023-01-13T17:00:00', '["./bothui/bothui3.jpeg"]', '["./bothui/bothui2.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, 36.5),
+    ('2023-01-14', '2023-01-14T7:00:00', '2023-01-14T17:00:00', '["./bothui/bothui2.jpeg"]', '["./bothui/bothui1.jpeg"]', 'AbsenseWithoutPermission', @stid1, @tid2, @tid2, 36.5),
+    ('2023-01-15', '2023-01-15T7:00:00', '2023-01-15T17:00:00', '["./bothui/bothui1.jpeg"]', '["./bothui/bothui3.jpeg"]', 'AbsenseWithPermission', @stid1, @tid1, @tid1, 36.5),
+    ('2023-01-16', '2023-01-16T7:00:00', '2023-01-16T17:00:00', '["./bothui/bothui5.jpeg"]', '["./bothui/bothui2.jpeg"]', 'AbsenseWithPermission', @stid1, @tid2, @tid2, 36.5)
 ;
 
 -- DailyRemark

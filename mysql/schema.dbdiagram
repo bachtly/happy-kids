@@ -222,6 +222,7 @@ Table KindergartenSchema.Attendance {
   checkoutNote varchar
   checkinPhotos varchar
   checkoutPhotos varchar
+  thermo decimal(4,2)
   status KindergartenSchema.CheckInStatusEnum
 
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]

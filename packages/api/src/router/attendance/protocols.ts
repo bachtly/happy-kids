@@ -23,7 +23,19 @@ const AttendanceItem = z.object({
   checkinTime: z.nullable(z.date()),
   checkoutTime: z.nullable(z.date()),
   checkinNote: z.nullable(z.string()),
-  checkoutNote: z.nullable(z.string())
+  checkoutNote: z.nullable(z.string()),
+  checkinPhotos: z.nullable(z.array(z.string())),
+  checkoutPhotos: z.nullable(z.array(z.string())),
+
+  checkinTeacherFullname: z.nullable(z.string()),
+  checkoutTeacherFullname: z.nullable(z.string()),
+
+  pickerRelativeFullname: z.nullable(z.string()),
+  studentFullname: z.nullable(z.string()),
+  studentAvatar: z.nullable(z.string()),
+  className: z.nullable(z.string()),
+
+  thermo: z.nullable(z.number())
 });
 
 const GetAttendanceListResponse = z.object({
@@ -68,7 +80,8 @@ const AttendanceItemDetail = z.object({
   checkinTeacherFullname: z.nullable(z.string()),
   checkoutTeacherFullname: z.nullable(z.string()),
 
-  pickerRelativeFullname: z.nullable(z.string())
+  pickerRelativeFullname: z.nullable(z.string()),
+  thermo: z.nullable(z.number())
 });
 
 const GetAttendanceItemDetailResponse = z.object({
@@ -93,7 +106,7 @@ const GetAttendanceStatisticsResponse = z.object({
 });
 
 const Student = z.object({
-  id: z.string(),
+  id: z.nullable(z.string()),
   fullname: z.nullable(z.string()),
   avatar: z.nullable(z.string()),
   className: z.nullable(z.string()),
@@ -109,7 +122,10 @@ const Student = z.object({
   leaveletterStatus: z.nullable(LetterStatus),
 
   pickupLetterId: z.nullable(z.string()),
-  pickupLetterStatus: z.nullable(PickupLetterStatus)
+  pickupLetterStatus: z.nullable(PickupLetterStatus),
+
+  thermo: z.nullable(z.number()),
+  studentId: z.nullable(z.string())
 });
 
 const GetStudentListRequest = z.object({
@@ -125,7 +141,9 @@ const CheckInRequest = z.object({
   studentId: z.string(),
   status: AttendanceStatus,
   note: z.nullable(z.string()),
-  photos: z.nullable(z.array(z.string()))
+  photos: z.nullable(z.array(z.string())),
+  thermo: z.nullable(z.number()),
+  date: z.date()
 });
 
 const CheckInResponse = z.object({});

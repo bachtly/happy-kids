@@ -14,6 +14,10 @@ interface AttendanceItemModel {
   checkinTeacherFullname?: string | null;
   checkoutTeacherFullname?: string | null;
   pickerRelativeFullname?: string | null;
+  studentFullname?: string | null;
+  studentAvatar?: string | null;
+  className?: string | null;
+  thermo?: number | null;
 }
 
 interface AttendanceStatisticsModel {
@@ -24,7 +28,7 @@ interface AttendanceStatisticsModel {
 }
 
 interface AttendanceStudentModel {
-  id: string;
+  id: string | null;
   fullname: string | null;
   avatar: string | null;
   className?: string | null;
@@ -37,14 +41,16 @@ interface AttendanceStudentModel {
   leaveletterStatus?: LeaveLetterStatus | null;
   pickupLetterId?: string | null;
   pickupLetterStatus?: PickupLetterStatus | null;
+  thermo?: number | null;
+  studentId?: string | null;
 }
 
 const STATUS_ENUM_TO_VERBOSE = new Map([
   ["CheckedOut", "Đã điểm danh"],
   ["NotCheckedIn", "Chưa điểm danh"],
   ["CheckedIn", "Đi học"],
-  ["AbsenseWithPermission", "Có phép"],
-  ["AbsenseWithoutPermission", "Không phép"]
+  ["AbsenseWithPermission", "Vắng có phép"],
+  ["AbsenseWithoutPermission", "Vắng không phép"]
 ]);
 
 enum AttendanceStatus {

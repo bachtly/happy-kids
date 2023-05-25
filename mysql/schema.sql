@@ -176,6 +176,7 @@ CREATE TABLE `KindergartenSchema`.`Attendance` (
   `checkoutNote` varchar(255),
   `checkinPhotos` varchar(255),
   `checkoutPhotos` varchar(255),
+  `thermo` decimal(4,2),
   `status` ENUM ('CheckedOut', 'CheckedIn', 'NotCheckedIn', 'AbsenseWithPermission', 'AbsenseWithoutPermission'),
   `studentId` varchar(36),
   `checkinTeacherId` varchar(36),
@@ -378,4 +379,5 @@ ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`userId`) REFERENCES `K
 ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`classId`) REFERENCES `KindergartenSchema`.`Class` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`createUserId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+
 COMMIT;

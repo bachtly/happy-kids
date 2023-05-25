@@ -17,7 +17,11 @@ class PhotoService implements PhotoServiceInterface {
     if (!photoPath || photoPath === "") return "";
 
     try {
-      if (photoPath.endsWith(".png")) {
+      if (
+        photoPath.endsWith(".png") ||
+        photoPath.endsWith(".jpeg") ||
+        photoPath.endsWith(".jpg")
+      ) {
         return await this.fileService.readFileBase64(photoPath);
       } else {
         return await this.fileService.asyncReadFile(photoPath);

@@ -66,7 +66,9 @@ const attendanceRouter = createTRPCRouter({
           input.status,
           input.note ?? "",
           ctx.user.userId,
-          input.photos ?? []
+          input.photos ?? [],
+          input.thermo ?? 36.5,
+          input.date
         )
     ),
 

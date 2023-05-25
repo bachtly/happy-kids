@@ -1,27 +1,43 @@
-import React, { useContext, useState } from "react";
-import { View, TextInput } from "react-native";
-import { useTheme, Button, Divider } from "react-native-paper";
-import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
+import React, { useContext, useEffect, useState } from "react";
+import { View, ScrollView, RefreshControl } from "react-native";
 import "querystring";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { useRouter, useSearchParams } from "expo-router";
-import AlertModal from "../../../src/components/common/AlertModal";
 import moment from "moment";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { ErrorContext } from "../../../src/utils/error-context";
 import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
+import WhiteBody from "../../../src/components/WhiteBody";
+import CustomTitle from "../../../src/components/common/CustomTitle";
+import CustomTextInput from "../../../src/components/common/CustomTextInput";
+import ImagePicker from "../../../src/components/ImagePicker";
+import MultiImageView from "../../../src/components/common/MultiImageView";
 
 const CheckinTextEditorScreen = () => {
   const router = useRouter();
-  const { colors } = useTheme();
-  const { studentId, time } = useSearchParams();
+  const { id, studentId, time } = useSearchParams();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
 
   const [note, setNote] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
+
+  const detailMutation = api.attendance.getAttendanceItemDetail.useMutation({
+    onSuccess: (resp) => {
+      resp.attendance?.checkoutNote != null &&
+        setNote(resp.attendance.checkoutNote);
+      resp.attendance?.checkoutPhotos != null &&
+        setPhotos(resp.attendance.checkoutPhotos);
+    },
+    onError: ({ message, data }) =>
+      trpcErrorHandler(() => {})(
+        data?.code ?? "",
+        message,
+        errorContext,
+        authContext
+      )
+  });
 
   const attMutation = api.attendance.checkout.useMutation({
     onSuccess: () => router.back(),
@@ -44,41 +60,60 @@ const CheckinTextEditorScreen = () => {
     });
   };
 
-  return (
-    <View style={{ padding: 20, backgroundColor: colors.background, flex: 1 }}>
-      <CustomWhiteStackScreen title={"Điểm danh về"} />
+  useEffect(() => {
+    refresh();
+  }, []);
 
-      <View style={{ marginBottom: 12 }}>
-        <TextInput
-          placeholder={"Ghi chú cho điểm danh"}
-          multiline={true}
-          style={{ color: colors.onBackground, maxHeight: 300 }}
-          onChangeText={(text) => setNote(text)}
-          scrollEnabled={true}
-          maxLength={1500}
+  const refresh = () => {
+    id &&
+      id != "" &&
+      detailMutation.mutate({
+        id: id
+      });
+  };
+
+  const isRefreshing = () => attMutation.isLoading || detailMutation.isLoading;
+
+  return (
+    <WhiteBody>
+      <ScrollView
+        className={"flex-1"}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing()} onRefresh={refresh} />
+        }
+      >
+        <CustomWhiteStackScreen
+          title={"Điểm danh về"}
+          addButtonHandler={() => checkout(note, photos)}
         />
 
-        <Divider style={{ marginTop: 8, marginBottom: 12 }} />
+        <CustomTitle title={"Ghi chú"} />
 
-        <MultiImagePicker onImagesChange={(imgs) => setPhotos(imgs)} />
-      </View>
+        <View className={"px-3"}>
+          <CustomTextInput
+            placeholder={"Thêm ghi chú"}
+            value={note}
+            setValue={(text) => setNote(text)}
+          />
+        </View>
 
-      <Button
-        onPress={() => {
-          checkout(note, photos);
-        }}
-        mode={"contained"}
-      >
-        Điểm danh ngay
-      </Button>
+        <CustomTitle title={"Chọn hình ảnh"} />
 
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
-      />
-    </View>
+        <View className={"px-3"}>
+          <View className={"h-32 w-32"}>
+            {photos.length > 0 && (
+              <MultiImageView images={photos} customStyle={"h-32 w-32"} />
+            )}
+            {photos.length == 0 && (
+              <ImagePicker
+                imageData={photos.length > 0 ? photos[0] : ""}
+                setImageData={(photo) => setPhotos([photo])}
+              />
+            )}
+          </View>
+        </View>
+      </ScrollView>
+    </WhiteBody>
   );
 };
 

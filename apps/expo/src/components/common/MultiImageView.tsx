@@ -7,9 +7,10 @@ import MyImagePicker from "../ImagePicker";
 
 type MultiImageViewProps = {
   images: string[];
+  customStyle?: string;
 };
 
-const MultiImageView = ({ images }: MultiImageViewProps) => {
+const MultiImageView = ({ images, customStyle }: MultiImageViewProps) => {
   const [imgVisible, setImgVisible] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
 
@@ -22,7 +23,7 @@ const MultiImageView = ({ images }: MultiImageViewProps) => {
         contentContainerStyle={{ gap: 8 }}
       >
         {photoList.map((image, key) => (
-          <View className="h-24 w-24" key={key}>
+          <View className={customStyle ?? "h-24 w-24"} key={key}>
             <MyImagePicker
               imageData={image}
               setImageData={() => {}}

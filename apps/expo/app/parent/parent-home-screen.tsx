@@ -38,7 +38,7 @@ const ParentHomeScreen = () => {
                 icon={attIcon}
                 onPress={() =>
                   router.push({
-                    pathname: "/parent/attendance/tab/attendance-home-screen",
+                    pathname: "/parent/attendance/tab/history-screen",
                     params: { studentId }
                   })
                 }

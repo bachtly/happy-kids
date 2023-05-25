@@ -130,7 +130,7 @@ const fontConfig = {
 
 const themeColors = {
   primary: "#00A0D9",
-  secondary: "#f1c40f",
+  secondary: "#f1d40f",
   outline: "#b1c6d5",
   background: "#fff",
   surface: "#fff",
@@ -139,5 +139,5 @@ const themeColors = {
     level3: "#fff"
   },
   surfaceDisabled: "#e8f0f5",
-  tertiary: "#00ab68"
+  tertiary: "#2A9AC2"
 };

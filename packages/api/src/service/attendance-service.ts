@@ -29,25 +29,91 @@ class AttendanceService {
       })}`
     );
 
-    const attendances = await this.mysqlDB
-      .selectFrom("Attendance")
-      .select([
-        "id",
-        "date",
-        "status",
-        "checkinTime",
-        "checkoutTime",
-        "checkinNote",
-        "checkoutNote"
-      ])
-      .where("date", ">=", this.timeService.getStartOfDay(timeStart))
-      .where("date", "<=", this.timeService.getEndOfDay(timeEnd))
-      .where("studentId", "=", studentId)
-      .execute()
-      .catch((err: Error) => {
-        console.log(err);
-        throw SYSTEM_ERROR_MESSAGE;
-      });
+    const attendances = await Promise.all(
+      await this.mysqlDB
+        .selectFrom("Attendance")
+        .leftJoin(
+          "User as CheckinTeacher",
+          "Attendance.checkinTeacherId",
+          "CheckinTeacher.id"
+        )
+        .leftJoin(
+          "User as CheckoutTeacher",
+          "Attendance.checkoutTeacherId",
+          "CheckoutTeacher.id"
+        )
+        .leftJoin(
+          "User as Relative",
+          "Attendance.pickerRelativeId",
+          "Relative.id"
+        )
+        .innerJoin("Student", "Attendance.studentId", "Student.id")
+        .innerJoin(
+          "StudentClassRelationship",
+          "StudentClassRelationship.studentId",
+          "Student.id"
+        )
+        .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+        .select([
+          "Attendance.id",
+          "Attendance.date",
+          "Attendance.status",
+          "Attendance.thermo as thermoStr",
+          "Attendance.checkinTime",
+          "Attendance.checkoutTime",
+          "Attendance.checkinNote",
+          "Attendance.checkoutNote",
+          "Attendance.checkinPhotos",
+          "Attendance.checkoutPhotos",
+          "Student.fullname as studentFullname",
+          "Student.avatarUrl as studentAvatarUrl",
+          "CheckinTeacher.fullname as checkinTeacherFullname",
+          "CheckoutTeacher.fullname as checkoutTeacherFullname",
+          "Relative.fullname as pickerRelativeFullname",
+          "Class.name as className"
+        ])
+        .where("date", ">=", this.timeService.getStartOfDay(timeStart))
+        .where("date", "<=", this.timeService.getEndOfDay(timeEnd))
+        .where("Student.id", "=", studentId)
+        .orderBy("date", "desc")
+        .execute()
+        .then((resp) =>
+          resp.map(async (item) => {
+            const checkinPhotoPaths = item.checkinPhotos
+              ? <string[]>JSON.parse(item.checkinPhotos)
+              : [];
+            const checkoutPhotoPaths = item.checkoutPhotos
+              ? <string[]>JSON.parse(item.checkoutPhotos)
+              : [];
+
+            const checkinPhotos = await Promise.all(
+              checkinPhotoPaths.map((photoPath) =>
+                this.photoService.getPhotoFromPath(photoPath)
+              )
+            );
+            const checkoutPhotos = await Promise.all(
+              checkoutPhotoPaths.map((photoPath) =>
+                this.photoService.getPhotoFromPath(photoPath)
+              )
+            );
+            const studentAvatar = await this.photoService.getPhotoFromPath(
+              item.studentAvatarUrl ?? ""
+            );
+
+            return {
+              ...item,
+              checkinPhotos: checkinPhotos,
+              checkoutPhotos: checkoutPhotos,
+              studentAvatar: studentAvatar,
+              thermo: Number(item.thermoStr)
+            };
+          })
+        )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        })
+    );
 
     return {
       attendances: attendances
@@ -90,7 +156,8 @@ class AttendanceService {
         "Attendance.checkoutPhotos",
         "CheckinTeacher.fullname as checkinTeacherFullname",
         "CheckoutTeacher.fullname as checkoutTeacherFullname",
-        "Relative.fullname as pickerRelativeFullname"
+        "Relative.fullname as pickerRelativeFullname",
+        "Attendance.thermo as thermoStr"
       ])
       .where("Attendance.id", "=", id)
       .executeTakeFirstOrThrow()
@@ -116,7 +183,8 @@ class AttendanceService {
         return {
           ...resp,
           checkinPhotos: checkinPhotos,
-          checkoutPhotos: checkoutPhotos
+          checkoutPhotos: checkoutPhotos,
+          thermo: Number(resp.thermoStr)
         };
       })
       .catch((err: Error) => {
@@ -252,10 +320,11 @@ class AttendanceService {
         "Student.id"
       )
       .select([
-        "Student.id",
+        "Attendance.id",
         "Student.fullname",
         "Student.avatarUrl",
         "Class.name as className",
+        "Attendance.thermo as thermoStr",
         "Attendance.status as attendanceStatus",
         "Attendance.checkinNote as attendanceCheckinNote",
         "Attendance.checkoutNote as attendanceCheckoutNote",
@@ -264,7 +333,8 @@ class AttendanceService {
         "LeaveLetter.status as leaveletterStatus",
         "LeaveLetter.id as leaveletterId",
         "PickupLetter.id as pickupLetterId",
-        "PickupLetter.status as pickupLetterStatus"
+        "PickupLetter.status as pickupLetterStatus",
+        "Student.id as studentId"
       ])
       .where("Class.id", "=", classId)
       .execute()
@@ -273,7 +343,10 @@ class AttendanceService {
           if (!item.attendanceStatus) {
             item.attendanceStatus = "NotCheckedIn";
           }
-          return item;
+          return {
+            ...item,
+            thermo: Number(item.thermoStr)
+          };
         })
       )
       .catch((err: Error) => {
@@ -322,7 +395,9 @@ class AttendanceService {
     status: z.infer<typeof AttendanceStatus>,
     note: string,
     teacherId: string,
-    photos: string[]
+    photos: string[],
+    thermo: number,
+    date: Date
   ) => {
     console.log(
       `checkIn receive request ${JSON.stringify({
@@ -330,21 +405,50 @@ class AttendanceService {
         checkInNote: note,
         studentId: studentId,
         teacherId: teacherId,
-        checkInPhotos: photos
+        checkInPhotos: photos,
+        thermo: thermo,
+        date: date
       })}`
     );
 
     if (studentId === "") throw SYSTEM_ERROR_MESSAGE;
-    if (note === "") throw "Vui lòng thêm ghi chú";
     if (status == "NotCheckedIn") throw "Vui lòng chọn tình trạng điểm danh";
     if (status == "CheckedIn" && photos.length == 0)
       throw "Vui lòng tải lên hình ảnh điểm danh của bé";
+
+    const attendanceId = await this.isAttendanceExist(studentId, date);
+    if (attendanceId) {
+      await this.mysqlDB
+        .updateTable("Attendance")
+        .set({
+          status: status,
+          date: date,
+          checkinTime: moment().toDate(),
+          checkinNote: note,
+          studentId: studentId,
+          checkinTeacherId: teacherId,
+          checkinPhotos: JSON.stringify(
+            photos.map((photo) => {
+              return this.photoService.storePhoto(photo, "./attendance");
+            })
+          ),
+          thermo: thermo
+        })
+        .where("id", "=", attendanceId)
+        .executeTakeFirstOrThrow()
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        });
+
+      return {};
+    }
 
     await this.mysqlDB
       .insertInto("Attendance")
       .values({
         status: status,
-        date: moment().toDate(),
+        date: date,
         checkinTime: moment().toDate(),
         checkinNote: note,
         studentId: studentId,
@@ -353,7 +457,8 @@ class AttendanceService {
           photos.map((photo) => {
             return this.photoService.storePhoto(photo, "./attendance");
           })
-        )
+        ),
+        thermo: thermo
       })
       .executeTakeFirstOrThrow()
       .catch((err: Error) => {
@@ -362,6 +467,21 @@ class AttendanceService {
       });
 
     return {};
+  };
+
+  isAttendanceExist = async (studentId: string, date: Date) => {
+    return await this.mysqlDB
+      .selectFrom("Attendance")
+      .select(["id"])
+      .where("Attendance.studentId", "=", studentId)
+      .where("date", "<=", this.timeService.getEndOfDay(date))
+      .where("date", ">=", this.timeService.getStartOfDay(date))
+      .executeTakeFirst()
+      .then((resp) => resp?.id)
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
   };
 
   checkout = async (
@@ -384,7 +504,6 @@ class AttendanceService {
     );
 
     if (studentId === "") throw SYSTEM_ERROR_MESSAGE;
-    if (note === "") throw "Vui lòng thêm ghi chú";
     if (photos.length == 0) throw "Vui lòng tải lên hình ảnh điểm danh của bé";
 
     await this.mysqlDB

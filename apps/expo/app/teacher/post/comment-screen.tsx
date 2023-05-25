@@ -11,11 +11,12 @@ import AlertModal from "../../../src/components/common/AlertModal";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { ErrorContext } from "../../../src/utils/error-context";
 import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
+import MultiImageView from "../../../src/components/common/MultiImageView";
 
 const ITEM_PER_PAGE = 6;
 
 const CommentScreen = () => {
-  const { postId } = useSearchParams();
+  const { postId, photo } = useSearchParams();
   const theme = useTheme();
   const { colors } = theme;
   const authContext = useAuthContext();
@@ -104,6 +105,8 @@ const CommentScreen = () => {
   return (
     <>
       <CustomWhiteStackScreen title={"Bình luận"} />
+
+      <MultiImageView images={[photo]} />
 
       <View style={{ backgroundColor: colors.background, flex: 1 }}>
         <View style={{ flex: 1 }}>
