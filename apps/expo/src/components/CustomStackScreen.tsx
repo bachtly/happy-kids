@@ -11,12 +11,16 @@ const CustomStackScreen = (props: {
 }) => {
   const theme = useTheme();
   const textColor = theme.colors.onPrimary;
+  const [bgColor, statusColor] = [theme.colors.primary, theme.colors.primary];
+
   return (
     <Stack.Screen
       options={{
         title: props.title,
         animation: "slide_from_right",
         headerTitleAlign: "center",
+        statusBarColor: statusColor,
+        headerStyle: { backgroundColor: bgColor },
         headerTitleStyle: {
           fontFamily: theme.fonts.headlineSmall.fontFamily,
           fontSize: theme.fonts.headlineSmall.fontSize,

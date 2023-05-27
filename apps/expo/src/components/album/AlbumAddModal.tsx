@@ -90,8 +90,6 @@ const AlbumAddModal = (props: PropsType) => {
           coverScreen={false}
           hasBackdrop={false}
           hideModalContentWhileAnimating={true}
-          animationIn={"slideInDown"}
-          animationOut={"slideOutUp"}
           useNativeDriver={true}
         >
           <View className={"h-full bg-white"}>
