@@ -1,9 +1,16 @@
+import moment, { Moment } from "moment";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
+import { Portal, Text, TextInput, Chip, IconButton } from "react-native-paper";
+import RNModal from "react-native-modal";
+
+import { AlbumTopic } from "../../models/AlbumModels";
 import { api } from "../../utils/api";
 import AlertModal from "../common/AlertModal";
+import DatePickerTextInput from "../common/DatePickerTextInput";
 import MultiImagePicker from "../common/MultiImagePicker";
+import CustomStackScreenSend from "../CustomStackScreenSend";
+import AlbumTopicModal from "./AlbumTopicModal";
 
 interface PropsType {
   visible: boolean;
@@ -18,6 +25,11 @@ const AlbumAddModal = (props: PropsType) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageList, setImageList] = useState<string[]>([]);
+  const [topics, setTopics] = useState<AlbumTopic[]>([]);
+  const [eventDate, setEventDate] = useState<Moment | null>(moment());
+
+  const [topicDgVis, setTopicDgVis] = useState(false);
+
   const [submitDisable, setSubmitDisable] = useState(false);
 
   const [submitFailed, setSubmitFailed] = useState(false);
@@ -37,6 +49,7 @@ const AlbumAddModal = (props: PropsType) => {
     setDescription("");
     setImageList([]);
     setSubmitDisable(false);
+    setTopics([]);
   };
 
   const addAlbum = () => {
@@ -44,7 +57,14 @@ const AlbumAddModal = (props: PropsType) => {
       setSubmitFailed(true);
       return;
     }
-    addMutation.mutate({ title, description, photos: imageList, classId });
+    addMutation.mutate({
+      title,
+      description,
+      photos: imageList,
+      classId,
+      eventDate: eventDate?.toDate() ?? new Date(),
+      topics: topics.map((item) => item.id)
+    });
     setSubmitDisable(true);
   };
 
@@ -57,14 +77,30 @@ const AlbumAddModal = (props: PropsType) => {
   return (
     <>
       <Portal>
-        <Dialog
-          visible={visible}
-          dismissable={false}
-          style={{ maxHeight: 600 }}
+        {visible && (
+          <CustomStackScreenSend
+            title={"Tạo album"}
+            sendButtonHandler={!submitDisable ? addAlbum : undefined}
+            backButtonHandler={closeModal}
+          />
+        )}
+        <RNModal
+          className="m-0"
+          isVisible={visible}
+          coverScreen={false}
+          hasBackdrop={false}
+          hideModalContentWhileAnimating={true}
+          animationIn={"slideInDown"}
+          animationOut={"slideOutUp"}
+          useNativeDriver={true}
         >
-          <Dialog.Title>{"Thêm album"}</Dialog.Title>
-          <Dialog.ScrollArea className={"px-0"}>
-            <ScrollView className={"px-6 pt-1"}>
+          <View className={"h-full bg-white"}>
+            <ScrollView
+              contentContainerStyle={{
+                paddingVertical: 12,
+                paddingHorizontal: 24
+              }}
+            >
               <View className="mb-2">
                 <Text variant={"labelLarge"}>Tên album</Text>
                 <TextInput
@@ -74,6 +110,33 @@ const AlbumAddModal = (props: PropsType) => {
                   onChangeText={setTitle}
                   value={title}
                   error={submitFailed && title === ""}
+                />
+              </View>
+
+              <View className="mb-2">
+                <Text variant={"labelLarge"}>Ngày cho album</Text>
+                <DatePickerTextInput
+                  date={eventDate}
+                  setDate={setEventDate}
+                  textInputProps={{ placeholder: "Nhập ngày cho album" }}
+                />
+              </View>
+
+              <View>
+                <Text variant={"labelLarge"} className="mb-1">
+                  Chủ đề
+                </Text>
+                <View className={"flex flex-row flex-wrap gap-1"}>
+                  {topics.map((item) => (
+                    <Chip mode="outlined" key={item.id}>
+                      {item.topic}
+                    </Chip>
+                  ))}
+                </View>
+                <IconButton
+                  mode="outlined"
+                  onPress={() => setTopicDgVis(true)}
+                  icon={"plus"}
                 />
               </View>
 
@@ -97,15 +160,17 @@ const AlbumAddModal = (props: PropsType) => {
                 <MultiImagePicker onImagesChange={setImageList} />
               </View>
             </ScrollView>
-          </Dialog.ScrollArea>
-          <Dialog.Actions>
-            <Button onPress={closeModal}>Hủy</Button>
-            <Button disabled={submitDisable} onPress={addAlbum}>
-              Thêm
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
+          </View>
+        </RNModal>
       </Portal>
+
+      <AlbumTopicModal
+        visibleParent={visible}
+        topics={topics}
+        setTopics={setTopics}
+        close={() => setTopicDgVis(false)}
+        visible={topicDgVis}
+      />
       <AlertModal
         visible={errorMessage != ""}
         title={"Thông báo"}

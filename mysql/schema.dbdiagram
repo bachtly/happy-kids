@@ -339,8 +339,22 @@ Table KindergartenSchema.Album {
   description text
   photos text
   createdAt datetime
+  eventDate datetime
   
+  teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
+}
+
+Table KindergartenSchema.AlbumTopic {
+  id varchar(36) [pk, default: `UUID()`]
+  topic text  
+}
+
+Table KindergartenSchema.AlbumTopicRelationship {
+  id varchar(36) [pk, default: `UUID()`]
+  
+  albumId varchar(36) [ref: - KindergartenSchema.Album.id]
+  topicId varchar(36) [ref: - KindergartenSchema.AlbumTopic.id]
 }
 
 Table KindergartenSchema.Noti {

@@ -1,16 +1,14 @@
-import { FlatList, RefreshControl, View } from "react-native";
+import { FlatList, RefreshControl, ScrollView, View, Text } from "react-native";
 import { useSearchParams } from "expo-router";
 import React, { useState } from "react";
+import { Chip, Divider, Portal } from "react-native-paper";
 
-import Body from "../../components/Body";
 import LoadingBar from "../../components/common/LoadingBar";
 import CustomStackScreen from "../../components/CustomStackScreen";
 import AlertModal from "../../components/common/AlertModal";
 import AlbumAddModal from "../../components/album/AlbumAddModal";
 import AlbumItem from "../../components/album/AlbumItem";
-
-import { AlbumItemModel } from "../../models/AlbumModels";
-
+import { AlbumItemModel, AlbumTopic } from "../../models/AlbumModels";
 import { api } from "../../utils/api";
 
 const AlbumHome = ({ isTeacher }: { isTeacher?: boolean }) => {
@@ -20,6 +18,7 @@ const AlbumHome = ({ isTeacher }: { isTeacher?: boolean }) => {
 
   const [addModalVis, setAddModalVis] = useState(false);
   const [albumList, setAlbumList] = useState<AlbumItemModel[]>([]);
+  const [selTopic, setSelTopic] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -40,8 +39,12 @@ const AlbumHome = ({ isTeacher }: { isTeacher?: boolean }) => {
             .map((item) => ({
               title: item.title ?? "",
               description: item.description ?? "",
-              photo: item.photo ?? "",
-              id: item.id ?? ""
+              photos: item.photos,
+              id: item.id ?? "",
+              eventDate: item.eventDate ?? new Date(),
+              topics: item.topics,
+              numPhoto: item.numPhoto,
+              teacher: item.teacher
             }))
         );
       },
@@ -58,17 +61,35 @@ const AlbumHome = ({ isTeacher }: { isTeacher?: boolean }) => {
   };
 
   return (
-    <Body>
-      <LoadingBar isFetching={isFetching} />
-      <View className="flex-1">
-        <CustomStackScreen
-          title={"Album ảnh"}
-          addButtonHandler={isTeacher ? () => setAddModalVis(true) : undefined}
+    <Portal.Host>
+      <View className="flex-1 bg-gray-200">
+        {!addModalVis && (
+          <CustomStackScreen
+            title={"Album ảnh"}
+            addButtonHandler={
+              isTeacher ? () => setAddModalVis(true) : undefined
+            }
+          />
+        )}
+        <LoadingBar isFetching={isFetching} />
+        <AlbumFilterBar selTopic={selTopic} setSelTopic={setSelTopic} />
+        <AlbumAddModal
+          visible={addModalVis}
+          onClose={() => setAddModalVis(false)}
+          fetchData={fetchData}
+          classId={classId ?? ""}
+          studentId={studentId ?? ""}
         />
+
         <FlatList
-          numColumns={2}
-          contentContainerStyle={{ padding: 4 }}
-          data={albumList}
+          contentContainerStyle={{ rowGap: 8 }}
+          data={
+            selTopic === ""
+              ? albumList
+              : albumList.filter((item) =>
+                  item.topics.some((topic) => topic.id === selTopic)
+                )
+          }
           renderItem={({ item }: { item: AlbumItemModel }) => (
             <AlbumItem item={item} />
           )}
@@ -77,23 +98,56 @@ const AlbumHome = ({ isTeacher }: { isTeacher?: boolean }) => {
             <RefreshControl refreshing={false} onRefresh={fetchData} />
           }
         />
-      </View>
 
-      <AlbumAddModal
-        visible={addModalVis}
-        onClose={() => setAddModalVis(false)}
-        fetchData={fetchData}
-        classId={classId ?? ""}
-        studentId={studentId ?? ""}
-      />
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
-      />
-    </Body>
+        <AlertModal
+          visible={errorMessage != ""}
+          title={"Thông báo"}
+          message={errorMessage}
+          onClose={() => setErrorMessage("")}
+        />
+      </View>
+    </Portal.Host>
   );
 };
 
 export default AlbumHome;
+
+const AlbumFilterBar = (props: {
+  selTopic: string;
+  setSelTopic: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  const [topics, setTopics] = useState<AlbumTopic[]>([]);
+
+  api.album.getAlbumTopic.useQuery(undefined, {
+    onSuccess: (data) => {
+      setTopics(data.map((item) => ({ ...item, topic: item.topic ?? "" })));
+    }
+  });
+  return (
+    <View className={"fixed bg-white"}>
+      <ScrollView
+        horizontal
+        contentContainerStyle={{ columnGap: 8, padding: 8 }}
+        showsHorizontalScrollIndicator={false}
+      >
+        <Chip
+          key={""}
+          selected={props.selTopic === ""}
+          onPress={() => props.setSelTopic("")}
+        >
+          Tất Cả Chủ Đề
+        </Chip>
+        {topics.map((item) => (
+          <Chip
+            key={item.id}
+            selected={props.selTopic === item.id}
+            onPress={() => props.setSelTopic(item.id)}
+          >
+            <Text className="capitalize">{item.topic}</Text>
+          </Chip>
+        ))}
+      </ScrollView>
+      <Divider />
+    </View>
+  );
+};

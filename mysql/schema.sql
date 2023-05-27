@@ -263,7 +263,20 @@ CREATE TABLE `KindergartenSchema`.`Album` (
   `description` text,
   `photos` text,
   `createdAt` datetime,
+  `eventDate` datetime,
+  `teacherId` varchar(36),
   `classId` varchar(36)
+);
+
+CREATE TABLE `KindergartenSchema`.`AlbumTopic` (
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `topic` text
+);
+
+CREATE TABLE `KindergartenSchema`.`AlbumTopicRelationship` (
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `albumId` varchar(36),
+  `topicId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Noti` (
@@ -372,7 +385,13 @@ ALTER TABLE `KindergartenSchema`.`PeriodRemark` ADD FOREIGN KEY (`studentId`) RE
 
 ALTER TABLE `KindergartenSchema`.`TuitionFee` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`Album` ADD FOREIGN KEY (`teacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`Album` ADD FOREIGN KEY (`classId`) REFERENCES `KindergartenSchema`.`Class` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`AlbumTopicRelationship` ADD FOREIGN KEY (`albumId`) REFERENCES `KindergartenSchema`.`Album` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`AlbumTopicRelationship` ADD FOREIGN KEY (`topicId`) REFERENCES `KindergartenSchema`.`AlbumTopic` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 

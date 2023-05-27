@@ -352,8 +352,15 @@ VALUES
 
 -- Album
 SET @albumid1 = 'albumid1-0000-0000-0000-000000000000';
-INSERT INTO Album (id, title, description,photos, createdAt, classId)
-VALUES (@albumid1, 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', @multi_avatar, '2023-01-02T17:00:00', @clid1);
+INSERT INTO Album (id, title, description, photos, createdAt, classId, eventDate, teacherId)
+VALUES (@albumid1, 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', @multi_avatar, '2023-01-02T17:00:00', @clid1, '2023-01-02', @tid1);
+
+SET @topicid1 = 'topicid1-0000-0000-0000-000000000000';
+INSERT INTO AlbumTopic (id, topic)
+VALUES (@topicid1, 'Bé chơi với động vật');
+
+INSERT INTO AlbumTopicRelationship(albumId, topicId)
+VALUES (@albumid1, @topicid1);
 
 -- Attendance T2 2023-01-02
 INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)

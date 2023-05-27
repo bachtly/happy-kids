@@ -57,7 +57,7 @@ export function LeaveLetterList({
         </Text>
         <View className={"flex flex-row justify-between gap-x-4 "}>
           <Image className={"aspect-square w-1/6"} source={leaveletterIcon} />
-          <View className={"flex-grow flex-col gap-y-1 whitespace-nowrap"}>
+          <View className={"flex-1 flex-col gap-y-1 whitespace-nowrap"}>
             <Text
               variant={"bodyMedium"}
               numberOfLines={1}

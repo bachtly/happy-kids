@@ -1,5 +1,6 @@
 import React, { FC } from "react";
-import { Button, Dialog, Portal, Text } from "react-native-paper";
+import { Button, Dialog, Text } from "react-native-paper";
+import { Modal } from "react-native";
 
 export type AlertModalProps = {
   visible: boolean;
@@ -13,8 +14,8 @@ const AlertModal: FC<AlertModalProps> = (props) => {
     props.onClose();
   };
   return (
-    <Portal>
-      <Dialog visible={props.visible} onDismiss={onClose}>
+    <Modal visible={props.visible} transparent={true}>
+      <Dialog visible={true} onDismiss={onClose}>
         <Dialog.Title>{props.title}</Dialog.Title>
         <Dialog.Content>
           <Text>{props.message}</Text>
@@ -23,7 +24,7 @@ const AlertModal: FC<AlertModalProps> = (props) => {
           <Button onPress={onClose}>OK</Button>
         </Dialog.Actions>
       </Dialog>
-    </Portal>
+    </Modal>
   );
 };
 

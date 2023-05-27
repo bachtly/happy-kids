@@ -103,7 +103,7 @@ const MedicineBatchList = ({
               setAddModalVisible(true);
             }}
           >
-            Thêm thuốc
+            Thêm&nbsp;thuốc
           </Button>
         </View>
       </TabTableView>

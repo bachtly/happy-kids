@@ -4,45 +4,33 @@ import {
   View,
   Image,
   ScrollView,
-  TouchableOpacity
+  TouchableHighlight
 } from "react-native";
 import React, { useState } from "react";
 import { useSearchParams } from "expo-router";
-import { Card, Portal, Text } from "react-native-paper";
+import { Chip, Divider, Portal, Text } from "react-native-paper";
 import ImageView from "react-native-image-viewing";
+import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
 import LoadingBar from "../../components/common/LoadingBar";
 import Body from "../../components/Body";
 import AlertModal from "../../components/common/AlertModal";
 import CustomStackScreen from "../../components/CustomStackScreen";
-import AlbumIcon from "assets/images/album.png";
-
 import { api } from "../../utils/api";
-
-const ImageItem = ({
-  item,
-  onPress
-}: {
-  item: string;
-  onPress: () => void;
-}) => {
-  return (
-    <View className="max-w-[50%] flex-1 p-1">
-      <TouchableOpacity className="aspect-square" onPress={onPress}>
-        <Image
-          source={
-            item === "" ? AlbumIcon : { uri: `data:image/jpeg;base64,${item}` }
-          }
-          className={"h-full w-full"}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
+import AlbumHead from "../../components/album/AlbumHead";
+import { UserChatModel } from "../../models/AlbumModels";
+import AlbumIcon from "assets/images/album.png";
 
 const AlbumDetail = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [topics, setTopics] = useState<string[]>([]);
+  const [eventDate, setEventDate] = useState<Date | null>(null);
+  const [albumHead, setAlbumHead] = useState<UserChatModel>({
+    avatar: "",
+    name: "User"
+  });
+
   const { id } = useSearchParams();
 
   const [photoList, setPhotoList] = useState<string[]>([]);
@@ -60,6 +48,9 @@ const AlbumDetail = () => {
         setTitle(data.title ?? "");
         setDescription(data.description ?? "");
         setPhotoList(data.photos);
+        setTopics(data.topics.filter((item): item is string => item !== null));
+        setEventDate(data.eventDate);
+        setAlbumHead(data.teacher);
       },
       enabled: !!id,
       onError: (e) => setErrorMessage(e.message)
@@ -84,17 +75,33 @@ const AlbumDetail = () => {
           <RefreshControl refreshing={false} onRefresh={fetchData} />
         }
       >
-        <Card className="p-3">
-          <Text className="text-center" variant="titleMedium">
-            {title}
+        <View className="p-3 pb-0">
+          <AlbumHead user={albumHead} eventDate={eventDate} />
+          <Text className="mt-2" variant={"bodyMedium"}>
+            <FontAwesome5Icon color={"#111"} name="images" /> Album:{" "}
+            <Text className="font-bold" variant={"bodyMedium"}>
+              {title}
+            </Text>
           </Text>
-          <Text className="text-center" variant="bodySmall">
-            {description}
-          </Text>
-        </Card>
+          <Text variant={"bodyMedium"}>{description}</Text>
+          <Divider className="mt-2" />
+          {topics.length > 0 && (
+            <View className="mt-2">
+              <View className={"mb-2 flex flex-row flex-wrap gap-1"}>
+                {topics.map((item, index) => (
+                  <Chip mode="outlined" key={index}>
+                    <Text className="capitalize" variant="labelSmall">
+                      {item}
+                    </Text>
+                  </Chip>
+                ))}
+              </View>
+              <Divider />
+            </View>
+          )}
+        </View>
 
         <FlatList
-          numColumns={2}
           contentContainerStyle={{ padding: 4 }}
           data={photoList}
           renderItem={({ item, index }: { item: string; index: number }) => (
@@ -133,3 +140,24 @@ const AlbumDetail = () => {
 };
 
 export default AlbumDetail;
+
+const ImageItem = ({
+  item,
+  onPress
+}: {
+  item: string;
+  onPress: () => void;
+}) => {
+  return (
+    <View className="flex-1 p-1">
+      <TouchableHighlight className="aspect-square" onPress={onPress}>
+        <Image
+          source={
+            item === "" ? AlbumIcon : { uri: `data:image/jpeg;base64,${item}` }
+          }
+          className={"h-full w-full"}
+        />
+      </TouchableHighlight>
+    </View>
+  );
+};
