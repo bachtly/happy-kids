@@ -1,8 +1,8 @@
-import { View } from "react-native";
+import { View, Modal } from "react-native";
 import { Moment } from "moment";
 import { useEffect, useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
-import { Button, Dialog, Portal } from "react-native-paper";
+import { Button, Dialog } from "react-native-paper";
 
 interface DatePickerDialogProps {
   // React State passed from outside
@@ -33,9 +33,9 @@ const DatePickerDialog = (props: DatePickerDialogProps) => {
 
   return (
     <View>
-      <Portal>
+      <Modal transparent={true} visible={dialogVisible}>
         <Dialog
-          visible={dialogVisible}
+          visible={true}
           onDismiss={() => onCloseModel()}
           style={{
             alignItems: "center",
@@ -57,7 +57,7 @@ const DatePickerDialog = (props: DatePickerDialogProps) => {
             <Button onPress={onSubmit}>Chọn ngày</Button>
           </Dialog.Actions>
         </Dialog>
-      </Portal>
+      </Modal>
     </View>
   );
 };

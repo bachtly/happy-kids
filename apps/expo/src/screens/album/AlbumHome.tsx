@@ -1,7 +1,7 @@
 import { FlatList, RefreshControl, ScrollView, View, Text } from "react-native";
 import { useSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Chip, Divider, Portal } from "react-native-paper";
+import { Chip, Divider } from "react-native-paper";
 
 import LoadingBar from "../../components/common/LoadingBar";
 import CustomStackScreen from "../../components/CustomStackScreen";
@@ -61,52 +61,46 @@ const AlbumHome = ({ isTeacher }: { isTeacher?: boolean }) => {
   };
 
   return (
-    <Portal.Host>
-      <View className="flex-1 bg-gray-200">
-        {!addModalVis && (
-          <CustomStackScreen
-            title={"Album ảnh"}
-            addButtonHandler={
-              isTeacher ? () => setAddModalVis(true) : undefined
-            }
-          />
+    <View className="flex-1 bg-gray-200">
+      <CustomStackScreen
+        title={"Album ảnh"}
+        addButtonHandler={isTeacher ? () => setAddModalVis(true) : undefined}
+      />
+      <LoadingBar isFetching={isFetching} />
+      <AlbumFilterBar selTopic={selTopic} setSelTopic={setSelTopic} />
+      <AlbumAddModal
+        visible={addModalVis}
+        onClose={() => setAddModalVis(false)}
+        fetchData={fetchData}
+        classId={classId ?? ""}
+        studentId={studentId ?? ""}
+      />
+
+      <FlatList
+        contentContainerStyle={{ rowGap: 8 }}
+        data={
+          selTopic === ""
+            ? albumList
+            : albumList.filter((item) =>
+                item.topics.some((topic) => topic.id === selTopic)
+              )
+        }
+        renderItem={({ item }: { item: AlbumItemModel }) => (
+          <AlbumItem item={item} />
         )}
-        <LoadingBar isFetching={isFetching} />
-        <AlbumFilterBar selTopic={selTopic} setSelTopic={setSelTopic} />
-        <AlbumAddModal
-          visible={addModalVis}
-          onClose={() => setAddModalVis(false)}
-          fetchData={fetchData}
-          classId={classId ?? ""}
-          studentId={studentId ?? ""}
-        />
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={fetchData} />
+        }
+      />
 
-        <FlatList
-          contentContainerStyle={{ rowGap: 8 }}
-          data={
-            selTopic === ""
-              ? albumList
-              : albumList.filter((item) =>
-                  item.topics.some((topic) => topic.id === selTopic)
-                )
-          }
-          renderItem={({ item }: { item: AlbumItemModel }) => (
-            <AlbumItem item={item} />
-          )}
-          keyExtractor={(item) => item.id}
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={fetchData} />
-          }
-        />
-
-        <AlertModal
-          visible={errorMessage != ""}
-          title={"Thông báo"}
-          message={errorMessage}
-          onClose={() => setErrorMessage("")}
-        />
-      </View>
-    </Portal.Host>
+      <AlertModal
+        visible={errorMessage != ""}
+        title={"Thông báo"}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
+    </View>
   );
 };
 
