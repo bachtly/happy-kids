@@ -55,7 +55,10 @@ const TextEditorScreen = () => {
 
         <Divider style={{ marginTop: 8, marginBottom: 12 }} />
 
-        <MultiImagePicker onImagesChange={(imgs) => setPhotos(imgs)} />
+        <MultiImagePicker
+          onImagesChange={(imgs) => setPhotos(imgs)}
+          images={photos}
+        />
       </View>
 
       <Button

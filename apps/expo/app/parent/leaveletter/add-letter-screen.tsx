@@ -66,7 +66,7 @@ const AddLetter = () => {
         startDate: dateStart.toDate(),
         endDate: dateEnd.toDate(),
         reason: reason,
-        photos: images.filter((item) => item !== "")
+        photos: images
       });
   };
 
@@ -118,7 +118,10 @@ const AddLetter = () => {
           <View className="my-2 flex flex-row items-end justify-between">
             <Text variant={"labelLarge"}>Ảnh đính kèm</Text>
           </View>
-          <MultiImagePicker onImagesChange={(imgs) => setImages(imgs)} />
+          <MultiImagePicker
+            onImagesChange={(imgs) => setImages(imgs)}
+            images={images}
+          />
 
           <View className={"items-center"}>
             <SubmitComponent

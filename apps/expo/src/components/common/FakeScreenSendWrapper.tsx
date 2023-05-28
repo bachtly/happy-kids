@@ -10,13 +10,15 @@ interface PropsType {
   onClose: () => void;
   sendButtonHandler?: () => void;
   children: React.ReactNode;
+  customStackFake?: React.ReactNode;
 }
 const FakeScreenSendWrapper = ({
   visible,
   title,
   sendButtonHandler,
   onClose,
-  children
+  children,
+  customStackFake
 }: PropsType) => {
   return (
     <>
@@ -28,11 +30,13 @@ const FakeScreenSendWrapper = ({
         hideModalContentWhileAnimating={true}
         useNativeDriver={true}
       >
-        <CustomStackScreenSendFake
-          title={title}
-          sendButtonHandler={sendButtonHandler}
-          backButtonHandler={onClose}
-        />
+        {customStackFake ?? (
+          <CustomStackScreenSendFake
+            title={title}
+            sendButtonHandler={sendButtonHandler}
+            backButtonHandler={onClose}
+          />
+        )}
         {children}
       </RNModal>
     </>

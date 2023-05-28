@@ -46,9 +46,9 @@ const AlbumAddModal = (props: PropsType) => {
   const resetFields = () => {
     setTitle("");
     setDescription("");
-    setImageList([]);
     setSubmitDisable(false);
     setTopics([]);
+    setImageList([]);
   };
 
   const addAlbum = () => {
@@ -144,7 +144,10 @@ const AlbumAddModal = (props: PropsType) => {
               <Text className="mb-2" variant={"labelLarge"}>
                 Ảnh
               </Text>
-              <MultiImagePicker onImagesChange={setImageList} />
+              <MultiImagePicker
+                images={imageList}
+                onImagesChange={setImageList}
+              />
             </View>
           </ScrollView>
         </View>
