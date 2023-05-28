@@ -1,8 +1,8 @@
 import moment from "moment";
 import { Moment } from "moment";
-import { useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
-import { IconButton, Text, useTheme } from "react-native-paper";
+import { IconButton, Text, useTheme, TextInput } from "react-native-paper";
 import {
   MedicineLetterUseStatus,
   MedUseTime
@@ -58,23 +58,29 @@ const MedicineUseTabTable = ({
             { date: new Date(), note: "", status: "NotUsed" }
           ])
         }
+        tabButtonRemove={(index) => {
+          const newMedUseTimes = medUseTimes.filter((_, key) => key != index);
+          setMedUseTimes(newMedUseTimes);
+
+          if (index >= newMedUseTimes.length) {
+            setCurBatchNumber(newMedUseTimes.length - 1);
+          }
+        }}
       >
         {medUseTimes[curBatchNumber] ? (
           <>
-            <View className="self-center">
+            <View className="mb-3 flex-row items-center justify-between">
               <DatePicker
                 initTime={moment(medUseTimes[curBatchNumber].date)}
                 setTime={onPickTime}
               />
-            </View>
-            <View className="self-center">
+
               <View className="flex-row items-center">
                 <IconButton
                   icon={"pencil"}
                   iconColor={theme.colors.primary}
-                  containerColor={"rgba(0,0,0,0)"}
                   size={16}
-                  mode={"contained"}
+                  mode={"outlined"}
                   onPress={() => {
                     setVisibleStatusDialog(true);
                   }}
@@ -83,11 +89,17 @@ const MedicineUseTabTable = ({
               </View>
             </View>
 
-            {medUseTimes[curBatchNumber].note.length > 0 && (
-              <Text className="text-center">
-                {medUseTimes[curBatchNumber].note}
-              </Text>
-            )}
+            <TextInput
+              className={"text-sm"}
+              placeholder="Thêm ghi chú"
+              mode={"outlined"}
+              multiline
+              onChangeText={(value) => {
+                setUseStatus(medUseTimes[curBatchNumber].status, value);
+              }}
+              value={medUseTimes[curBatchNumber].note}
+            />
+
             <IsUsedDialog
               visible={visibleStatusDialog}
               origValue={medUseTimes[curBatchNumber]}

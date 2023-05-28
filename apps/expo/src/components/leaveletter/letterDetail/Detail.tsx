@@ -1,4 +1,4 @@
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 
 import moment from "moment";
 import React, { useContext, useEffect } from "react";
@@ -14,6 +14,7 @@ import { ErrorContext } from "../../../utils/error-context";
 import LoadingBar from "../../common/LoadingBar";
 import EllipsedText from "../../common/EllipsedText";
 import MultiImageView from "../../common/MultiImageView";
+import CustomWhiteStackScreen from "../../CustomWhiteStackScreen";
 
 const Detail = ({
   id,
@@ -26,6 +27,7 @@ const Detail = ({
 }) => {
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
+  const router = useRouter();
 
   const { data, refetch, isFetching, isSuccess } =
     api.leaveletter.getLeaveLetter.useQuery(
@@ -59,6 +61,11 @@ const Detail = ({
 
   return (
     <Body>
+      <CustomWhiteStackScreen
+        title={"Chi tiết xin nghỉ"}
+        addButtonHandler={isTeacher ? () => router.back() : undefined}
+      />
+
       <LoadingBar isFetching={isFetching} />
       <ScrollView
         className="flex-1 bg-white"

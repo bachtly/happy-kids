@@ -1,12 +1,21 @@
 import { Text, useTheme } from "react-native-paper";
 import { View } from "react-native";
-import React from "react";
+import React, { ReactNode } from "react";
 
-const CustomTitle = ({ title }: { title: string }) => {
+const CustomTitle = ({
+  title,
+  rightButton
+}: {
+  title: string;
+  rightButton?: ReactNode;
+}) => {
   const { colors } = useTheme();
 
   return (
-    <View className={"px-3"} style={{ backgroundColor: colors.background }}>
+    <View
+      className={"flex-row items-center justify-between px-3"}
+      style={{ backgroundColor: colors.background }}
+    >
       <View className={"pb-3 pt-3"}>
         <Text
           className={""}
@@ -16,6 +25,7 @@ const CustomTitle = ({ title }: { title: string }) => {
           {title}
         </Text>
       </View>
+      {rightButton && <View>{rightButton}</View>}
     </View>
   );
 };

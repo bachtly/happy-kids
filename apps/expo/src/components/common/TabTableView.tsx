@@ -1,6 +1,7 @@
 import { View, ScrollView } from "react-native";
 import { useTheme, Button } from "react-native-paper";
 import CustomCard from "../CustomCard";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 interface TabButtonProps {
   text: string;
@@ -12,21 +13,14 @@ interface TabTableViewProps {
   chosenIndex: number;
   children: React.ReactNode;
   tabButtonAdd?: () => void;
+  tabButtonRemove?: (index: number) => void;
 }
 
 export default function TabTableView(props: TabTableViewProps) {
   const theme = useTheme();
   return (
     <View className="rounded-sm">
-      <ScrollView
-        contentContainerStyle={{
-          borderWidth: 1,
-          borderBottomWidth: 0,
-          borderColor: theme.colors.outline
-        }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {props.tabButtonPropsList.map((item, index) => (
           <View key={index}>
             <Button
@@ -43,10 +37,35 @@ export default function TabTableView(props: TabTableViewProps) {
                       borderRadius: 0
                     }
               }
+              labelStyle={
+                index == props.chosenIndex
+                  ? {
+                      color: theme.colors.primary
+                    }
+                  : {
+                      color: theme.colors.onSurfaceDisabled
+                    }
+              }
               onPress={item.onPress}
             >
               {item.text}
             </Button>
+
+            {props.tabButtonRemove && (
+              <Ionicons
+                name={"remove-circle-outline"}
+                style={{
+                  position: "absolute",
+                  top: 2,
+                  right: 2,
+                  color: theme.colors.onSurfaceDisabled
+                }}
+                size={18}
+                onPress={() =>
+                  props.tabButtonRemove && props.tabButtonRemove(index)
+                }
+              />
+            )}
           </View>
         ))}
         {props.tabButtonAdd && (

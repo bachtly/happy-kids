@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "react-native-paper";
 import RNModal from "react-native-modal";
 import CustomStackScreenSend, {
   CustomStackScreenSendFake
@@ -20,6 +21,8 @@ const FakeScreenSendWrapper = ({
   children,
   customStackFake
 }: PropsType) => {
+  const { colors } = useTheme();
+
   return (
     <>
       {visible && <CustomStackScreenSend />}
@@ -29,6 +32,7 @@ const FakeScreenSendWrapper = ({
         hasBackdrop={false}
         hideModalContentWhileAnimating={true}
         useNativeDriver={true}
+        style={{ backgroundColor: colors.background }}
       >
         {customStackFake ?? (
           <CustomStackScreenSendFake

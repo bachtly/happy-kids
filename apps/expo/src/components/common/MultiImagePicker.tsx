@@ -4,6 +4,7 @@ import { Text, IconButton } from "react-native-paper";
 import MyImagePickerMulti from "../ImagePickerMulti";
 import { CustomStackFakeDelete, CustomStackFakeDone } from "./CustomStackFake";
 import FakeScreenSendWrapper from "./FakeScreenSendWrapper";
+import SingleImageView from "./SingleImageView";
 interface ImageItem {
   id: number;
   photo: string;
@@ -76,10 +77,9 @@ const MultiImagePicker = (props: MultiImagePickerProps) => {
             return (
               <View className="w-1/3">
                 <View className="relative aspect-square w-full px-0.5">
-                  <Image
-                    source={{ uri: `data:image/jpeg;base64,${item}` }}
-                    className="absolute h-full w-full"
-                  />
+                  <View className="absolute h-full w-full">
+                    <SingleImageView image={item} />
+                  </View>
                   {index === 2 && (
                     <View className="absolute flex h-full w-full items-center justify-center bg-[#00000088]">
                       <Text className="text-white" variant="labelLarge">

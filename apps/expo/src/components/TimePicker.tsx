@@ -40,7 +40,7 @@ const TimePicker = (props: TimePickerProps) => {
       <Pressable onPress={handlePress}>
         {({ pressed }) => (
           <View className={"flex-row"}>
-            <View className={"mb-1 ml-0 mr-2 flex-initial"}>
+            <View className={"ml-0 mr-2 flex-initial"}>
               <Icons name="clock" size={25} />
             </View>
             <View
@@ -49,7 +49,7 @@ const TimePicker = (props: TimePickerProps) => {
                 borderBottomWidth: pressed ? 1 : 0
               }}
             >
-              <Text className={"m-auto mb-1"}>
+              <Text className={"m-auto"}>
                 {(props.time && props.time.format("HH:mm").toString()) ??
                   "__:__"}
               </Text>

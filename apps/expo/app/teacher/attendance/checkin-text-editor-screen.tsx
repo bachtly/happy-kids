@@ -17,7 +17,6 @@ import WhiteBody from "../../../src/components/WhiteBody";
 import CustomTextInput from "../../../src/components/common/CustomTextInput";
 import thermoIcon from "assets/images/thermometer.png";
 import NumericInput from "react-native-numeric-input";
-import MultiImageView from "../../../src/components/common/MultiImageView";
 import moment from "moment";
 import ImagePicker from "../../../src/components/ImagePicker";
 
@@ -194,16 +193,12 @@ const CheckinTextEditorScreen = () => {
         <CustomTitle title={"Chọn hình ảnh"} />
 
         <View className={"px-3"}>
-          <View className={"h-32 w-32"}>
-            {photos.length > 0 && (
-              <MultiImageView images={photos} customStyle={"h-32 w-32"} />
-            )}
-            {photos.length == 0 && (
-              <ImagePicker
-                imageData={photos.length > 0 ? photos[0] : ""}
-                setImageData={(photo) => setPhotos([photo])}
-              />
-            )}
+          <View className={""}>
+            <ImagePicker
+              imageData={photos.length > 0 ? photos[0] : ""}
+              setImageData={(photo) => setPhotos([photo])}
+              size={32}
+            />
           </View>
         </View>
       </ScrollView>

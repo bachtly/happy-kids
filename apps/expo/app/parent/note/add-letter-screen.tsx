@@ -2,20 +2,20 @@ import { useRouter, useSearchParams } from "expo-router";
 
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Text, TextInput, useTheme } from "react-native-paper";
+import { TextInput } from "react-native-paper";
 import { FormError } from "../../../src/components/AlertError";
-import CustomStackScreen from "../../../src/components/CustomStackScreen";
-import SubmitComponent from "../../../src/components/common/SubmitComponent";
 import LetterSubmitAlert from "../../../src/components/common/LetterSubmitAlert";
 import { api } from "../../../src/utils/api";
 import moment, { Moment } from "moment";
 import DateRangePicker from "../../../src/components/date-picker/DateRangePicker";
 import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
 import Body from "../../../src/components/Body";
+import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
+import WhiteBody from "../../../src/components/WhiteBody";
+import CustomTitle from "../../../src/components/common/CustomTitle";
 
 const AddLetter = () => {
   const now = moment();
-  const theme = useTheme();
 
   const { studentId } = useSearchParams();
 
@@ -53,26 +53,22 @@ const AddLetter = () => {
       studentId: studentId,
       photos: images
     });
+    router.back();
   };
 
   return (
     <Body>
-      <CustomStackScreen title={"Tạo lời nhắn"} />
+      <CustomWhiteStackScreen
+        title={"Tạo lời nhắn"}
+        addButtonHandler={onSubmit}
+      />
 
       <ScrollView className="flex-1">
-        <View className="flex-1  p-4">
-          <Text className="mb-2" variant={"labelLarge"}>
-            Lời nhắn cho các ngày
-          </Text>
+        <View className={"mb-3 flex-1"}>
+          <WhiteBody>
+            <CustomTitle title={"Lời nhắn cho các ngày"} />
 
-          <View
-            className="space-y-2 rounded-sm border p-4"
-            style={{
-              backgroundColor: theme.colors.background,
-              borderColor: theme.colors.outline
-            }}
-          >
-            <View className="flex flex-row items-center justify-center ">
+            <View className="flex flex-row items-center justify-center pb-4 pt-1">
               <DateRangePicker
                 initTimeStart={dateStart}
                 initTimeEnd={dateEnd}
@@ -80,46 +76,34 @@ const AddLetter = () => {
                 setTimeEnd={setDateEnd}
               />
             </View>
-          </View>
+          </WhiteBody>
+        </View>
 
-          <Text variant={"labelLarge"} className={"mt-2"}>
-            Lời nhắn
-          </Text>
+        <View className={"mb-3 flex-1"}>
+          <WhiteBody>
+            <CustomTitle title={"Lời nhắn"} />
 
-          <TextInput
-            className={"text-sm"}
-            placeholder="Nhập lời nhắn"
-            mode={"outlined"}
-            multiline
-            onChangeText={(input) => setMessage(input)}
-            value={message}
-            outlineStyle={
-              submitError.includes("leave_letter_empty_reason") &&
-              message === ""
-                ? {
-                    borderColor: "red"
-                  }
-                : {}
-            }
-          />
-
-          <View className="my-2 flex flex-row items-end justify-between">
-            <Text variant={"labelLarge"}>Ảnh đính kèm</Text>
-          </View>
-          <MultiImagePicker
-            onImagesChange={(imgs) => setImages(imgs)}
-            images={images}
-          />
-
-          <View className={"items-center"}>
-            <SubmitComponent
-              isLoading={postNoteThreadMutation.isLoading}
-              isSuccess={
-                postNoteThreadMutation.isSuccess && submitError.length === 0
-              }
-              onSubmit={onSubmit}
+            <TextInput
+              className={"mx-3 mb-3 text-sm"}
+              placeholder="Nhập lời nhắn"
+              mode={"outlined"}
+              multiline
+              onChangeText={(input) => setMessage(input)}
+              value={message}
             />
-          </View>
+          </WhiteBody>
+        </View>
+
+        <View className={"mb-3 flex-1"}>
+          <WhiteBody>
+            <CustomTitle title={"Ảnh đính kèm"} />
+            <View className={"px-2"}>
+              <MultiImagePicker
+                onImagesChange={(imgs) => setImages(imgs)}
+                images={images}
+              />
+            </View>
+          </WhiteBody>
         </View>
       </ScrollView>
 

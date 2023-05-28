@@ -1,8 +1,10 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
 import { MedicineModel } from "../../../models/MedicineModels";
 import MyImagePicker from "../../ImagePicker";
+import CustomTitle from "../../common/CustomTitle";
+import FakeScreenSendWrapper from "../../common/FakeScreenSendWrapper";
+import CustomTextInput from "../../common/CustomTextInput";
 
 type MedicineModalProps = {
   visible: boolean;
@@ -17,11 +19,8 @@ type MedicineModalProps = {
 const MedicineModal: FC<MedicineModalProps> = (props) => {
   const { visible, title, onClose, onConfirm, medicine, setMedicine } = props;
 
-  const [submitFailed, setSubmitFailed] = useState(false);
-
   const submitMedicine = () => {
     if (!(medicine.name !== "") || !(medicine.amount !== "")) {
-      setSubmitFailed(true);
       return;
     }
     onConfirm();
@@ -29,64 +28,54 @@ const MedicineModal: FC<MedicineModalProps> = (props) => {
   };
 
   const closeModal = () => {
-    setSubmitFailed(false);
     if (onClose) onClose();
   };
 
   return (
-    <Portal>
-      <Dialog visible={visible} dismissable={false} style={{ maxHeight: 600 }}>
-        <Dialog.Title>{title}</Dialog.Title>
-        <Dialog.ScrollArea className={"px-0"}>
-          <ScrollView className={"px-6 pt-1"}>
-            <View className="mb-2">
-              <Text variant={"labelLarge"}>Tên thuốc</Text>
-              <TextInput
-                className={"text-sm"}
-                mode="outlined"
-                placeholder={"Nhập tên thuốc"}
-                onChangeText={(name) =>
-                  setMedicine((prev) => ({ ...prev, name: name }))
-                }
-                value={medicine.name}
-                error={submitFailed && medicine.name === ""}
-              />
-            </View>
+    <FakeScreenSendWrapper
+      visible={visible}
+      title={title}
+      onClose={closeModal}
+      sendButtonHandler={() => submitMedicine()}
+    >
+      <ScrollView>
+        <CustomTitle title={"Tên thuốc"} />
 
-            <View className="mb-2">
-              <Text variant={"labelLarge"}>Liều dùng</Text>
-              <TextInput
-                className="text-sm"
-                mode="outlined"
-                placeholder={"Nhập liều dùng/ hướng dẫn sử dụng của thuốc"}
-                multiline
-                onChangeText={(amount) =>
-                  setMedicine((prev) => ({ ...prev, amount: amount }))
-                }
-                value={medicine.amount}
-                error={submitFailed && medicine.amount === ""}
-              />
-            </View>
+        <View className={"px-3"}>
+          <CustomTextInput
+            placeholder={"Nhập tên thuốc"}
+            value={medicine.name}
+            setValue={(name) =>
+              setMedicine((prev) => ({ ...prev, name: name }))
+            }
+          />
+        </View>
 
-            <View className="mb-2">
-              <Text variant={"labelLarge"}>Ảnh thuốc</Text>
-              <View className={"mt-2 h-32 w-32"}>
-                <MyImagePicker
-                  imageData={medicine.photo}
-                  setImageData={(photo) =>
-                    setMedicine((prev) => ({ ...prev, photo: photo }))
-                  }
-                />
-              </View>
-            </View>
-          </ScrollView>
-        </Dialog.ScrollArea>
-        <Dialog.Actions>
-          <Button onPress={closeModal}>Hủy</Button>
-          <Button onPress={submitMedicine}>Lưu</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+        <CustomTitle title={"Liều dùng"} />
+
+        <View className={"px-3"}>
+          <CustomTextInput
+            placeholder={"Nhập liều dùng/ hướng dẫn sử dụng của thuốc"}
+            value={medicine.amount}
+            setValue={(amount) =>
+              setMedicine((prev) => ({ ...prev, amount: amount }))
+            }
+          />
+        </View>
+
+        <CustomTitle title={"Ảnh thuốc"} />
+
+        <View className="px-3">
+          <MyImagePicker
+            imageData={medicine.photo}
+            setImageData={(photo) =>
+              setMedicine((prev) => ({ ...prev, photo: photo }))
+            }
+            size={32}
+          />
+        </View>
+      </ScrollView>
+    </FakeScreenSendWrapper>
   );
 };
 

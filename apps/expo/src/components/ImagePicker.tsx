@@ -1,7 +1,8 @@
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { View } from "react-native";
+import { IconButton } from "react-native-paper";
+import SingleImageView from "./common/SingleImageView";
 
 interface MyImagePickerProps {
   // React State passed from outside
@@ -9,6 +10,7 @@ interface MyImagePickerProps {
   setImageData: (imageData: string) => void;
   disabled?: boolean;
   onPress?: () => void;
+  size?: number;
 }
 
 const MyImagePicker = (props: MyImagePickerProps) => {
@@ -31,25 +33,25 @@ const MyImagePicker = (props: MyImagePickerProps) => {
   };
 
   return (
-    <View className="h-full w-full items-center">
-      <TouchableOpacity
-        className={"h-full w-full"}
-        onPress={props.onPress ?? pickImage}
-        disabled={props.disabled ?? false}
-      >
-        {imageData !== "" ? (
-          <Image
-            source={{ uri: `data:image/jpeg;base64,${imageData}` }}
-            className={"h-full w-full"}
-          />
-        ) : (
-          <View
-            className={"h-full w-full items-center justify-center bg-gray-300"}
-          >
-            <Text className={"text-gray-500"}>Chọn ảnh</Text>
-          </View>
-        )}
-      </TouchableOpacity>
+    <View className={"flex-1"}>
+      {imageData !== "" && (
+        <View
+          className={
+            props.size ? `h-${props.size} w-${props.size} mb-2` : "mb-2"
+          }
+        >
+          <SingleImageView image={imageData} />
+        </View>
+      )}
+
+      <IconButton
+        className="m-0"
+        mode="outlined"
+        onPress={() => {
+          props.onPress ? props.onPress() : void pickImage();
+        }}
+        icon={"camera"}
+      />
     </View>
   );
 };

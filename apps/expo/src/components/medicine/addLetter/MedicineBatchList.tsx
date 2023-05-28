@@ -77,6 +77,16 @@ const MedicineBatchList = ({
           }
         }))}
         tabButtonAdd={() => setBatchList((prev) => [...prev, moment()])}
+        tabButtonRemove={(index) => {
+          if (batchList.length == 1) return;
+
+          const newList = batchList.filter((_, key) => key != index);
+          setBatchList(newList);
+          if (index >= newList.length) {
+            setCurBatchNumber(newList.length - 1);
+            setMedicineList(getBatchMedicineList(newList.length - 1));
+          }
+        }}
       >
         <View>
           <View className="mb-2 flex flex-row items-center justify-center ">

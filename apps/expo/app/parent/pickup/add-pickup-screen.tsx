@@ -3,17 +3,24 @@ import moment, { Moment } from "moment";
 
 import React, { useContext, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Avatar, Button, Text, TextInput } from "react-native-paper";
+import {
+  Avatar,
+  Text,
+  TextInput,
+  useTheme,
+  IconButton
+} from "react-native-paper";
 import TimePicker from "../../../src/components/TimePicker";
 import { api } from "../../../src/utils/api";
 import DatePicker from "../../../src/components/date-picker/DatePicker";
 import SelectPickerModal from "../../../src/components/pickup/SelectPickerModal";
 import { RelativeModel } from "../../../src/models/PickupModels";
-import CustomStackScreen from "../../../src/components/CustomStackScreen";
-import AlertModal from "../../../src/components/common/AlertModal";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
+import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
+import WhiteBody from "../../../src/components/WhiteBody";
+import CustomTitle from "../../../src/components/common/CustomTitle";
 
 const DEFAULT_TIME = moment(moment.now());
 
@@ -22,6 +29,7 @@ const AddPickupScreen = () => {
   const router = useRouter();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
+  const { colors } = useTheme();
 
   const [date, setDate] = useState<Moment>(DEFAULT_TIME);
   const [time, setTime] = useState<Moment>(DEFAULT_TIME);
@@ -29,7 +37,6 @@ const AddPickupScreen = () => {
   const [picker, setPicker] = useState<RelativeModel | null>(null);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const pickupMutation = api.pickup.insertPickupLetter.useMutation({
     onSuccess: () => router.back(),
@@ -67,79 +74,91 @@ const AddPickupScreen = () => {
 
   return (
     <View className="flex-1">
-      <CustomStackScreen title={"Tạo đơn đón về"} />
+      <CustomWhiteStackScreen
+        title={"Tạo đơn đón về"}
+        addButtonHandler={() => confirmCreateLetter()}
+      />
 
-      <ScrollView className="flex-1 bg-white p-4">
-        <View className="mb-4 h-12 flex-row justify-between">
-          <Text variant={"titleMedium"}>Ngày đón</Text>
-          <DatePicker initTime={date} setTime={setDate} />
-        </View>
+      <ScrollView className="flex-1">
+        <View className={"mb-3 flex-1"}>
+          <WhiteBody>
+            <CustomTitle title={"Ngày giờ đón"} />
 
-        <View className="mb-4 h-12 flex-row justify-between">
-          <Text variant={"titleMedium"}>Giờ đón</Text>
-          <TimePicker time={time} setTime={setTime} />
-        </View>
-
-        <View className="mb-4 space-y-4">
-          <Text variant={"titleMedium"}>Người đón</Text>
-
-          {picker && (
-            <View className={"flex-row space-x-3"}>
-              <Avatar.Image
-                className={"my-auto"}
-                size={42}
-                source={{
-                  uri: picker.avatar
-                    ? `data:image/jpeg;base64,${picker.avatar}`
-                    : ""
-                }}
-              />
-              <View>
-                <Text className={""} variant={"labelLarge"}>
-                  {picker.fullname}
-                </Text>
-                <Text className={""} variant={"bodyMedium"}>
-                  {picker.phone}
-                </Text>
-              </View>
+            <View className="flex flex-row items-center justify-center pb-4 pt-1">
+              <DatePicker initTime={date} setTime={setDate} />
             </View>
-          )}
-          <Button mode={"outlined"} onPress={() => setModalVisible(true)}>
-            {picker ? "Đổi người đón" : "Chọn"}
-          </Button>
+
+            <View className="flex flex-row items-center justify-center pb-4 pt-1">
+              <TimePicker time={time} setTime={setTime} />
+            </View>
+          </WhiteBody>
         </View>
 
-        <View className={"mb-4"}>
-          <Text variant={"titleMedium"} className={"mb-2"}>
-            Ghi chú
-          </Text>
+        <View className={"mb-3 flex-1"}>
+          <WhiteBody>
+            <CustomTitle
+              title={"Người đón"}
+              rightButton={
+                <IconButton
+                  icon={"pencil"}
+                  iconColor={colors.primary}
+                  size={16}
+                  mode={"outlined"}
+                  onPress={() => {
+                    setModalVisible(true);
+                  }}
+                />
+              }
+            />
 
-          <TextInput
-            className={"text-sm"}
-            placeholder="Nhập ghi chú"
-            mode={"outlined"}
-            multiline
-            onChangeText={(input) => setNote(input)}
-            value={note}
-          />
+            <View className="px-3 pb-3">
+              {picker && (
+                <View className={"flex-row space-x-3"}>
+                  <Avatar.Image
+                    className={"my-auto"}
+                    size={42}
+                    source={{
+                      uri: picker.avatar
+                        ? `data:image/jpeg;base64,${picker.avatar}`
+                        : ""
+                    }}
+                  />
+                  <View>
+                    <Text className={""} variant={"labelLarge"}>
+                      {picker.fullname}
+                    </Text>
+                    <Text className={""} variant={"bodyMedium"}>
+                      {picker.phone}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              {!picker && <Text>Chưa có người đón</Text>}
+            </View>
+          </WhiteBody>
         </View>
 
-        <Button mode={"contained"} onPress={() => confirmCreateLetter()}>
-          Xác nhận
-        </Button>
+        <View className={"mb-3 flex-1"}>
+          <WhiteBody>
+            <CustomTitle title={"Ghi chú"} />
+
+            <TextInput
+              className={"mx-3 mb-3 text-sm"}
+              placeholder="Nhập ghi chú"
+              mode={"outlined"}
+              multiline
+              onChangeText={(input) => setNote(input)}
+              value={note}
+            />
+          </WhiteBody>
+        </View>
       </ScrollView>
 
       <SelectPickerModal
         visible={modalVisible}
         close={closeModal}
         submit={submitModal}
-      />
-
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
       />
     </View>
   );

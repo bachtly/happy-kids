@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import {
-  Button,
-  Dialog,
-  Portal,
-  RadioButton,
-  TextInput,
-  Text
-} from "react-native-paper";
+import { Button, Dialog, Portal, RadioButton } from "react-native-paper";
 import {
   MedicineLetterStatus,
   MedicineLetterUseStatus,
@@ -46,7 +39,7 @@ const LetterStatusDialog = ({
     <Portal>
       <Dialog onDismiss={onClose} visible={visible}>
         <Dialog.Title>Cập nhật trạng thái đơn</Dialog.Title>
-        <Dialog.ScrollArea className={"flex flex-row items-center px-0"}>
+        <Dialog.ScrollArea className={"flex flex-row items-center px-3"}>
           <ScrollView>
             <View>
               <RadioButton.Group
@@ -86,9 +79,8 @@ const IsUsedDialog = ({
   visible
 }: IsUsedDialogProps) => {
   const [value, setValue] = useState(origValue.status);
-  const [note, setNote] = useState(origValue.note);
   const onConfirm = () => {
-    setOrigValue(value, note);
+    setOrigValue(value, origValue.note);
     close();
   };
 
@@ -98,17 +90,15 @@ const IsUsedDialog = ({
 
   useEffect(() => {
     setValue(origValue.status);
-    setNote(origValue.note);
   }, [visible]);
 
   return (
     <Portal>
       <Dialog onDismiss={onClose} visible={visible} style={{ maxHeight: 600 }}>
-        <Dialog.Title>Cập nhật trạng thái uống thuốc</Dialog.Title>
-        <Dialog.ScrollArea className={"flex flex-row items-center px-0"}>
-          <ScrollView className={"px-6 pb-1 pt-1"}>
-            <View className="space-y-2">
-              <Text variant={"labelLarge"}>Trạng thái uống</Text>
+        <Dialog.Title>Trạng thái uống thuốc</Dialog.Title>
+        <Dialog.ScrollArea className={"flex flex-row items-center px-3"}>
+          <ScrollView className={""}>
+            <View className="space-y-0">
               <RadioButton.Group
                 value={value}
                 onValueChange={(value: string) =>
@@ -118,15 +108,6 @@ const IsUsedDialog = ({
                 <RadioButton.Item value={"NotUsed"} label={"Không uống"} />
                 <RadioButton.Item value={"Used"} label={"Đã uống"} />
               </RadioButton.Group>
-              <Text variant={"labelLarge"}>Ghi chú</Text>
-
-              <TextInput
-                multiline
-                value={note}
-                onChangeText={(value) => {
-                  setNote(value);
-                }}
-              />
             </View>
           </ScrollView>
         </Dialog.ScrollArea>

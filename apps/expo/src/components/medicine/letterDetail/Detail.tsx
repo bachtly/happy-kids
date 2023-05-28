@@ -1,7 +1,7 @@
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 
 import moment from "moment";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Text, useTheme, Divider } from "react-native-paper";
 import { api } from "../../../utils/api";
@@ -14,6 +14,12 @@ import { ErrorContext } from "../../../utils/error-context";
 import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
 import LoadingBar from "../../common/LoadingBar";
 import EllipsedText from "../../common/EllipsedText";
+import CustomWhiteStackScreen from "../../CustomWhiteStackScreen";
+import {
+  MedicineLetterStatus,
+  MedUseTime
+} from "../../../models/MedicineModels";
+import MedicineUseTabTable from "./MedicineUseTabTable";
 
 const Detail = ({
   userId,
@@ -28,12 +34,23 @@ const Detail = ({
   const theme = useTheme();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
+  const router = useRouter();
+
+  const [status, setStatus] = useState<MedicineLetterStatus>("NotConfirmed");
+  const [curMedUseTimes, setCurMedUseTimes] = useState<MedUseTime[]>([]);
+  const [curBatchNumber, setCurBatchNumber] = useState(0);
+
   const { data, refetch, isFetching, isSuccess } =
     api.medicine.getMedicineLetter.useQuery(
       {
         medicineLetterId: id
       },
       {
+        onSuccess: (resp) => {
+          resp.medicineLetter && setStatus(resp.medicineLetter.status);
+          resp.medicineLetter &&
+            setCurMedUseTimes(resp.medicineLetter.useDiary);
+        },
         onError: ({ message, data }) =>
           trpcErrorHandler(() => {})(
             data?.code ?? "",
@@ -43,6 +60,18 @@ const Detail = ({
           )
       }
     );
+
+  const updateStatMedLetterMutation =
+    api.medicine.updateMedicineLetter.useMutation({
+      onSuccess: (_) => refetch(),
+      onError: ({ message, data }) =>
+        trpcErrorHandler(() => {})(
+          data?.code ?? "",
+          message,
+          errorContext,
+          authContext
+        )
+    });
 
   // fetch data when focus
   const navigation = useNavigation();
@@ -60,6 +89,23 @@ const Detail = ({
 
   return (
     <Body>
+      <CustomWhiteStackScreen
+        title={"Chi tiết dặn thuốc"}
+        addButtonHandler={
+          !isTeacher
+            ? undefined
+            : () => {
+                updateStatMedLetterMutation.mutate({
+                  teacherId: userId,
+                  useDiary: curMedUseTimes,
+                  medicineLetterId: id,
+                  status: status
+                });
+                router.back();
+              }
+        }
+      />
+
       <LoadingBar isFetching={isFetching} />
 
       <ScrollView
@@ -72,12 +118,8 @@ const Detail = ({
           <View className="flex-1 px-5 pb-5">
             {isTeacher ? (
               <TeacherStatus
-                userId={userId}
-                status={data.medicineLetter.status}
-                refetch={fetchData}
-                isFetching={isFetching}
-                medicineLetterId={id}
-                medUseTimes={data.medicineLetter.useDiary}
+                status={status}
+                setStatus={(status) => setStatus(status)}
               />
             ) : (
               <ParentStatus
@@ -85,6 +127,25 @@ const Detail = ({
                 updatedByTeacher={data.medicineLetter.updatedByTeacher}
                 medUseTimes={data.medicineLetter.useDiary}
               />
+            )}
+
+            {isTeacher && (
+              <>
+                <Divider />
+                <View className={"space-y-1 py-3"}>
+                  <View className="flex-row items-baseline justify-between">
+                    <Text className="mb-3" variant={"labelLarge"}>
+                      Trạng thái uống thuốc
+                    </Text>
+                  </View>
+                  <MedicineUseTabTable
+                    medUseTimes={curMedUseTimes}
+                    setMedUseTimes={setCurMedUseTimes}
+                    curBatchNumber={curBatchNumber}
+                    setCurBatchNumber={setCurBatchNumber}
+                  />
+                </View>
+              </>
             )}
 
             <Divider />

@@ -6,7 +6,6 @@ import { Divider, Text } from "react-native-paper";
 import { api } from "../../../src/utils/api";
 import { PickupItemModel } from "../../../src/models/PickupModels";
 import Body from "../../../src/components/Body";
-import CustomStackScreen from "../../../src/components/CustomStackScreen";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { ErrorContext } from "../../../src/utils/error-context";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
@@ -14,6 +13,7 @@ import LoadingBar from "../../../src/components/common/LoadingBar";
 import EllipsedText from "../../../src/components/common/EllipsedText";
 import { MedicineLetterStatus } from "../../../src/models/MedicineModels";
 import LetterStatusText from "../../../src/components/medicine/StatusText";
+import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
 
 const PickupDetailScreen = () => {
   const { id } = useSearchParams();
@@ -47,7 +47,7 @@ const PickupDetailScreen = () => {
 
   return (
     <Body>
-      <CustomStackScreen title={"Chi tiết đón về"} />
+      <CustomWhiteStackScreen title={"Chi tiết đón về"} />
       <LoadingBar isFetching={pickupMutation.isLoading} />
 
       <ScrollView

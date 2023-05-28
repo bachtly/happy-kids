@@ -14,6 +14,7 @@ import MultiImageView from "../../common/MultiImageView";
 import { trpcErrorHandler } from "../../../utils/trpc-error-handler";
 import { ErrorContext } from "../../../utils/error-context";
 import { useAuthContext } from "../../../utils/auth-context-provider";
+import CustomWhiteStackScreen from "../../CustomWhiteStackScreen";
 
 const Detail = ({
   userId,
@@ -68,6 +69,11 @@ const Detail = ({
   const photoList = data?.noteThread?.photos;
   return (
     <Body>
+      <CustomWhiteStackScreen
+        title={"Chi tiết lời nhắn"}
+        addButtonHandler={isTeacher ? () => router.back() : undefined}
+      />
+
       <LoadingBar isFetching={isFetching} />
 
       <ScrollView
