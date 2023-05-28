@@ -105,7 +105,9 @@ sudo docker-compose start
 ```
 For authentication to work, we need to generate encryption keys:
 ```
-cd apps/nextjs/public/storage/secret/ && ssh-keygen -t rsa -m PEM -f jwtRS256.key
+cd apps/nextjs/public/storage/secret/ 
+ssh-keygen -t rsa -m PEM -f access.key
+openssl rsa -in access.key -pubout -outform PEM -out access.key.pub
 ```
 
 ### Database
