@@ -39,9 +39,7 @@ const AccountInfo = () => {
   });
 
   const onEditAvatar = () => {
-    pickImageFunc({ setImage: setAvatar }).catch((err: Error) =>
-      console.log(err.message)
-    );
+    pickImageFunc(setAvatar).catch((err: Error) => console.log(err.message));
   };
 
   const resetToDefault = () => {

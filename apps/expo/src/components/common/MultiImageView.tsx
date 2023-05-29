@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableHighlight, View, Image } from "react-native";
 import { Portal } from "react-native-paper";
 import ImageView from "react-native-image-viewing";
-
-import MyImagePicker from "../ImagePicker";
 
 type MultiImageViewProps = {
   images: string[];
@@ -24,14 +22,20 @@ const MultiImageView = ({ images, customStyle }: MultiImageViewProps) => {
       >
         {photoList.map((image, key) => (
           <View className={customStyle ?? "h-24 w-24"} key={key}>
-            <MyImagePicker
-              imageData={image}
-              setImageData={() => {}}
+            <TouchableHighlight
+              className="h-full w-full"
               onPress={() => {
                 setImgIdx(key);
                 setImgVisible(true);
               }}
-            />
+            >
+              <Image
+                className="h-full w-full"
+                source={{
+                  uri: `data:image/jpeg;base64,${image}`
+                }}
+              />
+            </TouchableHighlight>
           </View>
         ))}
       </ScrollView>
