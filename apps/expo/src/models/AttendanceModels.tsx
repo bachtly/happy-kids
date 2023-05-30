@@ -27,6 +27,17 @@ interface AttendanceStatisticsModel {
   AbsenseWithoutPermission: number;
 }
 
+interface AttendancePickupLetter {
+  id: string |null;
+  status: PickupLetterStatus|null;
+}
+
+interface AttendanceLeaveletter {
+  id: string |null;
+  status: LeaveLetterStatus | null;
+}
+
+
 interface AttendanceStudentModel {
   id: string | null;
   fullname: string | null;
@@ -37,10 +48,8 @@ interface AttendanceStudentModel {
   attendanceCheckoutNote: string | null;
   checkinPhotos?: string[] | null;
   checkoutPhotos?: string[] | null;
-  leaveletterId?: string | null;
-  leaveletterStatus?: LeaveLetterStatus | null;
-  pickupLetterId?: string | null;
-  pickupLetterStatus?: PickupLetterStatus | null;
+  leaveletters?: AttendanceLeaveletter[] | null;
+  pickupLetters?: AttendancePickupLetter[] | null;
   thermo?: number | null;
   studentId?: string | null;
 }

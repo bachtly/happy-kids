@@ -87,23 +87,29 @@ const CheckinItem = (props: CheckinItemProps) => {
         )}
       </View>
 
-      {props.attendance.leaveletterStatus && (
-        <UnderlineButton
-          icon={"file"}
-          onPress={() => {
-            router.push({
-              pathname: "teacher/leaveletter/letter-detail-screen",
-              params: {
-                id: props.attendance.leaveletterId,
-                studentName: props.attendance.fullname
-              }
-            });
-          }}
-        >
-          Bé có đơn xin nghỉ (
-          {<LetterStatusText status={props.attendance.leaveletterStatus} />})
-        </UnderlineButton>
-      )}
+      {props.attendance?.leaveletters &&
+        props.attendance.leaveletters.map((leaveletter, key) => (
+          <View key={key}>
+            <UnderlineButton
+              icon={"file"}
+              onPress={() => {
+                router.push({
+                  pathname: "teacher/leaveletter/letter-detail-screen",
+                  params: {
+                    id: leaveletter.id,
+                    studentName: props.attendance.fullname
+                  }
+                });
+              }}
+            >
+              Bé có đơn xin nghỉ (
+              {leaveletter.status && (
+                <LetterStatusText status={leaveletter.status} />
+              )}
+              )
+            </UnderlineButton>
+          </View>
+        ))}
     </CustomCard>
   );
 };

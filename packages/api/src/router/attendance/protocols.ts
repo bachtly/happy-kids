@@ -118,11 +118,19 @@ const Student = z.object({
   checkinPhotos: z.nullable(z.array(z.string())),
   checkoutPhotos: z.nullable(z.array(z.string())),
 
-  leaveletterId: z.nullable(z.string()),
-  leaveletterStatus: z.nullable(LetterStatus),
+  leaveletters: z.array(
+    z.object({
+      id: z.nullable(z.string()),
+      status: z.nullable(LetterStatus)
+    })
+  ),
 
-  pickupLetterId: z.nullable(z.string()),
-  pickupLetterStatus: z.nullable(PickupLetterStatus),
+  pickupLetters: z.array(
+    z.object({
+      id: z.nullable(z.string()),
+      status: z.nullable(PickupLetterStatus)
+    })
+  ),
 
   thermo: z.nullable(z.number()),
   studentId: z.nullable(z.string())

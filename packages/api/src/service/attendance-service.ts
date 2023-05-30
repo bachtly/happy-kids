@@ -7,6 +7,7 @@ import { z } from "zod";
 import { PhotoService } from "../utils/PhotoService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { TimeServiceInterface } from "../utils/TimeService";
+import { leaveletterService, pickupService } from "./common-services";
 
 @injectable()
 class AttendanceService {
@@ -265,128 +266,105 @@ class AttendanceService {
       })}`
     );
 
-    const rawStudents = await this.mysqlDB
-      .selectFrom("Student")
-      .innerJoin(
-        "StudentClassRelationship",
-        "Student.id",
-        "StudentClassRelationship.studentId"
-      )
-      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
-      .leftJoin(
-        this.mysqlDB
-          .selectFrom("Attendance")
-          .selectAll()
-          .where("date", "<=", this.timeService.getEndOfDay(date))
-          .where("date", ">=", this.timeService.getStartOfDay(date))
-          .as("Attendance"),
-        "Attendance.studentId",
-        "Student.id"
-      )
-      .leftJoin(
-        this.mysqlDB
-          .selectFrom("LeaveLetter")
-          .selectAll()
-          .where(
-            "LeaveLetter.startDate",
-            "<=",
-            this.timeService.getEndOfDay(date)
-          )
-          .where(
-            "LeaveLetter.endDate",
-            ">=",
-            this.timeService.getStartOfDay(date)
-          )
-          .as("LeaveLetter"),
-        "LeaveLetter.studentId",
-        "Student.id"
-      )
-      .leftJoin(
-        this.mysqlDB
-          .selectFrom("PickupLetter")
-          .selectAll()
-          .where(
-            "PickupLetter.pickupTime",
-            "<=",
-            this.timeService.getEndOfDay(date)
-          )
-          .where(
-            "PickupLetter.pickupTime",
-            ">=",
-            this.timeService.getStartOfDay(date)
-          )
-          .as("PickupLetter"),
-        "PickupLetter.studentId",
-        "Student.id"
-      )
-      .select([
-        "Attendance.id",
-        "Student.fullname",
-        "Student.avatarUrl",
-        "Class.name as className",
-        "Attendance.thermo as thermoStr",
-        "Attendance.status as attendanceStatus",
-        "Attendance.checkinNote as attendanceCheckinNote",
-        "Attendance.checkoutNote as attendanceCheckoutNote",
-        "Attendance.checkinPhotos",
-        "Attendance.checkoutPhotos",
-        "LeaveLetter.status as leaveletterStatus",
-        "LeaveLetter.id as leaveletterId",
-        "PickupLetter.id as pickupLetterId",
-        "PickupLetter.status as pickupLetterStatus",
-        "Student.id as studentId"
-      ])
-      .where("Class.id", "=", classId)
-      .execute()
-      .then((resp) =>
-        resp.map((item) => {
-          if (!item.attendanceStatus) {
-            item.attendanceStatus = "NotCheckedIn";
-          }
-          return {
-            ...item,
-            thermo: Number(item.thermoStr)
-          };
+    const rawStudents = await Promise.all(
+      await this.mysqlDB
+        .selectFrom("Student")
+        .innerJoin(
+          "StudentClassRelationship",
+          "Student.id",
+          "StudentClassRelationship.studentId"
+        )
+        .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+        .leftJoin(
+          this.mysqlDB
+            .selectFrom("Attendance")
+            .selectAll()
+            .where("date", "<=", this.timeService.getEndOfDay(date))
+            .where("date", ">=", this.timeService.getStartOfDay(date))
+            .as("Attendance"),
+          "Attendance.studentId",
+          "Student.id"
+        )
+        .select([
+          "Attendance.id",
+          "Student.fullname",
+          "Student.avatarUrl",
+          "Class.name as className",
+          "Attendance.thermo as thermoStr",
+          "Attendance.status as attendanceStatus",
+          "Attendance.checkinNote as attendanceCheckinNote",
+          "Attendance.checkoutNote as attendanceCheckoutNote",
+          "Attendance.checkinPhotos",
+          "Attendance.checkoutPhotos",
+          "Student.id as studentId"
+        ])
+        .where("Class.id", "=", classId)
+        .execute()
+        .then(
+          async (resp) =>
+            await Promise.all(
+              resp.map(async (item) => {
+                if (!item.attendanceStatus) {
+                  item.attendanceStatus = "NotCheckedIn";
+                }
+
+                const leavelettersResp =
+                  await leaveletterService.getLeaveLetterList(
+                    item.studentId,
+                    undefined
+                  );
+                const leaveletters = leavelettersResp.leaveLetterList.filter(
+                  (letter) =>
+                    this.timeService.getStartOfDay(letter.startDate) <= date &&
+                    date <= this.timeService.getEndOfDay(letter.endDate)
+                );
+
+                const pickupLettersResp = await pickupService.getPickupList(
+                  this.timeService.getStartOfDay(date),
+                  this.timeService.getEndOfDay(date),
+                  item.studentId
+                );
+                const pickupLetters = pickupLettersResp.pickups;
+
+                const checkinPhotoPaths = item.checkinPhotos
+                  ? <string[]>JSON.parse(item.checkinPhotos)
+                  : [];
+                const checkoutPhotoPaths = item.checkoutPhotos
+                  ? <string[]>JSON.parse(item.checkoutPhotos)
+                  : [];
+
+                const checkinPhotos = await Promise.all(
+                  checkinPhotoPaths.map((photoPath) =>
+                    this.photoService.getPhotoFromPath(photoPath)
+                  )
+                );
+                const checkoutPhotos = await Promise.all(
+                  checkoutPhotoPaths.map((photoPath) =>
+                    this.photoService.getPhotoFromPath(photoPath)
+                  )
+                );
+
+                return {
+                  ...item,
+                  leaveletters: leaveletters,
+                  pickupLetters: pickupLetters,
+                  thermo: Number(item.thermoStr),
+                  avatar: await this.photoService.getPhotoFromPath(
+                    item.avatarUrl ?? ""
+                  ),
+                  checkinPhotos: checkinPhotos,
+                  checkoutPhotos: checkoutPhotos
+                };
+              })
+            )
+        )
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
         })
-      )
-      .catch((err: Error) => {
-        console.log(err);
-        throw SYSTEM_ERROR_MESSAGE;
-      });
-
-    const refinedStudents = await Promise.all(
-      rawStudents.map(async (student) => {
-        const checkinPhotoPaths = student.checkinPhotos
-          ? <string[]>JSON.parse(student.checkinPhotos)
-          : [];
-        const checkoutPhotoPaths = student.checkoutPhotos
-          ? <string[]>JSON.parse(student.checkoutPhotos)
-          : [];
-
-        const checkinPhotos = await Promise.all(
-          checkinPhotoPaths.map((photoPath) =>
-            this.photoService.getPhotoFromPath(photoPath)
-          )
-        );
-        const checkoutPhotos = await Promise.all(
-          checkoutPhotoPaths.map((photoPath) =>
-            this.photoService.getPhotoFromPath(photoPath)
-          )
-        );
-
-        return {
-          ...student,
-          avatar: await this.photoService.getPhotoFromPath(
-            student.avatarUrl ?? ""
-          ),
-          checkinPhotos: checkinPhotos,
-          checkoutPhotos: checkoutPhotos
-        };
-      })
     );
-
     return {
-      students: refinedStudents
+      students: rawStudents
     };
   };
 
