@@ -13,6 +13,7 @@ import Body from "../../../src/components/Body";
 import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
 import WhiteBody from "../../../src/components/WhiteBody";
 import CustomTitle from "../../../src/components/common/CustomTitle";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const AddLetter = () => {
   const now = moment();
@@ -34,6 +35,7 @@ const AddLetter = () => {
         setSubmitError(["other"]);
       }
       setAlertModalVisible(true);
+      router.back();
     }
   });
 
@@ -53,7 +55,6 @@ const AddLetter = () => {
       studentId: studentId,
       photos: images
     });
-    router.back();
   };
 
   return (
@@ -62,6 +63,7 @@ const AddLetter = () => {
         title={"Tạo lời nhắn"}
         addButtonHandler={onSubmit}
       />
+      <LoadingBar isFetching={postNoteThreadMutation.isLoading} />
 
       <ScrollView className="flex-1">
         <View className={"mb-3 flex-1"}>

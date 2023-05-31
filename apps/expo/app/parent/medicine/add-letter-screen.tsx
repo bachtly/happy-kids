@@ -17,6 +17,7 @@ import { ErrorContext } from "../../../src/utils/error-context";
 import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
 import CustomTitle from "../../../src/components/common/CustomTitle";
 import WhiteBody from "../../../src/components/WhiteBody";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const AddLetter = () => {
   const now = moment();
@@ -41,7 +42,8 @@ const AddLetter = () => {
           message,
           errorContext,
           authContext
-        )
+        ),
+      onSuccess: () => router.back()
     });
 
   const onSubmit = () => {
@@ -74,7 +76,6 @@ const AddLetter = () => {
       );
       return;
     }
-
     postMedicineLetterMutation.mutate({
       studentId: studentId,
       startDate: dateStart.toDate(),
@@ -92,8 +93,6 @@ const AddLetter = () => {
       })),
       note: note
     });
-
-    router.back();
   };
 
   if (!studentId)
@@ -110,7 +109,7 @@ const AddLetter = () => {
         title={"Tạo đơn dặn thuốc"}
         addButtonHandler={() => onSubmit()}
       />
-
+      <LoadingBar isFetching={postMedicineLetterMutation.isLoading} />
       <ScrollView className="flex-1">
         <View className={"mb-3 flex-1"}>
           <WhiteBody>
@@ -153,7 +152,6 @@ const AddLetter = () => {
               multiline
               onChangeText={(input) => setNote(input)}
               value={note}
-              outlineStyle={note === "" ? { borderColor: "red" } : {}}
             />
           </WhiteBody>
         </View>

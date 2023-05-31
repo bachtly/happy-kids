@@ -15,6 +15,7 @@ import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScreen";
 import WhiteBody from "../../../src/components/WhiteBody";
 import CustomTitle from "../../../src/components/common/CustomTitle";
+import LoadingBar from "../../../src/components/common/LoadingBar";
 
 const AddLetter = () => {
   const now = moment();
@@ -35,7 +36,8 @@ const AddLetter = () => {
         message,
         errorContext,
         authContext
-      )
+      ),
+    onSuccess: () => router.back()
   });
 
   const onSubmit = () => {
@@ -79,16 +81,14 @@ const AddLetter = () => {
         reason: reason,
         photos: images
       });
-
-    router.back();
   };
-
   return (
     <Body>
       <CustomWhiteStackScreen
         title={"Tạo đơn xin nghỉ"}
         addButtonHandler={onSubmit}
       />
+      <LoadingBar isFetching={postLeaveLetterMutation.isLoading} />
 
       <ScrollView className="flex-1">
         <View className={"mb-3 flex-1"}>
