@@ -1,15 +1,14 @@
-import { Text, useTheme, Avatar } from "react-native-paper";
+import { Text, useTheme, IconButton } from "react-native-paper";
 import { View, TextInput } from "react-native";
 import moment from "moment";
 import {
   DAILY_REMARK_ACTIVITY_VERBOSE,
   DailyRemarkModel
 } from "../../models/DailyRemarkModels";
-import defaultAvatar from "../../../assets/images/default-user-avatar.png";
-import UnderlineButton from "../common/UnderlineButton";
 import CustomCard from "../CustomCard";
-import { useState } from "react";
+import React, { useState } from "react";
 import AddDailyRemarkModal from "./AddDailyRemarkModal";
+import UserWithAvatar from "../common/UserWithAvatar";
 
 const DATE_OF_WEEK = [
   "Chủ nhật",
@@ -48,29 +47,26 @@ const DailyRemarkItem = ({
     <CustomCard>
       {/*The account header*/}
       <View className={"mb-3 flex-row space-x-3"}>
-        <Avatar.Image
-          className={"my-auto"}
-          source={
-            isTeacher
-              ? item.studentAvatar
-                ? { uri: `data:image/jpeg;base64,${item.studentAvatar}` }
-                : defaultAvatar
-              : item.teacherAvatar
-              ? { uri: `data:image/jpeg;base64,${item.teacherAvatar}` }
-              : defaultAvatar
-          }
-          size={42}
-        />
-        <View className={"justify-center"}>
-          <Text className={""} variant={"titleSmall"}>
-            {isTeacher ? item.studentFullname : item.teacherFullname}
-          </Text>
-          <Text className={""} variant={"bodyMedium"}>
-            {item.date
+        <UserWithAvatar
+          avatar={isTeacher ? item.studentAvatar : item.teacherAvatar}
+          name={isTeacher ? item.studentFullname : item.teacherFullname}
+          extraInfo={
+            item.date
               ? getDateString(item.date, DATE_FORMAT)
-              : getDateString(date, DATE_FORMAT)}
-          </Text>
-        </View>
+              : getDateString(date, DATE_FORMAT)
+          }
+          rightButton={
+            isTeacher ? (
+              <IconButton
+                icon={"pencil"}
+                iconColor={colors.primary}
+                size={16}
+                mode={"outlined"}
+                onPress={() => setAddRemarkModalVisible(true)}
+              />
+            ) : undefined
+          }
+        />
       </View>
 
       {item.id ? (
@@ -101,26 +97,18 @@ const DailyRemarkItem = ({
       )}
 
       {isTeacher && (
-        <>
-          <View className={"mt-1"} style={{ alignSelf: "flex-end" }}>
-            <UnderlineButton
-              onPress={() => {
-                setAddRemarkModalVisible(true);
-              }}
-            >
-              Thêm nhận xét
-            </UnderlineButton>
-          </View>
-          <AddDailyRemarkModal
-            visible={addRemarkModalVisible}
-            close={() => setAddRemarkModalVisible(false)}
-            submit={() => {
-              setAddRemarkModalVisible(false);
-              refresh && refresh();
-            }}
-            remark={item}
-          />
-        </>
+        <AddDailyRemarkModal
+          visible={addRemarkModalVisible}
+          close={() => {
+            setAddRemarkModalVisible(false);
+            refresh && refresh();
+          }}
+          submit={() => {
+            setAddRemarkModalVisible(false);
+            refresh && refresh();
+          }}
+          remark={item}
+        />
       )}
     </CustomCard>
   );

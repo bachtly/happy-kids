@@ -4,12 +4,14 @@ import { DB } from "kysely-codegen";
 import moment from "moment";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
+import type { PhotoServiceInterface } from "../utils/PhotoService";
 
 @injectable()
 class PeriodRemarkService {
   constructor(
     private mysqlDB: Kysely<DB>,
-    @inject("FileService") private fileService: FileServiceInterface
+    @inject("FileService") private fileService: FileServiceInterface,
+    @inject("PhotoService") private photoService: PhotoServiceInterface
   ) {}
 
   getPeriodRemarkList = async (studentId: string) => {
@@ -18,15 +20,6 @@ class PeriodRemarkService {
         studentId: studentId
       })}`
     );
-
-    const getPhoto = async (photoPath: string) => {
-      if (!photoPath || photoPath === "") return "";
-      try {
-        return await this.fileService.asyncReadFile(photoPath);
-      } catch (_) {
-        return "";
-      }
-    };
 
     const remarks = await Promise.all(
       await this.mysqlDB
@@ -46,7 +39,7 @@ class PeriodRemarkService {
           resp.flat().map(async (item) => ({
             ...item,
             teacherAvatar: item.teacherAvatarUrl
-              ? await getPhoto(item.teacherAvatarUrl)
+              ? await this.photoService.getPhotoFromPath(item.teacherAvatarUrl)
               : ""
           }))
         )
@@ -67,15 +60,6 @@ class PeriodRemarkService {
         classId: classId
       })}`
     );
-
-    const getPhoto = async (photoPath: string) => {
-      if (!photoPath || photoPath === "") return "";
-      try {
-        return await this.fileService.asyncReadFile(photoPath);
-      } catch (_) {
-        return "";
-      }
-    };
 
     const date = moment(moment(time).format("MM/DD/YYYY"), "MM/DD/YYYY");
     const startOfMonth = moment(date.toDate().setDate(1)).toDate();
@@ -116,7 +100,9 @@ class PeriodRemarkService {
         .then((resp) =>
           resp.flat().map(async (item) => ({
             ...item,
-            studentAvatar: item.avatarUrl ? await getPhoto(item.avatarUrl) : ""
+            studentAvatar: item.avatarUrl
+              ? await this.photoService.getPhotoFromPath(item.avatarUrl)
+              : ""
           }))
         )
         .catch((err: Error) => {
@@ -131,6 +117,7 @@ class PeriodRemarkService {
   };
 
   insertPeriodRemark = async (
+    remarkId: string | null,
     period: "Week" | "Month" | "Quarter" | "Year",
     content: string,
     startTime: Date,
@@ -140,6 +127,7 @@ class PeriodRemarkService {
   ) => {
     console.log(
       `insertPeriodRemark receive request ${JSON.stringify({
+        remarkId: remarkId,
         period: period,
         content: content,
         startTime: startTime,
@@ -151,24 +139,39 @@ class PeriodRemarkService {
 
     if (content.trim() === "") throw "Vui lòng nhập nội dung nhận xét";
 
-    const count = await this.mysqlDB
-      .insertInto("PeriodRemark")
-      .values({
-        period: period,
-        content: content,
-        startTime: startTime,
-        endTime: endTime,
-        studentId: studentId,
-        teacherId: teacherId
-      })
-      .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows)
-      .catch((err: Error) => {
-        console.log(err);
-        throw SYSTEM_ERROR_MESSAGE;
-      });
+    if (remarkId) {
+      await this.mysqlDB
+        .updateTable("PeriodRemark")
+        .set({
+          content: content,
+          teacherId: teacherId
+        })
+        .where("id", "=", remarkId)
+        .execute()
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        });
+    } else {
+      const count = await this.mysqlDB
+        .insertInto("PeriodRemark")
+        .values({
+          period: period,
+          content: content,
+          startTime: startTime,
+          endTime: endTime,
+          studentId: studentId,
+          teacherId: teacherId
+        })
+        .executeTakeFirstOrThrow()
+        .then((res) => res.numInsertedOrUpdatedRows)
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        });
 
-    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
+      if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
+    }
 
     return {};
   };

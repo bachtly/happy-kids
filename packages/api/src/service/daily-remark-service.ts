@@ -5,12 +5,16 @@ import moment from "moment/moment";
 import { v4 as uuidv4 } from "uuid";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
+import type { PhotoServiceInterface } from "../utils/PhotoService";
+import { z } from "zod";
+import { Activity } from "../router/remark/daily-remark-protocols";
 
 @injectable()
 class DailyRemarkService {
   constructor(
     private mysqlDB: Kysely<DB>,
-    @inject("FileService") private fileService: FileServiceInterface
+    @inject("FileService") private fileService: FileServiceInterface,
+    @inject("PhotoService") private photoService: PhotoServiceInterface
   ) {}
 
   getDailyRemarkList = async (
@@ -119,15 +123,6 @@ class DailyRemarkService {
       })}`
     );
 
-    const getPhoto = async (photoPath: string) => {
-      if (!photoPath || photoPath === "") return "";
-      try {
-        return await this.fileService.asyncReadFile(photoPath);
-      } catch (_) {
-        return "";
-      }
-    };
-
     const startOfDate = moment(moment(time).format("MM/DD/YYYY")).toDate();
     const endOfDate = moment(moment(time).format("MM/DD/YYYY"))
       .add(1, "day")
@@ -178,7 +173,9 @@ class DailyRemarkService {
         .then((resp) =>
           resp.flat().map(async (item) => ({
             ...item,
-            studentAvatar: item.avatarUrl ? await getPhoto(item.avatarUrl) : ""
+            studentAvatar: item.avatarUrl
+              ? await this.photoService.getPhotoFromPath(item.avatarUrl)
+              : ""
           }))
         )
         .catch((err: Error) => {
@@ -264,8 +261,7 @@ class DailyRemarkService {
   };
 
   insertDailyRemarkActivity = async (
-    activity: "Study" | "Eat" | "Sleep" | "Wc" | "Other",
-    content: string,
+    activities: z.infer<typeof Activity>[],
     remarkId: string | null,
     date: Date | null,
     studentId: string | null,
@@ -273,8 +269,7 @@ class DailyRemarkService {
   ) => {
     console.log(
       `insertDailyRemarkActivity receive request ${JSON.stringify({
-        activity: activity,
-        content: content,
+        activities: activities,
         remarkId: remarkId,
         date: date,
         studentId: studentId,
@@ -282,27 +277,32 @@ class DailyRemarkService {
       })}`
     );
 
-    if (content.trim() === "") throw "Vui lòng nhập nội dung nhận xét";
-
     if (remarkId === null) {
       remarkId = await this.insertDailyRemark(date, studentId, teacherId);
+    } else {
+      await this.mysqlDB
+        .deleteFrom("DailyRemarkActivity")
+        .where("dailyRemarkId", "=", remarkId)
+        .execute();
     }
 
-    const count = await this.mysqlDB
-      .insertInto("DailyRemarkActivity")
-      .values({
-        activity: activity,
-        content: content,
-        dailyRemarkId: remarkId
-      })
-      .executeTakeFirstOrThrow()
-      .then((res) => res.numInsertedOrUpdatedRows)
-      .catch((err: Error) => {
-        console.log(err);
-        throw SYSTEM_ERROR_MESSAGE;
-      });
+    activities.map(async ({ type, content }) => {
+      const count = await this.mysqlDB
+        .replaceInto("DailyRemarkActivity")
+        .values({
+          activity: type,
+          content: content,
+          dailyRemarkId: remarkId
+        })
+        .executeTakeFirstOrThrow()
+        .then((res) => res.numInsertedOrUpdatedRows)
+        .catch((err: Error) => {
+          console.log(err);
+          throw SYSTEM_ERROR_MESSAGE;
+        });
 
-    if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
+      if (!count || count <= 0) throw SYSTEM_ERROR_MESSAGE;
+    });
 
     return {};
   };

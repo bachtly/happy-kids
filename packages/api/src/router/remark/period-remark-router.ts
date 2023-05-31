@@ -35,6 +35,7 @@ const periodRemarkRouter = createTRPCRouter({
     .mutation(
       async ({ ctx, input }) =>
         await periodRemarkService.insertPeriodRemark(
+          input.id,
           input.period,
           input.content,
           input.startTime,

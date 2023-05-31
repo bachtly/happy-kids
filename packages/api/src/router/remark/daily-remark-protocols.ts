@@ -59,9 +59,13 @@ export {
   GetDailyRemarkListFromClassIdResponse
 };
 
+const Activity = z.object({
+  type: z.enum(["Study", "Eat", "Sleep", "Wc", "Other"]).nullable(),
+  content: z.string()
+});
+
 const InsertDailyRemarkActivityRequest = z.object({
-  activity: z.enum(["Study", "Eat", "Sleep", "Wc", "Other"]),
-  content: z.string(),
+  activities: z.array(Activity),
   remarkId: z.nullable(z.string()),
   date: z.nullable(z.date()),
   studentId: z.nullable(z.string())
@@ -69,4 +73,8 @@ const InsertDailyRemarkActivityRequest = z.object({
 
 const InsertDailyRemarkActivityResponse = z.object({});
 
-export { InsertDailyRemarkActivityRequest, InsertDailyRemarkActivityResponse };
+export {
+  Activity,
+  InsertDailyRemarkActivityRequest,
+  InsertDailyRemarkActivityResponse
+};

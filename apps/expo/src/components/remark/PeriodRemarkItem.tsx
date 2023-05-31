@@ -1,12 +1,10 @@
-import { Text, useTheme, Avatar } from "react-native-paper";
-import { View } from "react-native";
+import { Text, useTheme, IconButton } from "react-native-paper";
 import moment, { Moment } from "moment";
-import defaultAvatar from "../../../assets/images/default-user-avatar.png";
 import { PeriodRemarkModel } from "../../models/PeriodRemarkModels";
 import CustomCard from "../CustomCard";
-import UnderlineButton from "../common/UnderlineButton";
-import { useState } from "react";
+import React, { useState } from "react";
 import AddPeriodRemarkModal from "./AddPeriodRemarkModal";
+import UserWithAvatar from "../common/UserWithAvatar";
 
 const MONTH_FORMAT = "MM/YYYY";
 
@@ -28,32 +26,29 @@ const PeriodRemarkItem = ({
   return (
     <CustomCard>
       {/*The account header*/}
-      <View className={"mb-3 flex-row space-x-3"}>
-        <Avatar.Image
-          className={"my-auto"}
-          source={
-            isTeacher
-              ? item.studentAvatar
-                ? { uri: `data:image/jpeg;base64,${item.studentAvatar}` }
-                : defaultAvatar
-              : item.teacherAvatar
-              ? { uri: `data:image/jpeg;base64,${item.teacherAvatar}` }
-              : defaultAvatar
-          }
-          size={42}
-        />
-        <View className={"justify-center"}>
-          <Text className={""} variant={"titleSmall"}>
-            {isTeacher ? item.studentFullname : item.teacherFullname}
-          </Text>
-          <Text className={""} variant={"bodyMedium"}>
-            Tháng{" "}
-            {item.startTime
-              ? moment(item.startTime).format(MONTH_FORMAT)
-              : moment(time).format(MONTH_FORMAT)}
-          </Text>
-        </View>
-      </View>
+      <UserWithAvatar
+        avatar={isTeacher ? item.studentAvatar : item.teacherAvatar}
+        name={isTeacher ? item.studentFullname : item.teacherFullname}
+        extraInfo={`Tháng ${
+          item.startTime
+            ? moment(item.startTime).format(MONTH_FORMAT)
+            : moment(time).format(MONTH_FORMAT)
+        }`}
+        rightButton={
+          isTeacher ? (
+            <IconButton
+              icon={"pencil"}
+              iconColor={colors.primary}
+              size={16}
+              mode={"outlined"}
+              onPress={() => {
+                setAddRemarkModalVisible(true);
+                console.log("fuxk", addRemarkModalVisible);
+              }}
+            />
+          ) : undefined
+        }
+      />
 
       {item.id ? (
         <Text style={{ color: colors.onBackground }}>{item.content ?? ""}</Text>
@@ -61,17 +56,8 @@ const PeriodRemarkItem = ({
         <Text style={{ color: colors.onBackground }}>Chưa có nhận xét</Text>
       )}
 
-      {isTeacher && !item.id && (
+      {isTeacher && (
         <>
-          <View className={"mt-1"} style={{ alignSelf: "flex-end" }}>
-            <UnderlineButton
-              onPress={() => {
-                setAddRemarkModalVisible(true);
-              }}
-            >
-              Thêm nhận xét
-            </UnderlineButton>
-          </View>
           <AddPeriodRemarkModal
             visible={addRemarkModalVisible}
             close={() => setAddRemarkModalVisible(false)}

@@ -10,7 +10,7 @@ const UserWithAvatar = ({
   rightButton
 }: {
   avatar?: string | null;
-  name: string;
+  name?: string | null;
   extraInfo: string;
   rightButton?: React.ReactNode;
 }) => {
@@ -26,7 +26,7 @@ const UserWithAvatar = ({
         />
         <View>
           <Text className={""} variant={"titleSmall"}>
-            {name}
+            {name ?? "Chưa có tên"}
           </Text>
           <Text className={""} variant={"bodyMedium"}>
             {extraInfo}

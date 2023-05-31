@@ -39,8 +39,7 @@ const dailyRemarkRouter = createTRPCRouter({
     .mutation(
       async ({ ctx, input }) =>
         await dailyRemarkService.insertDailyRemarkActivity(
-          input.activity,
-          input.content,
+          input.activities,
           input.remarkId,
           input.date,
           input.studentId,

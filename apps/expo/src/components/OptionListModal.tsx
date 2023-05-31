@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Dialog, Portal, RadioButton } from "react-native-paper";
+import { Button, Dialog, RadioButton } from "react-native-paper";
+import RNModal from "react-native-modal";
 
 type OptionListDialogProps = {
   options: string[];
@@ -18,7 +19,12 @@ const OptionListModal = ({
   const [value, setValue] = useState(options[0]);
 
   return (
-    <Portal>
+    <RNModal
+      className={"m-0"}
+      isVisible={visible}
+      hasBackdrop={false}
+      hideModalContentWhileAnimating={true}
+    >
       <Dialog dismissable={false} visible={visible}>
         <Dialog.Title>Cập nhật trạng thái đơn</Dialog.Title>
         <Dialog.ScrollArea className={"flex flex-row items-center px-0"}>
@@ -40,7 +46,7 @@ const OptionListModal = ({
           <Button onPress={() => submit(value)}>Lưu</Button>
         </Dialog.Actions>
       </Dialog>
-    </Portal>
+    </RNModal>
   );
 };
 
