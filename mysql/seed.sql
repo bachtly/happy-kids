@@ -244,24 +244,34 @@ VALUES
 ;
 
 -- LeaveLetter
-INSERT INTO LeaveLetter (createdAt, status, startDate, endDate, reason, updatedByTeacherId, studentId, createdByParentId)
+SET @leaveletid1 = uuid();
+SET @leaveletid2 = uuid();
+INSERT INTO LeaveLetter (id, createdAt, status, startDate, endDate, reason, updatedByTeacherId, studentId, createdByParentId)
 VALUES
-    ('2023-01-01', 'Confirmed', '2023-01-02', '2023-01-02', 'Bé bị sốt', @tid1, @stid1, @prid1),
-    ('2023-01-03', 'Rejected', '2023-01-03', '2023-01-03', 'Bé đi du lịch với cả nhà', @tid1, @stid4,@prid1),
-    ('2023-01-13', 'NotConfirmed', '2023-01-16', '2023-01-16', "Du lich", null, @stid2,@prid1)
+    (@leaveletid1, '2023-05-31', 'Confirmed', '2023-06-02', '2023-06-02', 'Bé bị sốt', @tid1, @stid1, @prid1),
+    (@leaveletid2, '2023-05-31', 'Rejected', '2023-06-04', '2023-06-04', 'Bé đi du lịch với cả nhà', @tid1, @stid4, @prid1)
 ;
+
+INSERT INTO LeaveLetterPhoto (photo, leaveLetterId)
+VALUES ('./seed/leave/fever', @leaveletid1);
 
 -- Medicine
 SET @medletid1 = uuid();
+SET @medphotoc = './seed/medicine/vitaminc';
+SET @medphotodc = './seed/medicine/dauca';
 INSERT INTO MedicineLetter (id, startDate, endDate, createdAt, status, note, updatedByTeacherId, createdByParentId, studentId)
-VALUES (@medletid1,'2023-01-04','2023-01-14', '2023-01-03', 'Confirmed', 'Bé bị sốt', @tid2, @prid1, @stid1);
+VALUES (@medletid1,'2023-06-04','2023-06-14', '2023-05-31', 'Confirmed', 'Bé bị sốt', @tid2, @prid1, @stid1);
 
 SET @medid1 = uuid();
+SET @medid2 = uuid();
 INSERT INTO Medicine (id, name, amount, medicineLetterId, photo, time)
-VALUES (@medid1, "Paracetamol", '1 vien', @medletid1, 'https://nhathuocanphuoc.vn/wp-content/uploads/2020/10/Tottri.webp', 450);
+VALUES 
+    (@medid1, "Vitamin C", '2 vien', @medletid1, @medphotoc , 450),
+    (@medid2, "Dầu cá", '3 vien', @medletid1, @medphotodc , 450)
+;
 
 INSERT INTO MedicineLetterUseDiary (id, status, date, note, medicineLetterId)
-VALUES (@medid1,"Used", "2023-01-04", 'be uong het thuoc', @medletid1);
+VALUES (@medid1,"Used", "2023-06-04", 'Bé uống hết thuốc', @medletid1);
 
 -- PickupLetter
 SET @pickupid1 = 'pickupid-1000-0000-0000-000000000000';
@@ -280,13 +290,14 @@ VALUES
 
 -- NoteLetter
 SET @notletid1 = 'notletid-1000-0000-0000-000000000000';
-INSERT INTO NoteThread (id, createdAt, startDate, endDate, status, content, createdByParentId, studentId)
-VALUES (@notletid1, '2023-01-05', '2023-01-05', '2023-01-05', 'Confirmed', 'Hôm nay bé bị cảm nhẹ, nhờ cô để mắt tới bé nhiều hơn', @prid1, @stid1);
+SET @notletphotos = '{"photoPaths": ["./seed/note/canmongtay"]}';
+INSERT INTO NoteThread (id, createdAt, startDate, endDate, status, content, createdByParentId, studentId, photos)
+VALUES (@notletid1, '2023-05-30', '2023-05-30', '2023-06-03', 'Confirmed', 'Bé hay cắn móng tay, cô chú ý giúp', @prid1, @stid1, @notletphotos);
 
 INSERT INTO NoteMessage (createdAt, content, userId, noteThreadId)
 VALUES
-    ('2023-01-05', 'Dạ vâng chị', @tid1, @notletid1),
-    ('2023-01-05', 'Cảm ơn cô nhiều nhé', @prid3, @notletid1)
+    ('2023-05-30', 'Dạ vâng chị', @tid1, @notletid1),
+    ('2023-05-30', 'Cảm ơn cô nhiều nhé', @prid3, @notletid1)
 ;
 
 -- Post1
@@ -352,15 +363,26 @@ VALUES
 
 -- Album
 SET @albumid1 = 'albumid1-0000-0000-0000-000000000000';
+Set @album1photo='["./seed/album/park1","./seed/album/park2","./seed/album/park3","./seed/album/park4","./seed/album/park5","./seed/album/park6","./seed/album/park7","./seed/album/park8"]';
 INSERT INTO Album (id, title, description, photos, createdAt, classId, eventDate, teacherId)
-VALUES (@albumid1, 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', 'Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa', @multi_avatar, '2023-01-02T17:00:00', @clid1, '2023-01-02', @tid1);
+VALUES (@albumid1, 'Các bé đi chơi công viên', 'Hoạt động ngoại khóa bao gồm chơi thể thao, vui chơi giải trí ở công viên Lê Văn Tám', @album1photo, '2023-01-02T17:00:00', @clid1, '2023-01-02', @tid1);
 
 SET @topicid1 = 'topicid1-0000-0000-0000-000000000000';
+SET @topicid2 = 'topicid2-0000-0000-0000-000000000000';
+SET @topicid3 = 'topicid3-0000-0000-0000-000000000000';
 INSERT INTO AlbumTopic (id, topic)
-VALUES (@topicid1, 'Bé chơi với động vật');
+VALUES 
+    (@topicid1, 'Dã ngoại'),
+    (@topicid2, 'Thể dục - thể thao'),
+    (@topicid3, 'Công viên')
+;
 
 INSERT INTO AlbumTopicRelationship(albumId, topicId)
-VALUES (@albumid1, @topicid1);
+VALUES 
+    (@albumid1, @topicid1),
+    (@albumid1, @topicid2),
+    (@albumid1, @topicid3)
+;
 
 -- Attendance T2 2023-01-02
 INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)
