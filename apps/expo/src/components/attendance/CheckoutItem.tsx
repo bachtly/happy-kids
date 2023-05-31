@@ -77,20 +77,26 @@ const CheckoutItem = (props: CheckoutItemProps) => {
         <MultipleImageView images={props.attendance.checkoutPhotos ?? []} />
       )}
 
-      {props.attendance.pickupLetterStatus && (
-        <UnderlineButton
-          icon={"file"}
-          onPress={() => {
-            router.push({
-              pathname: "teacher/pickup/pickup-detail-screen",
-              params: { id: props.attendance.pickupLetterId }
-            });
-          }}
-        >
-          Bé có đơn đón về (
-          {<LetterStatusText status={props.attendance.pickupLetterStatus} />})
-        </UnderlineButton>
-      )}
+      {props.attendance.pickupLetters &&
+        props.attendance.pickupLetters.map((pickupLetter, key) => (
+          <View key={key}>
+            <UnderlineButton
+              icon={"file"}
+              onPress={() => {
+                router.push({
+                  pathname: "teacher/pickup/pickup-detail-screen",
+                  params: { id: pickupLetter.id }
+                });
+              }}
+            >
+              Bé có đơn đón về (
+              {pickupLetter.status && (
+                <LetterStatusText status={pickupLetter.status} />
+              )}
+              )
+            </UnderlineButton>
+          </View>
+        ))}
     </CustomCard>
   );
 };

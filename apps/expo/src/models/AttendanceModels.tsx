@@ -28,15 +28,14 @@ interface AttendanceStatisticsModel {
 }
 
 interface AttendancePickupLetter {
-  id: string |null;
-  status: PickupLetterStatus|null;
+  id: string | null;
+  status: PickupLetterStatus | null;
 }
 
 interface AttendanceLeaveletter {
-  id: string |null;
+  id: string | null;
   status: LeaveLetterStatus | null;
 }
-
 
 interface AttendanceStudentModel {
   id: string | null;
