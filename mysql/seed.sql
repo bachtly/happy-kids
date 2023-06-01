@@ -296,8 +296,8 @@ VALUES (@notletid1, '2023-05-30', '2023-05-30', '2023-06-03', 'Confirmed', 'Bé 
 
 INSERT INTO NoteMessage (createdAt, content, userId, noteThreadId)
 VALUES
-    ('2023-05-30', 'Dạ vâng chị', @tid1, @notletid1),
-    ('2023-05-30', 'Cảm ơn cô nhiều nhé', @prid3, @notletid1)
+    ('2023-05-30T08:00:00', 'Dạ vâng chị', @tid1, @notletid1),
+    ('2023-05-30T08:03:00', 'Cảm ơn cô nhiều nhé', @prid1, @notletid1)
 ;
 
 -- Post1
