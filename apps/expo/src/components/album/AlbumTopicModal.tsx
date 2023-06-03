@@ -1,13 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import { ScrollView, Pressable, View } from "react-native";
-import {
-  Button,
-  Checkbox,
-  Portal,
-  Text,
-  Searchbar,
-  Divider
-} from "react-native-paper";
+import { Button, Checkbox, Text, Searchbar, Divider } from "react-native-paper";
 import RNModal from "react-native-modal";
 
 import { api } from "../../utils/api";
@@ -109,99 +102,98 @@ const AlbumTopicModal: FC<PropsType> = (props) => {
       else return re.add(albumTopicId);
     });
   };
+
   return (
-    <Portal>
-      <RNModal
-        className="m-0"
-        isVisible={visible}
-        hasBackdrop={false}
-        hideModalContentWhileAnimating={true}
-        useNativeDriver={true}
-      >
-        <View className={"h-full bg-white pb-1"}>
-          <Searchbar
-            className={"w-full"}
-            placeholder="Tìm kiếm chủ đề"
-            value={curTopic}
-            onChangeText={setCurTopic}
-          />
-          <Divider />
-          <ScrollView
-            contentContainerStyle={{
-              paddingVertical: 10,
-              paddingHorizontal: 20
+    <RNModal
+      className="m-0"
+      isVisible={visible}
+      hasBackdrop={false}
+      hideModalContentWhileAnimating={true}
+      useNativeDriver={true}
+    >
+      <View className={"h-full bg-white pb-1"}>
+        <Searchbar
+          className={"w-full"}
+          placeholder="Tìm kiếm chủ đề"
+          value={curTopic}
+          onChangeText={setCurTopic}
+        />
+        <Divider />
+        <ScrollView
+          contentContainerStyle={{
+            paddingVertical: 10,
+            paddingHorizontal: 20
+          }}
+        >
+          {displayCheckedTopics.length > 0 && (
+            <Text variant="labelLarge" className="mb-1">
+              Chủ đề đã chọn
+            </Text>
+          )}
+          {displayCheckedTopics.map((item) => (
+            <Pressable
+              className={"mb-1"}
+              onPress={() => {
+                addAlbumTopic(item.id);
+              }}
+              key={item.id}
+            >
+              <TopicItem
+                topic={item.topic}
+                checked={checkedTopics.has(item.id)}
+              />
+            </Pressable>
+          ))}
+          {displayTopics.length > 0 && (
+            <Text variant="labelLarge" className="mb-1">
+              Danh sách chủ đề
+            </Text>
+          )}
+          {displayTopics.map((item) => (
+            <Pressable
+              className={"mb-1"}
+              onPress={() => {
+                addAlbumTopic(item.id);
+              }}
+              key={item.id}
+            >
+              <TopicItem
+                topic={item.topic}
+                checked={checkedTopics.has(item.id)}
+              />
+            </Pressable>
+          ))}
+        </ScrollView>
+
+        {curTopic.length > 0 && (
+          <Button
+            mode="outlined"
+            onPress={() => {
+              topicMutation.mutate({ topic: curTopic });
             }}
           >
-            {displayCheckedTopics.length > 0 && (
-              <Text variant="labelLarge" className="mb-1">
-                Chủ đề đã chọn
-              </Text>
-            )}
-            {displayCheckedTopics.map((item) => (
-              <Pressable
-                className={"mb-1"}
-                onPress={() => {
-                  addAlbumTopic(item.id);
-                }}
-                key={item.id}
-              >
-                <TopicItem
-                  topic={item.topic}
-                  checked={checkedTopics.has(item.id)}
-                />
-              </Pressable>
-            ))}
-            {displayTopics.length > 0 && (
-              <Text variant="labelLarge" className="mb-1">
-                Danh sách chủ đề
-              </Text>
-            )}
-            {displayTopics.map((item) => (
-              <Pressable
-                className={"mb-1"}
-                onPress={() => {
-                  addAlbumTopic(item.id);
-                }}
-                key={item.id}
-              >
-                <TopicItem
-                  topic={item.topic}
-                  checked={checkedTopics.has(item.id)}
-                />
-              </Pressable>
-            ))}
-          </ScrollView>
-
-          {curTopic.length > 0 && (
-            <Button
-              mode="outlined"
-              onPress={() => {
-                topicMutation.mutate({ topic: curTopic });
-              }}
-            >
-              Thêm chủ đề {curTopic}
-            </Button>
-          )}
-          <View className="flex flex-row items-center justify-evenly">
-            <Button mode={"outlined"} className="w-1/2" onPress={close}>
-              Hủy
-            </Button>
-            <Button
-              mode={"contained"}
-              className="w-1/2"
-              onPress={() => {
-                props.setTopics(
-                  topicList.filter((item) => checkedTopics.has(item.id))
-                );
-                close();
-              }}
-            >
-              Lưu
-            </Button>
-          </View>
+            Thêm chủ đề {curTopic}
+          </Button>
+        )}
+        <View className="flex flex-row items-center justify-evenly">
+          <Button mode={"outlined"} className="w-1/2" onPress={close}>
+            Hủy
+          </Button>
+          <Button
+            mode={"contained"}
+            className="w-1/2"
+            onPress={() => {
+              props.setTopics(
+                topicList.filter((item) => checkedTopics.has(item.id))
+              );
+              close();
+            }}
+          >
+            Lưu
+          </Button>
         </View>
-      </RNModal>
-    </Portal>
+      </View>
+    </RNModal>
   );
 };
 
