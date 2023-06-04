@@ -19,9 +19,13 @@ const CheckEmailExistenceParams = z.object({
   email: z.string()
 });
 
-const CheckEmailExistenceResp = z.object({
+export const CheckEmailExistenceRespZod = z.object({
   isExisted: z.boolean()
 });
+
+export type CheckEmailExistenceResp = z.infer<
+  typeof CheckEmailExistenceRespZod
+>;
 
 const SignupParams = z.object({
   email: z.string(),
@@ -29,10 +33,4 @@ const SignupParams = z.object({
   fullName: z.string()
 });
 
-export {
-  LoginResponse,
-  LoginParams,
-  CheckEmailExistenceParams,
-  CheckEmailExistenceResp,
-  SignupParams
-};
+export { LoginResponse, LoginParams, CheckEmailExistenceParams, SignupParams };

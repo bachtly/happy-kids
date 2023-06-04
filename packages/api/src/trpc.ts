@@ -6,10 +6,11 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { authService } from "./service/common-services";
-import { CreateNextContextOptions } from "@trpc/server/dist/adapters/next";
+import { TRPCError, initTRPC } from "@trpc/server";
+import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { getServerSession } from "@acme/auth";
 
 /**
  * 1. CONTEXT
@@ -36,8 +37,18 @@ import { CreateNextContextOptions } from "@trpc/server/dist/adapters/next";
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = ({ req, res }: CreateNextContextOptions) => {
-  return { req, res, user: { userId: "" } };
+
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+  const { req, res } = opts;
+
+  // Get the session from the server using the unstable_getServerSession wrapper function
+  const session = await getServerSession({ req, res });
+
+  return {
+    req,
+    res,
+    session: session
+  };
 };
 
 export type Context = ReturnType<typeof createTRPCContext>;
@@ -78,10 +89,32 @@ export const publicProcedure = t.procedure;
  * Reusable middleware that enforces users are logged in before running the
  * procedure
  */
-const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
-  await authService.deserializeUser(ctx);
 
-  return next();
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
+  // get userId from authorization header
+  const userId = await authService.deserializeUser(ctx.req).catch(() => null);
+  if (userId) {
+    return next({
+      ctx: {
+        session: { ...ctx.session, user: { id: userId } }
+      }
+    });
+
+    // get userId from next-auth server context
+  } else if (ctx.session && ctx.session.user.id) {
+    return next({
+      ctx: {
+        session: { ...ctx.session, user: { id: ctx.session.user.id } }
+      }
+    });
+
+    // user not logged in
+  } else {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Đã xảy ra lỗi. Vui lòng đăng nhập lại."
+    });
+  }
 });
 
 /**

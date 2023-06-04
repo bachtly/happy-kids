@@ -2,7 +2,8 @@ import { attendanceRouter } from "./router/attendance/attendance-router";
 import { authRouter } from "./router/authentication/auth-router";
 import { leaveletterRouter } from "./router/leaveletter/leaveletter-router";
 import { medicineRouter } from "./router/medicine/medicine-router";
-import { createTRPCRouter } from "./trpc";
+import { userRouter } from "./router/user/user-router";
+import { schoolRouter } from "./router/school/school-router";
 import { pickupRouter } from "./router/pickup/pickup-router";
 import { dailyRemarkRouter } from "./router/remark/daily-remark-router";
 import { periodRemarkRouter } from "./router/remark/period-remark-router";
@@ -11,6 +12,7 @@ import { postRouter } from "./router/post/post-router";
 import { accountRouter } from "./router/account/account-router";
 import { notiRouter } from "./router/noti/noti-router";
 import { albumRouter } from "./router/album/album-router";
+import { createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -18,6 +20,8 @@ export const appRouter = createTRPCRouter({
   medicine: medicineRouter,
   leaveletter: leaveletterRouter,
   pickup: pickupRouter,
+  user: userRouter,
+  school: schoolRouter,
   dailyRemark: dailyRemarkRouter,
   periodRemark: periodRemarkRouter,
   note: noteRouter,

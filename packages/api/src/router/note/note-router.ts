@@ -13,7 +13,7 @@ export const noteRouter = createTRPCRouter({
     .input(PostNoteThreadParams)
     .mutation(async ({ ctx, input }) => {
       return await noteService.createNoteThread(
-        ctx.user.userId,
+        ctx.session.user.id,
         input.studentId,
         input.startDate,
         input.endDate,
@@ -49,7 +49,7 @@ export const noteRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await noteService.updateNoteStatus(
         input.noteThreadId,
-        ctx.user.userId,
+        ctx.session.user.id,
         input.status
       );
     })

@@ -42,7 +42,8 @@ const pickupRouter = createTRPCRouter({
     .input(GetRelativeListRequest)
     // .output(GetRelativeListResponse)
     .mutation(
-      async ({ ctx }) => await pickupService.getRelativeList(ctx.user.userId)
+      async ({ ctx }) =>
+        await pickupService.getRelativeList(ctx.session.user.id)
     ),
 
   insertRelative: protectedProcedure
@@ -55,7 +56,7 @@ const pickupRouter = createTRPCRouter({
           input.note,
           input.phone,
           input.avatarData,
-          ctx.user.userId
+          ctx.session.user.id
         )
     ),
 
@@ -89,7 +90,7 @@ const pickupRouter = createTRPCRouter({
     .output(ConfirmPickupLetterResponse)
     .mutation(
       async ({ ctx, input }) =>
-        await pickupService.confirmPickupLetter(input.id, ctx.user.userId)
+        await pickupService.confirmPickupLetter(input.id, ctx.session.user.id)
     ),
 
   rejectPickupLetter: protectedProcedure
@@ -97,7 +98,7 @@ const pickupRouter = createTRPCRouter({
     .output(RejectPickupLetterResponse)
     .mutation(
       async ({ ctx, input }) =>
-        await pickupService.rejectPickupLetter(input.id, ctx.user.userId)
+        await pickupService.rejectPickupLetter(input.id, ctx.session.user.id)
     )
 });
 

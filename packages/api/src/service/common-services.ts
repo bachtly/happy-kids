@@ -6,6 +6,9 @@ import { container } from "tsyringe";
 import AttendanceService from "./attendance-service";
 import LoginService from "./login-service";
 import SignupService from "./signup-service";
+import ClassService from "./class-service";
+import UserService from "./user-service";
+import SchoolService from "./school-service";
 import MedicineService from "./medicine-service";
 import PickupService from "./pickup-service";
 import LeaveLetterService from "./leaveletter-service";
@@ -20,6 +23,7 @@ import { FileService } from "../utils/FileService";
 import { TimeService } from "../utils/TimeService";
 import AlbumService from "./album-service";
 import AuthService from "./auth-service";
+import StudentService from "./student-service";
 
 container.register<Kysely<DB>>(Kysely, { useValue: mysqlDB });
 container.register("FileService", { useClass: FileService });
@@ -38,6 +42,7 @@ export const medicineService = container.resolve(MedicineService);
 export const leaveletterService = container.resolve(LeaveLetterService);
 
 export const dailyRemarkService = container.resolve(DailyRemarkService);
+
 export const periodRemarkService = container.resolve(PeriodRemarkService);
 
 export const postService = container.resolve(PostService);
@@ -49,3 +54,11 @@ export const notiService = container.resolve(NotiService);
 export const authService = container.resolve(AuthService);
 
 export const albumService = container.resolve(AlbumService);
+
+export const classService = container.resolve(ClassService);
+
+export const userService = container.resolve(UserService);
+
+export const schoolService = container.resolve(SchoolService);
+
+export const studentService = container.resolve(StudentService);

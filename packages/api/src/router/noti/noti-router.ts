@@ -8,7 +8,7 @@ const notiRouter = createTRPCRouter({
     .output(GetNotiListResponse)
     .mutation(
       async ({ ctx, input }) =>
-        await notiService.getNotiList(ctx.user.userId, input.classId)
+        await notiService.getNotiList(ctx.session.user.id, input.classId)
     )
 });
 

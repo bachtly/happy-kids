@@ -40,23 +40,25 @@ const HistoryScreen = () => {
 
   const attMutation = api.attendance.getAttendanceList.useMutation({
     onSuccess: (resp) => setAttendanceList(resp.attendances),
-    onError: ({ message, data }) =>
+    onError: ({ message, data }) => {
       trpcErrorHandler(() => {})(
         data?.code ?? "",
         message,
         errorContext,
         authContext
-      )
+      );
+    }
   });
   const statMutation = api.attendance.getAttendanceStatistics.useMutation({
     onSuccess: (resp) => setStatistics(resp.statistics),
-    onError: ({ message, data }) =>
+    onError: ({ message, data }) => {
       trpcErrorHandler(() => {})(
         data?.code ?? "",
         message,
         errorContext,
         authContext
-      )
+      );
+    }
   });
 
   // update list when search criterias change

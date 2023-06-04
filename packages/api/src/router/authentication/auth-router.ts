@@ -1,13 +1,9 @@
 import { loginService, signupService } from "../../service/common-services";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure
-} from "../../trpc";
+import { createTRPCRouter, publicProcedure } from "../../trpc";
 
 import {
   CheckEmailExistenceParams,
-  CheckEmailExistenceResp,
+  CheckEmailExistenceRespZod,
   LoginParams,
   SignupParams
 } from "./protocols";
@@ -15,19 +11,18 @@ import {
 import { z } from "zod";
 
 export const authRouter = createTRPCRouter({
-  getSecretMessage: protectedProcedure.query(() => {
-    // testing type validation of overridden next-auth Session in @acme/auth package
-    return "you can see this secret message!";
+  getSession: publicProcedure.query(({ ctx }) => {
+    return ctx.session;
   }),
   userLogin: publicProcedure
     .input(LoginParams)
     .mutation(
-      async ({ ctx, input }) =>
-        await loginService.loginUser(ctx, input.username, input.password)
+      async ({ input }) =>
+        await loginService.loginUser(input.username, input.password)
     ),
   checkEmailExistence: publicProcedure
     .input(CheckEmailExistenceParams)
-    .output(CheckEmailExistenceResp)
+    .output(CheckEmailExistenceRespZod)
     .mutation(async ({ input }) => {
       return await signupService.checkEmailExistence(input.email);
     }),
@@ -35,7 +30,7 @@ export const authRouter = createTRPCRouter({
     .input(SignupParams)
     .output(z.void())
     .mutation(async ({ input }) => {
-      return await signupService.signupUser(
+      return await signupService.signupUserExternalUser(
         input.email,
         input.password,
         input.fullName

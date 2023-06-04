@@ -66,3 +66,7 @@ export const numbersZeroToNine = [
   "8",
   "9"
 ];
+
+export const showStringOrEmpty = (str: string | null) => {
+  return str ? str : "";
+};

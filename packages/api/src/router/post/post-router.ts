@@ -20,7 +20,7 @@ const postRouter = createTRPCRouter({
     .mutation(
       async ({ ctx, input }) =>
         await postService.getPostList(
-          ctx.user.userId,
+          ctx.session.user.id,
           input.page,
           input.itemsPerPage
         )
@@ -30,7 +30,7 @@ const postRouter = createTRPCRouter({
     .input(GetUserInfoRequest)
     .output(GetUserInfoResponse)
     .mutation(
-      async ({ ctx }) => await postService.getUserInfo(ctx.user.userId)
+      async ({ ctx }) => await postService.getUserInfo(ctx.session.user.id)
     ),
 
   insertPost: protectedProcedure
@@ -41,7 +41,7 @@ const postRouter = createTRPCRouter({
         await postService.insertPost(
           input.content,
           input.photos,
-          ctx.user.userId
+          ctx.session.user.id
         )
     ),
 
@@ -62,7 +62,11 @@ const postRouter = createTRPCRouter({
     .output(CommentResponse)
     .mutation(
       async ({ ctx, input }) =>
-        await postService.comment(input.content, ctx.user.userId, input.postId)
+        await postService.comment(
+          input.content,
+          ctx.session.user.id,
+          input.postId
+        )
     )
 });
 

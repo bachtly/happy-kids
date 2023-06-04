@@ -41,7 +41,7 @@ const periodRemarkRouter = createTRPCRouter({
           input.startTime,
           input.endTime,
           input.studentId,
-          ctx.user.userId
+          ctx.session.user.id
         )
     )
 });

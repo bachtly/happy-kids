@@ -1,31 +1,34 @@
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
-import { z } from "zod";
 import { injectable } from "tsyringe";
 import { CheckEmailExistenceResp } from "../router/authentication/protocols";
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcryptjs";
+import UserService from "./user-service";
 
 @injectable()
 class SignupService {
-  constructor(private mysqlDB: Kysely<DB>) {}
+  constructor(private mysqlDB: Kysely<DB>, private userService: UserService) {}
 
-  checkEmailExistence = (
-    email: string
-  ): Promise<z.infer<typeof CheckEmailExistenceResp>> => {
-    return this.mysqlDB
-      .selectFrom("User")
-      .select("id")
-      .where("email", "=", email)
-      .executeTakeFirst()
-      .then((resp) => {
+  checkEmailExistence = (email: string): Promise<CheckEmailExistenceResp> => {
+    return this.userService.getUserInfoFromEmail(email).then((resp) => {
+      if (resp) {
         return {
-          isExisted: !!resp
+          isExisted: true
         };
-      });
+      } else {
+        return {
+          isExisted: false
+        };
+      }
+    });
   };
 
-  signupUser = (email: string, password: string, fullName: string) => {
+  signupUserExternalUser = (
+    email: string,
+    password: string,
+    fullName: string
+  ): Promise<void> => {
     const userId = uuidv4();
     return bcrypt
       .hash(password, 10)
@@ -41,7 +44,7 @@ class SignupService {
           })
           .executeTakeFirst()
       )
-      .then((_) => {});
+      .then();
   };
 }
 

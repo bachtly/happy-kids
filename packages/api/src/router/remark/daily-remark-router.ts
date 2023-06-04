@@ -43,7 +43,7 @@ const dailyRemarkRouter = createTRPCRouter({
           input.remarkId,
           input.date,
           input.studentId,
-          ctx.user.userId
+          ctx.session.user.id
         )
     )
 });

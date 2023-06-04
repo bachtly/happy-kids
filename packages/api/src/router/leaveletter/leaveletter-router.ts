@@ -12,7 +12,7 @@ export const leaveletterRouter = createTRPCRouter({
     .input(PostLeaveLetterParams)
     .mutation(async ({ ctx, input }) => {
       return await leaveletterService.createLeaveLetter(
-        ctx.user.userId,
+        ctx.session.user.id,
         input.studentId,
         input.startDate,
         input.endDate,
@@ -40,7 +40,7 @@ export const leaveletterRouter = createTRPCRouter({
     .input(UpdateStatusLeaveLetterParams)
     .mutation(async ({ ctx, input }) => {
       return await leaveletterService.updateLeaveLetter(
-        ctx.user.userId,
+        ctx.session.user.id,
         input.leaveLetterId,
         input.status
       );

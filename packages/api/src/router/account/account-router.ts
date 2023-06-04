@@ -6,13 +6,13 @@ export const accountRouter = createTRPCRouter({
   getAccountInfo: protectedProcedure
     .input(GetAccountInfo)
     .query(async ({ ctx }) => {
-      return await accountService.getAccountInfo(ctx.user.userId);
+      return await accountService.getAccountInfo(ctx.session.user.id);
     }),
   updateAccountInfo: protectedProcedure
     .input(UpdateAccountInfo)
     .mutation(async ({ ctx, input }) => {
       return await accountService.updateAccountInfo(
-        ctx.user.userId,
+        ctx.session.user.id,
         input.accountInfo
       );
     }),
@@ -20,7 +20,7 @@ export const accountRouter = createTRPCRouter({
     .input(UpdatePassword)
     .mutation(async ({ ctx, input }) => {
       return await accountService.updatePassword(
-        ctx.user.userId,
+        ctx.session.user.id,
         input.oldPass,
         input.newPass
       );

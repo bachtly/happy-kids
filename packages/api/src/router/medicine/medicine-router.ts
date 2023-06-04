@@ -12,7 +12,7 @@ export const medicineRouter = createTRPCRouter({
     .input(PostMedicineLetterParams)
     .mutation(async ({ ctx, input }) => {
       return await medicineService.createMedicineLetter(
-        ctx.user.userId,
+        ctx.session.user.id,
         input.studentId,
         input.startDate,
         input.endDate,

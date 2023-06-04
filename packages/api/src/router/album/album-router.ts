@@ -30,7 +30,7 @@ const albumRouter = createTRPCRouter({
         input.classId,
         input.eventDate,
         input.topics,
-        ctx.user.userId
+        ctx.session.user.id
       );
     }),
 

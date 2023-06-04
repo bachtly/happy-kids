@@ -2,7 +2,6 @@ import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import { inject, injectable } from "tsyringe";
 import * as bcrypt from "bcryptjs";
-import { Context } from "../trpc";
 import jwt from "jsonwebtoken";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
@@ -13,18 +12,19 @@ class LoginService {
     private mysqlDB: Kysely<DB>,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
-  loginUser = async (ctx: Context, username: string, password: string) => {
+
+  loginUser = async (username: string, password: string) => {
     console.log(`User ${username} is logging in`);
 
-    const [isMatch, userGroup] = await this.mysqlDB
+    const [isMatch, userGroup, userId] = await this.mysqlDB
       .selectFrom("User")
-      .select(["userGroup", "username", "password"])
+      .select(["userGroup", "username", "password", "id"])
       .where("username", "=", username)
       .executeTakeFirstOrThrow()
       .then((resp) => {
         return bcrypt
           .compare(password, resp.password)
-          .then((isMatch) => [isMatch, resp.userGroup]);
+          .then((isMatch) => [isMatch, resp.userGroup, resp.id]);
       })
       .catch((err: Error) => {
         console.log(err);
@@ -64,8 +64,6 @@ class LoginService {
           const accessTokenPrivateKey = await this.fileService.asyncReadFile(
             process.env.JWT_ACCESS_PRIVATE_KEY_DIR as string
           );
-          console.log(process.env.JWT_ACCESS_TOKEN_TTL);
-
           const accessToken = jwt.sign(
             { id: resp.userId },
             accessTokenPrivateKey,
@@ -83,7 +81,7 @@ class LoginService {
           console.log(err);
           throw SYSTEM_ERROR_MESSAGE;
         });
-    } else if (userGroup == "Teacher") {
+    } else if (userGroup == "Employee") {
       return await this.mysqlDB
         .selectFrom("User")
         .innerJoin(
@@ -121,6 +119,10 @@ class LoginService {
           console.log(err);
           throw SYSTEM_ERROR_MESSAGE;
         });
+    } else if (userGroup == "Admin") {
+      return {
+        userId: userId
+      };
     }
   };
 }

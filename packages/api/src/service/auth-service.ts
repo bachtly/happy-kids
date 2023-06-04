@@ -1,10 +1,10 @@
 import { Kysely } from "kysely";
 import { DB } from "kysely-codegen";
 import { inject, injectable } from "tsyringe";
-import { Context } from "../trpc";
 import jwt from "jsonwebtoken";
 import type { FileServiceInterface } from "../utils/FileService";
 import { TRPCError } from "@trpc/server";
+import type { NextApiRequest } from "next";
 
 interface JwtContent {
   id: string;
@@ -16,11 +16,12 @@ class AuthService {
     private mysqlDB: Kysely<DB>,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
-  deserializeUser = async (ctx: Context) => {
+
+  deserializeUser = async (req: NextApiRequest) => {
     let id: string;
 
     try {
-      const accessToken = ctx.req.headers["authorization"] ?? "";
+      const accessToken = req.headers["authorization"] ?? "";
       const accessTokenPublicKey = await this.fileService.asyncReadFile(
         process.env.JWT_ACCESS_PUBLIC_KEY_DIR as string
       );
@@ -35,14 +36,7 @@ class AuthService {
         message: "Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại."
       });
     }
-
-    if (!id)
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Đã xảy ra lỗi. Vui lòng đăng nhập lại."
-      });
-
-    ctx.user.userId = id;
+    return id;
   };
 }
 
