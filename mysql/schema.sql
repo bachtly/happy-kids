@@ -56,6 +56,8 @@ CREATE TABLE `KindergartenSchema`.`Student` (
   `fullname` varchar(255),
   `avatarUrl` varchar(255),
   `birthdate` datetime,
+  `height` decimal(4,1),
+  `weight` decimal(3,1),
   `parentId` varchar(36)
 );
 

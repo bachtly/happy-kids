@@ -63,6 +63,8 @@ Table KindergartenSchema.Student {
   fullname varchar
   avatarUrl varchar
   birthdate datetime
+  height decimal(4,1)
+  weight decimal(3,1)
 
   parentId varchar(36) [ref: - KindergartenSchema.User.id]
 }

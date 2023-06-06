@@ -8,6 +8,7 @@ import { TextInput, useTheme } from "react-native-paper";
 interface PropsType {
   date: Moment | null;
   setDate: (date: Moment | null) => void;
+  disabled?: boolean;
 }
 
 const BirthdateFormField = (props: PropsType) => {
@@ -17,7 +18,11 @@ const BirthdateFormField = (props: PropsType) => {
   return (
     <View className="mb-3 flex-row items-center gap-x-2">
       <Icon style={{ marginRight: 2 }} name={"birthday-cake"} size={20} />
-      <Pressable className="flex-grow" onPress={() => setDialogVisible(true)}>
+      <Pressable
+        className="flex-grow"
+        disabled={props.disabled}
+        onPress={() => setDialogVisible(true)}
+      >
         {({ pressed }) => (
           <TextInput
             label={"Ngày sinh"}

@@ -1,13 +1,13 @@
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import React from "react";
-import { Text, TouchableRipple } from "react-native-paper";
+import { Text, TouchableRipple, useTheme } from "react-native-paper";
 import { View } from "react-native";
 
 const CustomStackFake = (props: {
   title: string;
   left: React.ReactNode;
   leftButtonHandler?: () => void;
-  right: React.ReactNode;
+  right?: React.ReactNode;
   rightButtonHandler?: () => void;
   textColor: string;
   bgColor: string;
@@ -31,14 +31,15 @@ const CustomStackFake = (props: {
       >
         {props.left}
       </TouchableRipple>
-
-      <TouchableRipple
-        className="absolute bottom-1/2 right-3 top-1/2 flex h-8 w-8 -translate-y-4 items-center justify-center rounded-full"
-        borderless
-        onPress={props.rightButtonHandler}
-      >
-        {props.right}
-      </TouchableRipple>
+      {props.right && (
+        <TouchableRipple
+          className="absolute bottom-1/2 right-3 top-1/2 flex h-8 w-8 -translate-y-4 items-center justify-center rounded-full"
+          borderless
+          onPress={props.rightButtonHandler}
+        >
+          {props.right}
+        </TouchableRipple>
+      )}
     </View>
   );
 };
@@ -81,6 +82,24 @@ export const CustomStackFakeDone = (props: {
       title={props.title}
       leftButtonHandler={props.onBack}
       rightButtonHandler={props.onDone}
+    />
+  );
+};
+
+export const CustomStackFakeWithBack = (props: {
+  title: string;
+  onBack?: () => void;
+}) => {
+  const theme = useTheme();
+  const bgColor = theme.colors.primary;
+  const textColor = "white";
+  return (
+    <CustomStackFake
+      bgColor={bgColor}
+      textColor={textColor}
+      left={<MaterialIcons name="arrow-back" color={textColor} size={24} />}
+      title={props.title}
+      leftButtonHandler={props.onBack}
     />
   );
 };

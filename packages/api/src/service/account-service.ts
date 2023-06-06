@@ -103,6 +103,65 @@ class AccountService {
 
     return {};
   };
+
+  getParentChildren = async (parentId: string) => {
+    return await this.mysqlDB
+      .selectFrom("User")
+      .innerJoin("Student", "Student.parentId", "User.id")
+      .innerJoin(
+        "StudentClassRelationship",
+        "StudentClassRelationship.studentId",
+        "Student.id"
+      )
+      .innerJoin("Class", "StudentClassRelationship.classId", "Class.id")
+      .select([
+        "Student.id as studentId",
+        "Student.fullname as studentName",
+        "Student.avatarUrl as avatar",
+        "StudentClassRelationship.classId as classId",
+        "Class.name as className"
+      ])
+      .where("User.id", "=", parentId)
+      .execute()
+      .then((resp) =>
+        Promise.all(
+          resp.map(async (item) => ({
+            ...item,
+            avatar: item.avatar
+              ? await this.photoService.getPhotoFromPath(item.avatar)
+              : ""
+          }))
+        )
+      )
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+  };
+
+  getStudentInfo = async (studentId: string) => {
+    return await this.mysqlDB
+      .selectFrom("Student")
+      .selectAll()
+      .where("id", "=", studentId)
+      .executeTakeFirstOrThrow()
+      .then(async (resp) => ({
+        ...resp,
+        avatarUrl: resp.avatarUrl
+          ? await this.photoService.getPhotoFromPath(resp.avatarUrl)
+          : ""
+      }))
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+  };
+
+  getStudentInfoParent = async (studentId: string, parentId: string) => {
+    const re = await this.getStudentInfo(studentId);
+    if (re.parentId !== parentId) throw SYSTEM_ERROR_MESSAGE;
+    return re;
+  };
 }
 
 export default AccountService;

@@ -24,6 +24,7 @@ export type AuthContextType = {
     studentId?: string | null;
   }) => void;
   onLogout: () => void;
+  setStudentId: (a: string) => void;
 };
 
 export const AuthContext = React.createContext<AuthContextType>({
@@ -34,7 +35,8 @@ export const AuthContext = React.createContext<AuthContextType>({
   classId: null,
   isTeacher: null,
   onLogin: (_) => {},
-  onLogout: () => {}
+  onLogout: () => {},
+  setStudentId: (_) => {}
 });
 
 type ProviderProps = {
@@ -169,7 +171,8 @@ export const AuthContextProvider = ({ children }: ProviderProps) => {
             classId: null,
             studentId: null,
             isTeacher: null
-          })
+          }),
+        setStudentId
       }}
     >
       {children}

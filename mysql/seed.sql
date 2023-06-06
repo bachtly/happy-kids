@@ -211,14 +211,14 @@ SET @stid3 = 'stid3000-0000-0000-0000-000000000000';
 SET @stid4 = 'stid4000-0000-0000-0000-000000000000';
 SET @stid5 = 'stid5000-0000-0000-0000-000000000000';
 SET @stid6 = 'stid6000-0000-0000-0000-000000000000';
-INSERT INTO Student (id, fullname, birthdate, parentId, avatarUrl)
+INSERT INTO Student (id, fullname, birthdate, parentId, avatarUrl, height, weight)
 VALUES
-    (@stid1, 'Lý Thanh Bách Student1', '2001-04-14', @prid1, './bothui/bothui1.jpeg'),
-    (@stid2, 'Lý Thanh Bách Student2', '2001-04-14', @prid2, @avatar),
-    (@stid3, 'Lý Thanh Bách Student3', '2001-04-14', @prid2, @avatar),
-    (@stid4, 'Lý Thanh Bách Student4', '2001-04-14', @prid3, @avatar),
-    (@stid5, 'Lý Thanh Bách Student5', '2001-04-14', @prid3, @avatar),
-    (@stid6, 'Lý Thanh Bách Student6', '2001-04-14', @prid4, @avatar)
+    (@stid1, 'Lý Thanh Bách Student1', '2001-03-24', @prid1, './bothui/bothui1.jpeg','100.0','27.5'),
+    (@stid2, 'Lý Thanh Bách Student2', '2001-01-12', @prid2, './bothui/bothui2.jpeg','105.5','23.5'),
+    (@stid3, 'Lý Thanh Bách Student3', '2001-05-13', @prid2, './bothui/bothui3.jpeg','98.0','20.5'),
+    (@stid4, 'Lý Thanh Bách Student4', '2001-02-09', @prid3, './bothui/bothui5.jpeg','110.0','21.3'),
+    (@stid5, 'Lý Thanh Bách Student5', '2001-07-07', @prid3, './bothui/bothui2.jpeg','110.5','20.5'),
+    (@stid6, 'Lý Thanh Bách Student6', '2001-04-01', @prid4, './bothui/bothui1.jpeg','102.0','27.5')
 ;
 
 -- Student - Class

@@ -1,6 +1,9 @@
-import { View } from "react-native";
+import { TouchableHighlight, View } from "react-native";
+import ImageView from "react-native-image-viewing";
 import { Avatar, IconButton, useTheme } from "react-native-paper";
+
 import AvaImage from "../../../assets/images/default-user-avatar.png";
+import { useState } from "react";
 
 interface PropsType {
   image: string;
@@ -9,15 +12,14 @@ interface PropsType {
 
 const BigAvatar = ({ image, onEditPress }: PropsType) => {
   const theme = useTheme();
+  const [imgVisible, setImgVisible] = useState(false);
+  const src =
+    image === "" ? AvaImage : { uri: `data:image/jpeg;base64,${image}` };
   return (
     <View className="relative mx-auto h-[100px] w-[100px]">
-      <Avatar.Image
-        size={100}
-        source={
-          image === "" ? AvaImage : { uri: `data:image/jpeg;base64,${image}` }
-        }
-        className="absolute"
-      />
+      <TouchableHighlight onPress={() => setImgVisible(true)}>
+        <Avatar.Image size={100} source={src} className="absolute" />
+      </TouchableHighlight>
       {onEditPress && (
         <IconButton
           className="absolute bottom-0 right-0 m-0 h-8 w-8"
@@ -28,6 +30,13 @@ const BigAvatar = ({ image, onEditPress }: PropsType) => {
           onPress={onEditPress}
         />
       )}
+      <ImageView
+        images={[src]}
+        keyExtractor={(_, index) => String(index)}
+        imageIndex={0}
+        visible={imgVisible}
+        onRequestClose={() => setImgVisible(false)}
+      />
     </View>
   );
 };
