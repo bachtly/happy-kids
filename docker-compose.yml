@@ -5,18 +5,6 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 3000:3000
+      - 8001:8001
     command: "pnpm --filter nextjs start"
 
-  mysql:
-    image: mysql
-    container_name: mysql
-    ports:
-      - 3306:3306
-    volumes:
-      - mysql_volume:/var/lib/mysql/
-    env_file:
-      - docker-configs/mysql.conf
-
-volumes:
-  mysql_volume:
