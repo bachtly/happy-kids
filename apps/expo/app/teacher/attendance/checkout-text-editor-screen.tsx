@@ -83,7 +83,7 @@ const CheckinTextEditorScreen = () => {
       >
         <CustomWhiteStackScreen
           title={"Điểm danh về"}
-          addButtonHandler={() => checkout(note, photos)}
+          rightButtonHandler={() => checkout(note, photos)}
         />
 
         <CustomTitle title={"Ghi chú"} />

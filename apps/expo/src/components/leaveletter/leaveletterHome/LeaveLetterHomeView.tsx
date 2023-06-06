@@ -135,7 +135,7 @@ const LeaveLetterHomeView = ({
 
       <CustomStackScreen
         title={"Xin nghỉ"}
-        addButtonHandler={
+        rightButtonHandler={
           isTeacher
             ? undefined
             : () => {

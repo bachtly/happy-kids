@@ -4,7 +4,7 @@ import { DB } from "kysely-codegen";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import type { FileServiceInterface } from "../utils/FileService";
-import NotiService from "./noti-service";
+import NotiService, { NotificationTopics } from "./noti-service";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { TimeServiceInterface } from "../utils/TimeService";
 
@@ -262,7 +262,8 @@ class PickupService {
           params: { id }
         }),
         "icons/pickup-icon.png",
-        item.teacherId
+        item.teacherId,
+        NotificationTopics.PickupLetter
       );
     });
 
@@ -366,7 +367,8 @@ class PickupService {
           params: { id: id }
         }),
         "icons/pickup-icon.png",
-        parentId
+        parentId,
+        NotificationTopics.PickupLetter
       );
 
     return {};
@@ -431,7 +433,8 @@ class PickupService {
           params: { id: id }
         }),
         "icons/pickup-icon.png",
-        parentId
+        parentId,
+        NotificationTopics.PickupLetter
       );
 
     return {};

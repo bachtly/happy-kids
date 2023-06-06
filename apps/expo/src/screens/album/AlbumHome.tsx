@@ -64,7 +64,7 @@ const AlbumHome = ({ isTeacher }: { isTeacher?: boolean }) => {
     <View className="flex-1 bg-gray-200">
       <CustomStackScreen
         title={"Album ảnh"}
-        addButtonHandler={isTeacher ? () => setAddModalVis(true) : undefined}
+        rightButtonHandler={isTeacher ? () => setAddModalVis(true) : undefined}
       />
       <LoadingBar isFetching={isFetching} />
       <AlbumFilterBar selTopic={selTopic} setSelTopic={setSelTopic} />

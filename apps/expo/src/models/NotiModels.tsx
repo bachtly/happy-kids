@@ -7,4 +7,19 @@ interface NotiItemModel {
   time?: Date | null;
 }
 
-export type { NotiItemModel };
+enum NotificationTopics {
+  Attendance = "Attendance",
+  MedicineLetter = "MedicineLetter",
+  LeaveLetter = "LeaveLetter",
+  NoteLetter = "NoteLetter",
+  PickupLetter = "PickupLetter",
+  Post = "Post",
+  Album = "Album"
+}
+
+interface NotificationSettingModel {
+  disabledTopics: NotificationTopics[];
+}
+
+export type { NotiItemModel, NotificationSettingModel };
+export { NotificationTopics };

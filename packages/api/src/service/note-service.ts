@@ -14,7 +14,7 @@ import {
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
 import { TRPCError } from "@trpc/server";
-import NotiService from "./noti-service";
+import NotiService, { NotificationTopics } from "./noti-service";
 
 @injectable()
 class NoteService {
@@ -316,7 +316,7 @@ class NoteService {
 
       const getPhotos = async (): Promise<string[]> => {
         if (!resp[0].photos) return [];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-assignment
         const { photoPaths }: { photoPaths: string[] } = JSON.parse(
           resp[0].photos
         );
@@ -435,7 +435,8 @@ class NoteService {
           params: { id: letterId }
         }),
         "icons/note.png",
-        item.teacherId
+        item.teacherId,
+        NotificationTopics.NoteLetter
       );
     });
   };
@@ -475,7 +476,8 @@ class NoteService {
           params: { id: letterId }
         }),
         "icons/note.png",
-        parentId
+        parentId,
+        NotificationTopics.NoteLetter
       );
   };
 }

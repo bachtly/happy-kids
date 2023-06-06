@@ -69,7 +69,7 @@ const HistoryScreen = () => {
       <Body>
         <CustomStack
           title={"Đón về"}
-          addButtonHandler={() => {
+          rightButtonHandler={() => {
             router.push({
               pathname: "parent/pickup/add-pickup-screen",
               params: { studentId: studentIdSaved }

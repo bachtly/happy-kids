@@ -76,7 +76,7 @@ const AddPickupScreen = () => {
     <View className="flex-1">
       <CustomWhiteStackScreen
         title={"Tạo đơn đón về"}
-        addButtonHandler={() => confirmCreateLetter()}
+        rightButtonHandler={() => confirmCreateLetter()}
       />
 
       <ScrollView className="flex-1">

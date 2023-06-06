@@ -37,7 +37,7 @@ export const CustomStackScreenSendFake = (props: {
       <Text
         variant={"headlineSmall"}
         className="text-center"
-        style={{ color: textColor }}
+        style={{ color: textColor, lineHeight: 26 }}
       >
         {props.title}
       </Text>
@@ -54,7 +54,7 @@ export const CustomStackScreenSendFake = (props: {
         borderless
         onPress={props.sendButtonHandler}
       >
-        <Ionicons name={"send-sharp"} size={20} color={textColor} />
+        <Ionicons name={"send-sharp"} size={24} color={textColor} />
       </TouchableRipple>
     </View>
   );

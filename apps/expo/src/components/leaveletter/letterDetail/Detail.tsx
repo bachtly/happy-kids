@@ -63,7 +63,7 @@ const Detail = ({
     <Body>
       <CustomWhiteStackScreen
         title={"Chi tiết xin nghỉ"}
-        addButtonHandler={isTeacher ? () => router.back() : undefined}
+        rightButtonHandler={isTeacher ? () => router.back() : undefined}
       />
 
       <LoadingBar isFetching={isFetching} />

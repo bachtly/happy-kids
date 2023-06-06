@@ -2,7 +2,6 @@ import { useRouter } from "expo-router";
 import { ScrollView, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useAuthContext } from "../../src/utils/auth-context-provider";
-import CustomStackScreen from "../../src/components/CustomStackScreen";
 import FeatureItem from "../../src/components/home/FeatureItem";
 import attIcon from "../../assets/images/attendance.png";
 import studyIcon from "../../assets/images/study.png";
@@ -23,8 +22,6 @@ const TeacherHomeScreen = () => {
 
   return (
     <Body>
-      <CustomStackScreen title={"Trang chủ"} />
-
       <ScrollView>
         <View className={"space-y-6 p-4"}>
           {/*GROUP FEATURES*/}

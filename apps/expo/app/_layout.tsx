@@ -13,6 +13,7 @@ import { AuthContextProvider } from "../src/utils/auth-context-provider";
 import { ErrorContextProvider } from "../src/utils/error-context";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { NotificationProvider } from "../src/utils/notification-context";
 
 // Keep the splash screen visible while we fetch resources
 void SplashScreen.preventAutoHideAsync();
@@ -61,16 +62,18 @@ const RootLayout = () => {
         <PaperProvider theme={theme}>
           <AuthContextProvider>
             <ErrorContextProvider>
-              <Stack
-                screenOptions={{
-                  headerTintColor: theme.colors.background,
-                  headerStyle: {
-                    backgroundColor: theme.colors.primary
-                  },
-                  statusBarColor: theme.colors.primary
-                }}
-                initialRouteName="login/login-screen"
-              />
+              <NotificationProvider>
+                <Stack
+                  screenOptions={{
+                    headerTintColor: theme.colors.background,
+                    headerStyle: {
+                      backgroundColor: theme.colors.primary
+                    },
+                    statusBarColor: theme.colors.primary
+                  }}
+                  initialRouteName="login/login-screen"
+                />
+              </NotificationProvider>
             </ErrorContextProvider>
           </AuthContextProvider>
         </PaperProvider>

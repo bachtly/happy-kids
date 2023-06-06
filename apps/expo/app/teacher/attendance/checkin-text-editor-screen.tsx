@@ -102,7 +102,7 @@ const CheckinTextEditorScreen = () => {
       >
         <CustomWhiteStackScreen
           title={"Điểm danh đến"}
-          addButtonHandler={() => checkin(note, photos, status, thermo)}
+          rightButtonHandler={() => checkin(note, photos, status, thermo)}
         />
 
         <CustomTitle title={"Thông tin chung"} />

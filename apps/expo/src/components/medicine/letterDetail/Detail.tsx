@@ -91,7 +91,7 @@ const Detail = ({
     <Body>
       <CustomWhiteStackScreen
         title={"Chi tiết dặn thuốc"}
-        addButtonHandler={
+        rightButtonHandler={
           !isTeacher
             ? undefined
             : () => {

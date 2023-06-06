@@ -16,7 +16,7 @@ import {
 import { sortAndUnique } from "../utils/arrayHelper";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
-import NotiService from "./noti-service";
+import NotiService, { NotificationTopics } from "./noti-service";
 
 @injectable()
 class MedicineService {
@@ -453,7 +453,8 @@ class MedicineService {
           params: { id: letterId, studentName: item.studentFullname }
         }),
         "icons/medicine-icon.png",
-        item.teacherId
+        item.teacherId,
+        NotificationTopics.MedicineLetter
       );
     });
   };
@@ -499,7 +500,8 @@ class MedicineService {
             params: { id: letterId }
           }),
           "icons/medicine-icon.png",
-          parentId
+          parentId,
+          NotificationTopics.MedicineLetter
         );
     }
 
@@ -513,7 +515,8 @@ class MedicineService {
             params: { id: letterId }
           }),
           "icons/medicine-icon.png",
-          parentId
+          parentId,
+          NotificationTopics.MedicineLetter
         );
     }
   };

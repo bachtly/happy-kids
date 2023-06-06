@@ -1,16 +1,17 @@
 import TeacherHomeScreen from "./teacher-home-screen";
 import PostHomeScreen from "./post/post-home-screen";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useTheme, Text } from "react-native-paper";
+import { useTheme, Text, TouchableRipple } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AccountHomeScreen from "./account/account-home-screen";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import NotiHomeScreen from "./noti/noti-home-screen";
 
 const Tab = createBottomTabNavigator();
 
 const TeacherLandingScreen = () => {
+  const router = useRouter();
   const theme = useTheme();
   const { colors } = theme;
 
@@ -50,7 +51,10 @@ const TeacherLandingScreen = () => {
               getIcon("home-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Trang chủ", color, focused),
-            headerTitleStyle: headerTitleStyle,
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            },
             headerTitleAlign: "center"
           }}
         />
@@ -62,7 +66,10 @@ const TeacherLandingScreen = () => {
               getIcon("newspaper-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Bảng tin", color, focused),
-            headerTitleStyle: headerTitleStyle,
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            },
             headerTitleAlign: "center"
           }}
         />
@@ -70,12 +77,30 @@ const TeacherLandingScreen = () => {
           name="Thông báo"
           component={NotiHomeScreen}
           options={{
+            headerTitleAlign: "center",
             tabBarIcon: ({ color, focused }) =>
               getIcon("notifications-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Thông báo", color, focused),
-            headerTitleStyle: headerTitleStyle,
-            headerTitleAlign: "center"
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            },
+            headerRight: (_) => {
+              return (
+                <TouchableRipple
+                  borderless
+                  style={{ marginRight: 16 }}
+                  onPress={() => router.push("parent/noti/noti-setting-screen")}
+                >
+                  <Ionicons
+                    name={"settings-sharp"}
+                    color={theme.colors.onPrimary}
+                    size={22}
+                  />
+                </TouchableRipple>
+              );
+            }
           }}
         />
         <Tab.Screen
@@ -86,7 +111,10 @@ const TeacherLandingScreen = () => {
               getIcon("person-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Tài khoản", color, focused),
-            headerTitleStyle: headerTitleStyle,
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            },
             headerTitleAlign: "center"
           }}
         />

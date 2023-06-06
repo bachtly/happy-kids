@@ -107,7 +107,7 @@ const AddLetter = () => {
     <Body>
       <CustomWhiteStackScreen
         title={"Tạo đơn dặn thuốc"}
-        addButtonHandler={() => onSubmit()}
+        rightButtonHandler={() => onSubmit()}
       />
       <LoadingBar isFetching={postMedicineLetterMutation.isLoading} />
       <ScrollView className="flex-1">

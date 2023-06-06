@@ -6,7 +6,6 @@ import Body from "../../../src/components/Body";
 import { NotiItemModel } from "../../../src/models/NotiModels";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import NotiItem from "../../../src/components/noti/NotiItem";
-import AlertModal from "../../../src/components/common/AlertModal";
 import { trpcErrorHandler } from "../../../src/utils/trpc-error-handler";
 import { ErrorContext } from "../../../src/utils/error-context";
 import LoadingBar from "../../../src/components/common/LoadingBar";
@@ -15,9 +14,9 @@ const NotiHomeScreen = () => {
   const isFocused = useIsFocused();
   const authContext = useAuthContext();
   const errorContext = useContext(ErrorContext);
+
   // data
   const [notis, setNotis] = useState<NotiItemModel[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const notiMutation = api.noti.getNotiList.useMutation({
     onSuccess: (resp) => setNotis(resp.notis),
@@ -58,13 +57,6 @@ const NotiHomeScreen = () => {
           )}
         />
       </View>
-
-      <AlertModal
-        visible={errorMessage != ""}
-        title={"Thông báo"}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
-      />
     </Body>
   );
 };

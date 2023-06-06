@@ -6,14 +6,14 @@ import { z } from "zod";
 
 import {
   GetLeaveLetterListResponse,
-  PostLeaveLetterResponse,
-  LetterStatus,
+  GetLeaveLetterResponse,
   LeaveLetter,
-  GetLeaveLetterResponse
+  LetterStatus,
+  PostLeaveLetterResponse
 } from "../router/leaveletter/protocols";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
-import NotiService from "./noti-service";
+import NotiService, { NotificationTopics } from "./noti-service";
 
 @injectable()
 class LeaveLetterService {
@@ -362,7 +362,8 @@ class LeaveLetterService {
           params: { id: letterId }
         }),
         "icons/leave-letter-icon.png",
-        item.teacherId
+        item.teacherId,
+        NotificationTopics.LeaveLetter
       );
     });
   };
@@ -402,7 +403,8 @@ class LeaveLetterService {
           params: { id: letterId }
         }),
         "icons/leave-letter-icon.png",
-        parentId
+        parentId,
+        NotificationTopics.LeaveLetter
       );
   };
 }

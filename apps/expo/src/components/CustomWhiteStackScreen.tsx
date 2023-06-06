@@ -1,12 +1,15 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { TouchableRipple, useTheme } from "react-native-paper";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const CustomWhiteStackScreen = (props: {
   title: string;
-  addButtonHandler?: () => void;
+  rightButtonHandler?: () => void;
+  backButtonHandler?: () => void;
 }) => {
+  const router = useRouter();
   const theme = useTheme();
 
   return (
@@ -24,23 +27,39 @@ const CustomWhiteStackScreen = (props: {
           fontWeight: theme.fonts.headlineSmall.fontWeight
         },
         headerShadowVisible: false,
-        headerRight: props.addButtonHandler
+        headerRight: props.rightButtonHandler
           ? () => {
               return (
-                <TouchableRipple borderless onPress={props.addButtonHandler}>
+                <TouchableRipple
+                  className="mt-1"
+                  borderless
+                  onPress={props.rightButtonHandler}
+                >
                   <Ionicons
                     name={"send-sharp"}
                     size={24}
                     color={theme.colors.onPrimary}
-                    style={{ paddingTop: 8 }}
                     onPress={() => {
-                      props.addButtonHandler && props.addButtonHandler();
+                      props.rightButtonHandler && props.rightButtonHandler();
                     }}
                   />
                 </TouchableRipple>
               );
             }
-          : undefined
+          : undefined,
+        headerLeft: (_) => (
+          <TouchableRipple
+            className="mt-1"
+            borderless
+            onPress={props.backButtonHandler ?? (() => router.back())}
+          >
+            <MaterialIcons
+              name="arrow-back"
+              color={theme.colors.onPrimary}
+              size={24}
+            />
+          </TouchableRipple>
+        )
       }}
     />
   );

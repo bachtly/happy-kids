@@ -1,7 +1,7 @@
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useTheme, Text } from "react-native-paper";
+import { useTheme, Text, TouchableRipple } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import ParentHomeScreen from "./parent-home-screen";
 import PostHomeScreen from "./post/post-home-screen";
@@ -11,6 +11,7 @@ import AccountHomeScreen from "./account/account-home-screen";
 const Tab = createBottomTabNavigator();
 
 const ParentLandingScreen = () => {
+  const router = useRouter();
   const theme = useTheme();
   const { colors } = theme;
 
@@ -51,40 +52,70 @@ const ParentLandingScreen = () => {
               getIcon("home-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Trang chủ", color, focused),
-            headerTitleStyle: headerTitleStyle
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            }
           }}
         />
         <Tab.Screen
           name="Bảng tin"
           component={PostHomeScreen}
           options={{
+            headerTitleAlign: "center",
             tabBarIcon: ({ color, focused }) =>
               getIcon("newspaper-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Bảng tin", color, focused),
-            headerTitleStyle: headerTitleStyle
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            }
           }}
         />
         <Tab.Screen
           name="Thông báo"
           component={NotiHomeScreen}
           options={{
+            headerTitleAlign: "center",
             tabBarIcon: ({ color, focused }) =>
               getIcon("notifications-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Thông báo", color, focused),
-            headerTitleStyle: headerTitleStyle
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            },
+            headerRight: (_) => {
+              return (
+                <TouchableRipple
+                  borderless
+                  style={{ marginRight: 16 }}
+                  onPress={() => router.push("parent/noti/noti-setting-screen")}
+                >
+                  <Ionicons
+                    name={"settings-sharp"}
+                    color={theme.colors.onPrimary}
+                    size={22}
+                  />
+                </TouchableRipple>
+              );
+            }
           }}
         />
         <Tab.Screen
           name="Tài khoản"
           component={AccountHomeScreen}
           options={{
+            headerTitleAlign: "center",
             tabBarIcon: ({ color, focused }) =>
               getIcon("person-outline", color, focused),
             tabBarLabel: ({ color, focused }) =>
               getLabel("Tài khoản", color, focused),
-            headerTitleStyle: headerTitleStyle
+            headerTitleStyle: {
+              ...headerTitleStyle,
+              lineHeight: 24
+            }
           }}
         />
       </Tab.Navigator>

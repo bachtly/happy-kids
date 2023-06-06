@@ -53,7 +53,7 @@ const PickupDetailScreen = () => {
     <Body>
       <CustomWhiteStackScreen
         title={"Chi tiết đón về"}
-        addButtonHandler={() => router.back()}
+        rightButtonHandler={() => router.back()}
       />
       <LoadingBar isFetching={pickupMutation.isLoading} />
 

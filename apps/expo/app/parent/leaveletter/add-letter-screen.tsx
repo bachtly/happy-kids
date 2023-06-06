@@ -86,7 +86,7 @@ const AddLetter = () => {
     <Body>
       <CustomWhiteStackScreen
         title={"Tạo đơn xin nghỉ"}
-        addButtonHandler={onSubmit}
+        rightButtonHandler={onSubmit}
       />
       <LoadingBar isFetching={postLeaveLetterMutation.isLoading} />
 

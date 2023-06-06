@@ -2,7 +2,6 @@ import { useRouter } from "expo-router";
 import { ScrollView, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useAuthContext } from "../../src/utils/auth-context-provider";
-import CustomStackScreen from "../../src/components/CustomStackScreen";
 import Body from "../../src/components/Body";
 import FeatureItem from "../../src/components/home/FeatureItem";
 import ChildrenSwitcher from "../../src/components/account/ChildrenSwitcher";
@@ -25,8 +24,6 @@ const ParentHomeScreen = () => {
 
   return (
     <Body>
-      <CustomStackScreen title={"Trang chủ"} />
-
       <ScrollView>
         <ChildrenSwitcher />
         <View className={"space-y-6 p-4"}>

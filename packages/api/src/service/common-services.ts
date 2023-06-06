@@ -20,11 +20,15 @@ import { FileService } from "../utils/FileService";
 import { TimeService } from "../utils/TimeService";
 import AlbumService from "./album-service";
 import AuthService from "./auth-service";
+import { ExpoNotificationWrapper } from "../utils/ExpoNotificationWrapper";
 
 container.register<Kysely<DB>>(Kysely, { useValue: mysqlDB });
 container.register("FileService", { useClass: FileService });
 container.register("PhotoService", { useClass: PhotoService });
 container.register("TimeService", { useClass: TimeService });
+container.register("ExpoNotificationWrapper", {
+  useClass: ExpoNotificationWrapper
+});
 
 export const loginService = container.resolve(LoginService);
 export const attendanceService = container.resolve(AttendanceService);

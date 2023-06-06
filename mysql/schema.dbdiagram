@@ -371,3 +371,11 @@ Table KindergartenSchema.Noti {
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
   createUserId varchar(36) [ref: - KindergartenSchema.User.id]
 }
+
+Table KindergartenSchema.UserNotification {
+  id varchar(36) [pk, default: `UUID()`]
+  token text
+  disabledTopics text
+
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
+}

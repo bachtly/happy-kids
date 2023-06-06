@@ -17,4 +17,19 @@ const GetNotiListResponse = z.object({
   notis: z.array(Noti)
 });
 
+const RegisterTokenRequest = z.object({
+  token: z.string().nullable().optional()
+});
+
+const GetDisabledTopicsResponse = z.object({
+  disabledTopics: z.array(z.string())
+});
+
+const UpdateDisabledTopicsResponse = z.object({
+  disabledTopics: z.array(z.string())
+});
+
 export { GetNotiListRequest, GetNotiListResponse };
+export { RegisterTokenRequest };
+export { GetDisabledTopicsResponse };
+export { UpdateDisabledTopicsResponse };

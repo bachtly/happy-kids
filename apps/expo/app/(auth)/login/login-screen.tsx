@@ -44,7 +44,7 @@ const LoginScreen = () => {
   };
   return (
     <View className="flex-1 bg-white">
-      <CustomStackScreen title={"Đăng nhập"} />
+      <CustomStackScreen title={"Đăng nhập"} hideBackButton={true} />
       <Portal>
         <Dialog
           visible={showFailLogin}

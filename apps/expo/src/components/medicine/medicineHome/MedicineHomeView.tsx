@@ -135,7 +135,7 @@ const MedicineHomeView = ({
 
       <CustomStackScreen
         title={"Dặn thuốc"}
-        addButtonHandler={
+        rightButtonHandler={
           isTeacher
             ? undefined
             : () => {

@@ -133,7 +133,7 @@ const NoteHomeView = ({
 
       <CustomStackScreen
         title={"Lời nhắn"}
-        addButtonHandler={
+        rightButtonHandler={
           isTeacher
             ? undefined
             : () => {

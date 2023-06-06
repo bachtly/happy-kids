@@ -293,6 +293,13 @@ CREATE TABLE `KindergartenSchema`.`Noti` (
   `createUserId` varchar(36)
 );
 
+CREATE TABLE `KindergartenSchema`.`UserNotification` (
+  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
+  `token` text,
+  `disabledTopics` text,
+  `userId` varchar(36)
+);
+
 ALTER TABLE `KindergartenSchema`.`Class` ADD FOREIGN KEY (`schoolId`) REFERENCES `KindergartenSchema`.`School` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`StudentClassRelationship` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
@@ -401,4 +408,5 @@ ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`classId`) REFERENCES `
 
 ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`createUserId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`UserNotification` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 COMMIT;
