@@ -2,11 +2,25 @@ START TRANSACTION;
 
 USE KindergartenSchema;
 
+-- password = 'password123'
+SET @password_hashed = '$2a$10$1WrZyVUDl8mIKoImZ1O3vuOZwzVANa.5cicTr8LW5LUGYehFg4trS';
+
+SET @portalAdminId1 = 'admin100-0000-0000-0000-000000000000';
+INSERT INTO USER (id, username, password, fullname, email, userGroup)
+VALUES
+    (
+        @portalAdminId1,
+        "happykids_admin@gmail.com",
+        @password_hashed,
+        "Happy Kids Admin",
+        "happykids_admin@gmail.com",
+        "Admin"
+    );
+
 -- Common attributes
 SET @avatar = './seed/avatar';
 SET @multi_avatar = concat('\["', @avatar, '", "', @avatar, '"', '\]');
--- password = 'password123'
-SET @password_hashed = '$2a$10$1WrZyVUDl8mIKoImZ1O3vuOZwzVANa.5cicTr8LW5LUGYehFg4trS';
+
 
 -- Insert schools
 SET @sid1 = 'sid10000-0000-0000-0000-000000000000';
@@ -15,6 +29,7 @@ INSERT INTO School (id, name, address)
 VALUES
     (@sid1, 'King\'s Landing', '107/2B Wall\'s Treet, Seven Kingdoms, Game Of Thrones'),
     (@sid2, 'Sơn Ca', '144 Trần Hưng Đạo, phường Mỹ Bình, thành phố Long Xuyên, tỉnh An Giang');
+
 
 -- Insert Managers to school 1
 SET @mgrid1 = 'mgrid100-0000-0000-0000-000000000000';
@@ -32,8 +47,8 @@ VALUES
         'bach.principal@gmail.com',
         '0900000000',
         @sid1,
+        'Employee',
         'Manager',
-        'Principal',
         @avatar
     ),
     (
@@ -45,8 +60,8 @@ VALUES
         'bach.viceprincipal@gmail.com',
         '0900000003',
         @sid1,
+        'Employee',
         'Manager',
-        'VicePrincipal',
         @avatar
     ),
     (
@@ -58,8 +73,8 @@ VALUES
         'bach.accountant1@gmail.com',
         '0900000002',
         @sid1,
+        'Employee',
         'Manager',
-        'Accountant',
         @avatar
     ),
     (
@@ -71,8 +86,8 @@ VALUES
         'bach.accountant2@gmail.com',
         '0900000005',
         @sid1,
+        'Employee',
         'Manager',
-        'Accountant',
         @avatar
     );
 
@@ -80,6 +95,7 @@ VALUES
 SET @tid1 = 'tid10000-0000-0000-0000-000000000000';
 SET @tid2 = 'tid20000-0000-0000-0000-000000000000';
 SET @tid3 = 'tid30000-0000-0000-0000-000000000000';
+
 INSERT INTO User (id, username, password, fullname, birthdate, email, phone, schoolId, userGroup, employeeRole, avatarUrl)
 VALUES
     (
@@ -91,8 +107,8 @@ VALUES
         'bach.teacher1@gmail.com',
         '0900000004',
         @sid1,
+        'Employee',
         'Teacher',
-        null,
         @avatar
     ),
     (
@@ -104,8 +120,8 @@ VALUES
         'bach.teacher2@gmail.com',
         '0900000006',
         @sid1,
+        'Employee',
         'Teacher',
-        null,
         @avatar
     ),
     (
@@ -117,8 +133,8 @@ VALUES
         'bach.teacher3@gmail.com',
         '0900000007',
         @sid1,
+        'Employee',
         'Teacher',
-        null,
         @avatar
     )
 ;
@@ -133,6 +149,7 @@ VALUES
     (@clid2, 'Stark A', 2021, @sid1),
     (@clid3, 'Stark B', 2022, @sid1)
 ;
+
 
 -- Teacher - Class
 INSERT INTO TeacherClassRelationship (teacherId, classId)
@@ -265,7 +282,7 @@ VALUES (@medletid1,'2023-06-04','2023-06-14', '2023-05-31', 'Confirmed', 'Bé b�
 SET @medid1 = uuid();
 SET @medid2 = uuid();
 INSERT INTO Medicine (id, name, amount, medicineLetterId, photo, time)
-VALUES 
+VALUES
     (@medid1, "Vitamin C", '2 vien', @medletid1, @medphotoc , 450),
     (@medid2, "Dầu cá", '3 vien', @medletid1, @medphotodc , 450)
 ;
@@ -280,14 +297,12 @@ VALUES (@pickupid1, 'Chiều nay mẹ bé bận, nhờ chú Tư rước bé', '2
         'Confirmed', @rlid1, @tid1, @stid4);
 
 INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
-VALUES 
+VALUES
 	('Chiều nay mẹ bé bận', '2023-05-22T17:00:00', '2023-05-21', 'Confirmed', @rlid2, @tid1, @stid1),
     ('Chiều nay mẹ bé bận', '2023-05-23T17:00:00', '2023-05-22', 'Confirmed', @rlid2, @tid1, @stid1),
     ('Chiều nay mẹ bé bận', '2023-05-24T17:00:00', '2023-05-23', 'Confirmed', @rlid2, @tid1, @stid1),
     ('Chiều nay mẹ bé bận', '2023-05-25T17:00:00', '2023-05-24', 'Confirmed', @rlid2, @tid1, @stid1),
-    ('Chiều nay mẹ bé bận', '2023-05-26T17:00:00', '2023-05-25', 'Confirmed', @rlid2, @tid1, @stid1)
-;
-
+    ('Chiều nay mẹ bé bận', '2023-05-26T17:00:00', '2023-05-25', 'Confirmed', @rlid2, @tid1, @stid1);
 -- NoteLetter
 SET @notletid1 = 'notletid-1000-0000-0000-000000000000';
 SET @notletphotos = '{"photoPaths": ["./seed/note/canmongtay"]}';
@@ -303,17 +318,17 @@ VALUES
 -- Post1
 SET @postid1 = 'postid10-0000-0000-0000-000000000000';
 INSERT INTO Post (id, createdAt, userId, photos, content)
-VALUES 
+VALUES
 	(@postid1, '2023-01-06', @mgrid4, @multi_avatar,
 		'THÔNG BÁO: Nghỉ học tránh bão số 1000\nDựa vào dự báo thời tiết của VTV, bão số 1000 dự kiến sẽ đổ bộ vào khu vực tỉnh chúng ta vào ngày thứ 2 tới." Để tránh những ảnh hưởng đáng tiếc xảy ra, nhà trường xin thông báo cho các phụ huynh về việc tạm ngưng việc học của bé vào T2 tới và sẽ tiếp tục việc học vào T3');
 
 INSERT INTO PostReaction (time, reaction, userId, postId)
-VALUES 
+VALUES
 	('2023-01-06T20:00:00', 'Like', @mgrid1, @postid1)
 ;
 
 INSERT INTO PostComment (time, userId, postId, content)
-VALUES 
+VALUES
 	('2023-01-06T20:00:00', @prid1, @postid1, 'Nam mô a di đà phật'),
     ('2023-01-07T21:00:00', @prid1, @postid1, 'Cảm ơn trường đã thông báo sớm (1). Gia đình em cũng có ý định đi du lịch từ sớm. Sẵn có dịp tốt thế này thì đi luôn cho tiện, hihi.'),
     ('2023-01-08T22:00:00', @prid1, @postid1, 'Cám ơn trường đã thông báo sớm (2). Gia đình em cũng có ý định đi du lịch từ sớm. Sẵn có dịp tốt thế này thì đi luôn cho tiện, hihi.'),
@@ -331,7 +346,7 @@ VALUES (@mgrid1, @postid1), (@mgrid2, @postid1), (@mgrid3, @postid1),
 -- Post2
 SET @postid2 = 'postid20-0000-0000-0000-000000000000';
 INSERT INTO Post (id, createdAt, userId, photos, content)
-VALUES 
+VALUES
 	(@postid2, '2023-01-10', @tid2, @multi_avatar,
 		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời');
 
@@ -350,7 +365,7 @@ SET @postid4 = 'postid40-0000-0000-0000-000000000000';
 SET @postid5 = 'postid50-0000-0000-0000-000000000000';
 SET @postid6 = 'postid60-0000-0000-0000-000000000000';
 INSERT INTO Post (id, createdAt, userId, photos, content)
-VALUES 
+VALUES
 	(@postid3, '2023-04-11', @tid2, @multi_avatar,
 		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời'),
 	(@postid4, '2023-04-11', @tid2, @multi_avatar,
@@ -371,14 +386,14 @@ SET @topicid1 = 'topicid1-0000-0000-0000-000000000000';
 SET @topicid2 = 'topicid2-0000-0000-0000-000000000000';
 SET @topicid3 = 'topicid3-0000-0000-0000-000000000000';
 INSERT INTO AlbumTopic (id, topic)
-VALUES 
+VALUES
     (@topicid1, 'Dã ngoại'),
     (@topicid2, 'Thể dục - thể thao'),
     (@topicid3, 'Công viên')
 ;
 
 INSERT INTO AlbumTopicRelationship(albumId, topicId)
-VALUES 
+VALUES
     (@albumid1, @topicid1),
     (@albumid1, @topicid2),
     (@albumid1, @topicid3)
@@ -520,11 +535,11 @@ VALUES
 -- Notifications
 INSERT INTO Noti (userId, classId, createUserId, title, content, route, photoUrl, time)
 VALUES
-	(@prid1, null, @tid1, 'Giáo viên đã phản hồi đơn đón về của bạn', 'Giáo viên đã xác nhận đơn đón về', 
+	(@prid1, null, @tid1, 'Giáo viên đã phản hồi đơn đón về của bạn', 'Giáo viên đã xác nhận đơn đón về',
 		'{"pathname": "parent/pickup/pickup-detail-screen", "params": {"id": "pickupid-1000-0000-0000-000000000000"}}',
 		'./icons/pickup-icon.png', '2023-05-05T7:00:00'
     ),
-    (@prid1, null, @tid1, 'Giáo viên đã phản hồi đơn đón về của bạn', 'Giáo viên đã xác nhận đơn đón về', 
+    (@prid1, null, @tid1, 'Giáo viên đã phản hồi đơn đón về của bạn', 'Giáo viên đã xác nhận đơn đón về',
 		'{"pathname": "parent/pickup/pickup-detail-screen", "params": {"id": "pickupid-1000-0000-0000-000000000000"}}',
 		'./icons/avatar', '2023-05-05T8:00:00'
     )

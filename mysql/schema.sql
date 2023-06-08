@@ -4,42 +4,43 @@ START TRANSACTION;
 CREATE SCHEMA `KindergartenSchema`;
 
 CREATE TABLE `KindergartenSchema`.`School` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `name` varchar(255),
-  `address` varchar(255)
+  `id` varchar(36) PRIMARY KEY NOT NULL DEFAULT (UUID()),
+  `name` varchar(255) NOT NULL,
+  `address` varchar(255),
+  `createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE `KindergartenSchema`.`Class` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `name` varchar(255),
-  `schoolYear` int,
-  `schoolId` varchar(36)
+  `id` varchar(36) PRIMARY KEY NOT NULL DEFAULT (UUID()),
+  `name` varchar(255) NOT NULL,
+  `schoolYear` int NOT NULL,
+  `schoolId` varchar(36) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE `KindergartenSchema`.`StudentClassRelationship` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `studentId` varchar(36),
-  `classId` varchar(36)
+  `studentId` varchar(36) NOT NULL,
+  `classId` varchar(36) NOT NULL
 );
 
 CREATE TABLE `KindergartenSchema`.`User` (
   `id` varchar(36) PRIMARY KEY NOT NULL,
   `username` varchar(255) UNIQUE NOT NULL,
   `password` varchar(255) NOT NULL,
-  `fullname` varchar(255),
+  `fullname` varchar(255) NOT NULL,
   `birthdate` datetime,
   `email` varchar(255) UNIQUE NOT NULL,
   `phone` varchar(16),
   `avatarUrl` text,
   `schoolId` varchar(36),
-  `employeeRole` varchar(255),
-  `userGroup` ENUM ('Manager', 'Teacher', 'Parent')
+  `employeeRole` ENUM ('Manager', 'Teacher'),
+  `userGroup` ENUM ('Admin', 'Employee', 'Parent')
 );
 
 CREATE TABLE `KindergartenSchema`.`TeacherClassRelationship` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `teacherId` varchar(36),
-  `classId` varchar(36)
+  `teacherId` varchar(36) NOT NULL,
+  `classId` varchar(36) NOT NULL,
+  PRIMARY KEY (`teacherId`, `classId`)
 );
 
 CREATE TABLE `KindergartenSchema`.`Relative` (
@@ -52,13 +53,13 @@ CREATE TABLE `KindergartenSchema`.`Relative` (
 );
 
 CREATE TABLE `KindergartenSchema`.`Student` (
-  `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
-  `fullname` varchar(255),
+  `id` varchar(36) PRIMARY KEY NOT NULL DEFAULT (UUID()),
+  `fullname` varchar(255) NOT NULL,
   `avatarUrl` varchar(255),
-  `birthdate` datetime,
+  `birthdate` datetime NOT NULL,
   `height` decimal(4,1),
   `weight` decimal(3,1),
-  `parentId` varchar(36)
+  `parentId` varchar(36) NOT NULL
 );
 
 CREATE TABLE `KindergartenSchema`.`Post` (
@@ -409,4 +410,5 @@ ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`classId`) REFERENCES `
 ALTER TABLE `KindergartenSchema`.`Noti` ADD FOREIGN KEY (`createUserId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`UserNotification` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+
 COMMIT;

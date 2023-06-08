@@ -13,25 +13,31 @@ class LoginService {
     private mysqlDB: Kysely<DB>,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
+
   loginUser = async (ctx: Context, username: string, password: string) => {
     console.log(`User ${username} is logging in`);
 
-    const [isMatch, userGroup] = await this.mysqlDB
+    const [isMatch, userGroup, employeeRole] = await this.mysqlDB
       .selectFrom("User")
-      .select(["userGroup", "username", "password"])
+      .select(["userGroup", "username", "password", "employeeRole"])
       .where("username", "=", username)
       .executeTakeFirstOrThrow()
       .then((resp) => {
         return bcrypt
           .compare(password, resp.password)
-          .then((isMatch) => [isMatch, resp.userGroup]);
+          .then((isMatch) => [isMatch, resp.userGroup, resp.employeeRole]);
       })
       .catch((err: Error) => {
         console.log(err);
         throw SYSTEM_ERROR_MESSAGE;
       });
 
-    console.log(isMatch, userGroup);
+    console.log(
+      "User info: (matched, group, role):",
+      isMatch,
+      userGroup,
+      employeeRole
+    );
 
     if (!isMatch) {
       return {
@@ -83,7 +89,7 @@ class LoginService {
           console.log(err);
           throw SYSTEM_ERROR_MESSAGE;
         });
-    } else if (userGroup == "Teacher") {
+    } else if (userGroup == "Employee" && employeeRole == "Teacher") {
       return await this.mysqlDB
         .selectFrom("User")
         .innerJoin(
