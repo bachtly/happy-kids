@@ -4,6 +4,9 @@ export const EmployeeRoleZod = z.enum(["Manager", "Teacher"]);
 
 export type EmployeeRole = z.infer<typeof EmployeeRoleZod>;
 
+export const UserGroupZod = z.enum(["Parent", "Employee", "Admin"]);
+export type UserGroup = z.infer<typeof UserGroupZod>;
+
 export const UserInfoZod = z.object({
   id: z.string(),
   fullname: z.string(),

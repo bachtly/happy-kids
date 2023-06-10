@@ -5,6 +5,8 @@ import * as bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
+import { LoginResponse } from "../router/authentication/protocols";
+import { UserGroup } from "../model/user";
 
 @injectable()
 class LoginService {
@@ -13,7 +15,10 @@ class LoginService {
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
 
-  loginUser = async (username: string, password: string) => {
+  loginUser = async (
+    username: string,
+    password: string
+  ): Promise<LoginResponse> => {
     console.log(`User ${username} is logging in`);
 
     const [isMatch, userGroup, userId] = await this.mysqlDB
@@ -21,7 +26,7 @@ class LoginService {
       .select(["userGroup", "username", "password", "id"])
       .where("username", "=", username)
       .executeTakeFirstOrThrow()
-      .then((resp) => {
+      .then<[boolean, UserGroup, string]>((resp) => {
         return bcrypt
           .compare(password, resp.password)
           .then((isMatch) => [isMatch, resp.userGroup, resp.id]);
@@ -40,7 +45,8 @@ class LoginService {
         userId: null,
         classId: null,
         studentId: null,
-        isTeacher: false
+        isTeacher: false,
+        userGroup: null
       };
     }
 
@@ -71,10 +77,13 @@ class LoginService {
           );
 
           return {
-            ...resp,
+            userId: resp.userId,
             success: true,
             accessToken: accessToken,
-            isTeacher: false
+            isTeacher: false,
+            classId: resp.classId,
+            studentId: resp.studentId,
+            userGroup: userGroup
           };
         })
         .catch((err: Error) => {
@@ -108,11 +117,13 @@ class LoginService {
           );
 
           return {
-            ...resp,
+            userId: resp.userId,
+            classId: resp.classId,
             success: true,
             accessToken: accessToken,
             isTeacher: true,
-            studentId: null
+            studentId: null,
+            userGroup: userGroup
           };
         })
         .catch((err: Error) => {
@@ -121,7 +132,23 @@ class LoginService {
         });
     } else if (userGroup == "Admin") {
       return {
-        userId: userId
+        userId: userId,
+        classId: null,
+        isTeacher: false,
+        studentId: null,
+        accessToken: null,
+        success: true,
+        userGroup: userGroup
+      };
+    } else {
+      return {
+        userId: null,
+        classId: null,
+        isTeacher: false,
+        studentId: null,
+        accessToken: null,
+        success: false,
+        userGroup: null
       };
     }
   };

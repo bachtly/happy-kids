@@ -1,29 +1,6 @@
-import { type DefaultSession, type NextAuthOptions, User } from "next-auth";
+import { type NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { loginService } from "../../api/src/service/common-services";
-
-/**
- * Module augmentation for `next-auth` types
- * Allows us to add custom properties to the `session` object
- * and keep type safety
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- **/
-declare module "next-auth" {
-  type UserRole = "Manager" | "Parent" | "PortalAdmin" | "Teacher";
-
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-    } & DefaultSession["user"];
-  }
-
-  //
-  // interface User extends DefaultUser {
-  //   id: string;
-  //   role: UserRole;
-  // }
-}
 
 /**
  * Options for NextAuth.js used to configure
@@ -73,7 +50,8 @@ export const authOptions: NextAuthOptions = {
             .then((resp) => {
               if (resp && resp.userId)
                 return {
-                  id: resp.userId
+                  id: resp.userId,
+                  userGroup: resp.userGroup
                 };
               else {
                 throw new Error("User does not exist");

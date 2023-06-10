@@ -3,7 +3,6 @@ import { DB } from "kysely-codegen";
 import { injectable } from "tsyringe";
 import UserService from "./user-service";
 import { showStringOrEmpty } from "../../../shared/string-utils";
-import { v4 as uuid } from "uuid";
 import { ClassModel } from "../model/class";
 import StudentService from "./student-service";
 import {
@@ -192,11 +191,9 @@ class ClassService {
 
   addTeacherToClass = (teacherId: string, classId: string) => {
     return this.verifyUserAndClassInSameSchool(teacherId, classId).then((_) => {
-      const id = uuid();
       return this.mysqlDB
         .insertInto("TeacherClassRelationship")
         .values({
-          id,
           teacherId,
           classId
         })

@@ -40,7 +40,8 @@ class SignupService {
             id: userId,
             fullname: fullName,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            userGroup: "Parent"
           })
           .executeTakeFirst()
       )

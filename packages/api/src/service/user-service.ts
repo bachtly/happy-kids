@@ -16,7 +16,7 @@ class UserService {
       .then((resp) => {
         return {
           ...resp,
-          isAdmin: resp.isAdmin > 0
+          isAdmin: resp.userGroup == "Admin"
         };
       });
   };
@@ -30,7 +30,7 @@ class UserService {
       .then((resp) => {
         return {
           ...resp,
-          isAdmin: resp.isAdmin != 0
+          isAdmin: resp.userGroup == "Admin"
         };
       })
       .catch((_) => null);
@@ -61,7 +61,7 @@ class UserService {
       resp.map((item) => {
         return {
           ...item,
-          isAdmin: item.isAdmin > 0
+          isAdmin: item.userGroup == "Admin"
         };
       })
     );

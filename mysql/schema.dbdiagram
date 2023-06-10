@@ -1,16 +1,16 @@
 Table KindergartenSchema.School {
-  id varchar(36) [pk, not null]
+  id varchar(36) [pk, not null, default: `UUID()`]
   name varchar [not null]
   address varchar
-  createdAt datetime [not null, default: CURRENT_TIMESTAMP]
+  createdAt datetime [not null, default: `CURRENT_TIMESTAMP`]
 }
 
 Table KindergartenSchema.Class {
-  id varchar(36) [pk, not null]
+  id varchar(36) [pk, not null, default: `UUID()`]
   name varchar [not null]
   schoolYear int [not null]
   schoolId varchar(36) [not null, ref: - KindergartenSchema.School.id]
-  createdAt datetime [not null, default: CURRENT_TIMESTAMP]
+  createdAt datetime [not null, default: `CURRENT_TIMESTAMP`]
 }
 
 Table KindergartenSchema.StudentClassRelationship {
@@ -39,13 +39,13 @@ Table KindergartenSchema.User {
   phone varchar(16)
   avatarUrl text
   schoolId varchar(36) [ref: - KindergartenSchema.School.id]
-  employeeRole varchar
-  userGroup KindergartenSchema.UserGroup [null]
+  employeeRole KindergartenSchema.EmployeeRole
+  userGroup KindergartenSchema.UserGroup [not null]
 }
 
 Table KindergartenSchema.TeacherClassRelationship{
-  teacherId varchar(36) [not null, ref: - KindergartenSchema.User.id]
-  classId varchar(36) [not null, ref: - KindergartenSchema.Class.id]
+  teacherId varchar(36) [pk, not null, ref: - KindergartenSchema.User.id]
+  classId varchar(36) [pk, not null, ref: - KindergartenSchema.Class.id]
 }
 
 Table KindergartenSchema.Relative {
@@ -58,10 +58,12 @@ Table KindergartenSchema.Relative {
 }
 
 Table KindergartenSchema.Student {
-  id varchar(36) [pk, not null]
+  id varchar(36) [pk, not null, default: `UUID()`]
   fullname varchar [not null]
   avatarUrl varchar
   birthdate datetime [not null]
+  height decimal(4,1)
+  weight decimal(3,1)
   parentId varchar(36) [ref: - KindergartenSchema.User.id, not null]
 }
 
@@ -335,4 +337,12 @@ Table KindergartenSchema.Noti {
   userId varchar(36) [ref: - KindergartenSchema.User.id]
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
   createUserId varchar(36) [ref: - KindergartenSchema.User.id]
+}
+
+Table KindergartenSchema.UserNotification {
+  id varchar(36) [pk, default: `UUID()`]
+  token text
+  disabledTopics text
+
+  userId varchar(36) [ref: - KindergartenSchema.User.id]
 }
