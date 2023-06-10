@@ -1,53 +1,18 @@
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React from "react";
 import { View } from "react-native";
-import { Chip, IconButton } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import SingleImageView from "./common/SingleImageView";
-import RNModal from "react-native-modal";
 interface MyImagePickerProps {
   // React State passed from outside
   imageData: string;
   setImageData: (imageData: string) => void;
-  disabled?: boolean;
   size?: number;
 }
 
 const MyImagePicker = (props: MyImagePickerProps) => {
-  const [visible, setVisible] = useState(false);
   return (
     <View className={"flex-1"}>
-      <RNModal
-        isVisible={visible}
-        animationIn={"fadeIn"}
-        animationOut={"fadeOut"}
-        onBackdropPress={() => setVisible(false)}
-        useNativeDriver={true}
-      >
-        <Chip
-          className={"mb-2 h-12 w-1/2 self-center"}
-          mode={"outlined"}
-          icon={"camera"}
-          onPress={() => {
-            void pickImageCameraFunc(props.setImageData).catch((e) =>
-              console.log(e)
-            );
-            setVisible(false);
-          }}
-        >
-          Chụp ảnh
-        </Chip>
-        <Chip
-          className={"h-12 w-1/2 self-center"}
-          mode={"outlined"}
-          icon={"folder"}
-          onPress={() => {
-            void pickImageFunc(props.setImageData).catch((e) => console.log(e));
-            setVisible(false);
-          }}
-        >
-          Chọn ảnh
-        </Chip>
-      </RNModal>
       {props.imageData !== "" && (
         <View
           className={"mb-2"}
@@ -61,12 +26,26 @@ const MyImagePicker = (props: MyImagePickerProps) => {
         </View>
       )}
 
-      <IconButton
-        className="m-0"
-        mode="outlined"
-        onPress={() => setVisible(true)}
-        icon={"camera"}
-      />
+      <View className="flex flex-row space-x-2">
+        <IconButton
+          className="m-0"
+          mode="outlined"
+          onPress={() => {
+            void pickImageCameraFunc(props.setImageData).catch((e) =>
+              console.log(e)
+            );
+          }}
+          icon={"camera"}
+        />
+        <IconButton
+          className="m-0"
+          mode="outlined"
+          onPress={() => {
+            void pickImageFunc(props.setImageData).catch((e) => console.log(e));
+          }}
+          icon={"attachment"}
+        />
+      </View>
     </View>
   );
 };

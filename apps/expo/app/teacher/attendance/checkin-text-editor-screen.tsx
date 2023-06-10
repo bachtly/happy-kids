@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, ScrollView, Image, RefreshControl } from "react-native";
+import { Image, RefreshControl, ScrollView, View } from "react-native";
 import { RadioButton, Text } from "react-native-paper";
 import "querystring";
 import { api } from "../../../src/utils/api";
@@ -113,7 +113,9 @@ const CheckinTextEditorScreen = () => {
               <RadioButton
                 value={status.toString()}
                 status={
-                  status == "CheckedIn" || status == "CheckedOut"
+                  status == AttendanceStatus.CheckedIn.toString() ||
+                  status == AttendanceStatus.CheckedOut.toString() ||
+                  status == AttendanceStatus.NotCheckedIn.toString()
                     ? "checked"
                     : "unchecked"
                 }

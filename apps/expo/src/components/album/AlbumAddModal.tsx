@@ -85,7 +85,7 @@ const AlbumAddModal = (props: PropsType) => {
           <ScrollView
             contentContainerStyle={{
               paddingVertical: 12,
-              paddingHorizontal: 24
+              paddingHorizontal: 16
             }}
           >
             <View className="mb-2">
@@ -109,8 +109,8 @@ const AlbumAddModal = (props: PropsType) => {
               />
             </View>
 
-            <View>
-              <Text variant={"labelLarge"} className="mb-1">
+            <View className={"mb-1"}>
+              <Text variant={"labelLarge"} className="mb-2">
                 Chủ đề
               </Text>
               <View className={"flex flex-row flex-wrap gap-1"}>
@@ -121,6 +121,7 @@ const AlbumAddModal = (props: PropsType) => {
                 ))}
               </View>
               <IconButton
+                className={"m-0"}
                 mode="outlined"
                 onPress={() => setTopicDgVis(true)}
                 icon={"plus"}

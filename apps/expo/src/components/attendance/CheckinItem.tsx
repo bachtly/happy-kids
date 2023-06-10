@@ -37,7 +37,7 @@ const CheckinItem = (props: CheckinItemProps) => {
 
   return (
     <CustomCard>
-      <View className={"mb-3 flex-row space-x-2"}>
+      <View className={"flex-row"}>
         <UserWithAvatar
           avatar={props.attendance.avatar}
           name={props.attendance.fullname ?? ""}
@@ -81,11 +81,11 @@ const CheckinItem = (props: CheckinItemProps) => {
         />
       </View>
 
-      <View className={"mb-2"}>
-        {isFilled && (
-          <MultipleImageView images={props.attendance.checkinPhotos ?? []} />
-        )}
-      </View>
+      {isFilled && props.attendance.checkinPhotos && (
+        <View className={"mb-2"}>
+          <MultipleImageView images={props.attendance.checkinPhotos} />
+        </View>
+      )}
 
       {props.attendance?.leaveletters &&
         props.attendance.leaveletters.map((leaveletter, key) => (

@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import { View } from "react-native";
-import { Chip } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import AlertModal from "./common/AlertModal";
 import { ActivityIndicator } from "react-native-paper";
 interface PropsType {
@@ -15,44 +15,32 @@ const MyImagePickerMulti = (props: PropsType) => {
     setVisible(false);
   };
   return (
-    <View className="relative h-full w-full">
-      <View className="flex h-full w-full justify-evenly">
-        <Chip
-          mode={"outlined"}
-          icon={"camera"}
-          className={"h-2/5 w-full"}
-          disabled={loading}
+    <View>
+      <View className="flex-row space-x-1">
+        <IconButton
+          className="m-0"
+          mode="outlined"
           onPress={() => {
             setLoading(true);
             void pickMultiImageCameraFunc(props.setImageData)
-              .catch((e) => {
-                console.log(e);
-                setVisible(true);
-              })
+              .catch((e) => console.log(e))
               .then(() => setLoading(false));
           }}
-        >
-          Chụp ảnh
-        </Chip>
-        <Chip
-          mode={"outlined"}
-          icon={"folder"}
-          disabled={loading}
-          className={"h-2/5 w-full"}
+          icon={"camera"}
+        />
+        <IconButton
+          className="m-0"
+          mode="outlined"
           onPress={() => {
             setLoading(true);
-
             void pickMultiImageFileFunc(props.setImageData)
-              .catch((e) => {
-                console.log(e);
-                setVisible(true);
-              })
+              .catch((e) => console.log(e))
               .then(() => setLoading(false));
           }}
-        >
-          Chọn ảnh
-        </Chip>
+          icon={"attachment"}
+        />
       </View>
+
       {loading && (
         <ActivityIndicator className="absolute h-full w-full bg-[#00000008]" />
       )}
@@ -108,3 +96,4 @@ const pickMultiImageCameraFunc = async (
 };
 
 export default MyImagePickerMulti;
+export { pickMultiImageCameraFunc, pickMultiImageFileFunc };

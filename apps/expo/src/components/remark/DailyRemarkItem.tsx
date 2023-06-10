@@ -46,28 +46,26 @@ const DailyRemarkItem = ({
   return (
     <CustomCard>
       {/*The account header*/}
-      <View className={"mb-3 flex-row space-x-3"}>
-        <UserWithAvatar
-          avatar={isTeacher ? item.studentAvatar : item.teacherAvatar}
-          name={isTeacher ? item.studentFullname : item.teacherFullname}
-          extraInfo={
-            item.date
-              ? getDateString(item.date, DATE_FORMAT)
-              : getDateString(date, DATE_FORMAT)
-          }
-          rightButton={
-            isTeacher ? (
-              <IconButton
-                icon={"pencil"}
-                iconColor={colors.primary}
-                size={16}
-                mode={"outlined"}
-                onPress={() => setAddRemarkModalVisible(true)}
-              />
-            ) : undefined
-          }
-        />
-      </View>
+      <UserWithAvatar
+        avatar={isTeacher ? item.studentAvatar : item.teacherAvatar}
+        name={isTeacher ? item.studentFullname : item.teacherFullname}
+        extraInfo={
+          item.date
+            ? getDateString(item.date, DATE_FORMAT)
+            : getDateString(date, DATE_FORMAT)
+        }
+        rightButton={
+          isTeacher ? (
+            <IconButton
+              icon={"pencil"}
+              iconColor={colors.primary}
+              size={16}
+              mode={"outlined"}
+              onPress={() => setAddRemarkModalVisible(true)}
+            />
+          ) : undefined
+        }
+      />
 
       {item.id ? (
         <View className={"space-y-3"}>

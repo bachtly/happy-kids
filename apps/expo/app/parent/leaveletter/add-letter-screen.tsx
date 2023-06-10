@@ -16,6 +16,7 @@ import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScre
 import WhiteBody from "../../../src/components/WhiteBody";
 import CustomTitle from "../../../src/components/common/CustomTitle";
 import LoadingBar from "../../../src/components/common/LoadingBar";
+import ShortcutLeaveReason from "../../../src/components/leaveletter/add/ShortcutLeaveReason";
 
 const AddLetter = () => {
   const now = moment();
@@ -64,7 +65,7 @@ const AddLetter = () => {
     if (reason === "") {
       trpcErrorHandler(() => {})(
         "",
-        "Vui lòng điền lý do xin nghỉ",
+        'Vui lòng điền lý do xin nghỉ. Lý do "Khác" cần điền thêm chi tiết.',
         errorContext,
         authContext
       );
@@ -110,6 +111,10 @@ const AddLetter = () => {
           <WhiteBody>
             <CustomTitle title={"Lý do nghỉ"} />
 
+            <View className={"mx-3 mb-2"}>
+              <ShortcutLeaveReason setReason={(inp) => setReason(inp)} />
+            </View>
+
             <TextInput
               className={"mx-3 mb-3 text-sm"}
               placeholder="Nhập lý do nghỉ học"
@@ -125,7 +130,7 @@ const AddLetter = () => {
           <WhiteBody>
             <CustomTitle title={"Ảnh đính kèm"} />
 
-            <View className={"mx-1 mb-3"}>
+            <View className={"mx-3 mb-3"}>
               <MultiImagePicker
                 onImagesChange={(imgs) => setImages(imgs)}
                 images={images}

@@ -27,7 +27,7 @@ const CheckoutItem = (props: CheckoutItemProps) => {
 
   return (
     <CustomCard>
-      <View className={"mb-3 flex-row space-x-3"}>
+      <View className={"flex-row"}>
         <UserWithAvatar
           avatar={props.attendance.avatar}
           name={props.attendance.fullname ?? ""}

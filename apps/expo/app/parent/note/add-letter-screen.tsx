@@ -99,7 +99,7 @@ const AddLetter = () => {
         <View className={"mb-3 flex-1"}>
           <WhiteBody>
             <CustomTitle title={"Ảnh đính kèm"} />
-            <View className={"px-2"}>
+            <View className={"mx-3 mb-3"}>
               <MultiImagePicker
                 onImagesChange={(imgs) => setImages(imgs)}
                 images={images}
