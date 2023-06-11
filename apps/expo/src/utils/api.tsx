@@ -38,7 +38,7 @@ const getBaseUrl = () => {
   // if (!localhost)
   //   throw new Error("failed to get localhost, configure it manually");
   // return `http://${localhost}:3000`;
-  return "http://38.54.15.167:8000";
+  return "https://happykids.cloud:8000";
 };
 
 /**
