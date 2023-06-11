@@ -41,7 +41,7 @@ CREATE TABLE `KindergartenSchema`.`User` (
   `avatarUrl` text,
   `schoolId` varchar(36),
   `employeeRole` ENUM ('Manager', 'Teacher'),
-  `userGroup` ENUM ('Admin', 'Employee', 'Parent')
+  `userGroup` ENUM ('Admin', 'Employee', 'Parent') NOT NULL
 );
 
 CREATE TABLE `KindergartenSchema`.`TeacherClassRelationship` (
