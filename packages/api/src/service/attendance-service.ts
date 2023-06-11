@@ -334,6 +334,8 @@ class AttendanceService {
                   );
                 const leaveletters = leavelettersResp.leaveLetterList.filter(
                   (letter) =>
+                    letter.startDate &&
+                    letter.endDate &&
                     this.timeService.getStartOfDay(letter.startDate) <= date &&
                     date <= this.timeService.getEndOfDay(letter.endDate)
                 );
@@ -341,7 +343,8 @@ class AttendanceService {
                 const pickupLettersResp = await pickupService.getPickupList(
                   this.timeService.getStartOfDay(date),
                   this.timeService.getEndOfDay(date),
-                  item.studentId
+                  item.studentId,
+                  classId
                 );
                 const pickupLetters = pickupLettersResp.pickups;
 
