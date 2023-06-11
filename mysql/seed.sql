@@ -6,7 +6,7 @@ USE KindergartenSchema;
 SET @password_hashed = '$2a$10$1WrZyVUDl8mIKoImZ1O3vuOZwzVANa.5cicTr8LW5LUGYehFg4trS';
 
 SET @portalAdminId1 = 'admin100-0000-0000-0000-000000000000';
-INSERT INTO USER (id, username, password, fullname, email, userGroup)
+INSERT INTO User (id, username, password, fullname, email, userGroup)
 VALUES
     (
         @portalAdminId1,
