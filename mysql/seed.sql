@@ -6,7 +6,7 @@ USE KindergartenSchema;
 SET @password_hashed = '$2a$10$1WrZyVUDl8mIKoImZ1O3vuOZwzVANa.5cicTr8LW5LUGYehFg4trS';
 
 SET @portalAdminId1 = 'admin100-0000-0000-0000-000000000000';
-INSERT INTO USER (id, username, password, fullname, email, userGroup)
+INSERT INTO User (id, username, password, fullname, email, userGroup)
 VALUES
     (
         @portalAdminId1,
@@ -22,13 +22,28 @@ SET @avatar = './seed/avatar';
 SET @multi_avatar = concat('\["', @avatar, '", "', @avatar, '"', '\]');
 
 
+-- Insert SchoolTerm 
+SET @sy1t1 = 'sy1t1000-0000-0000-0000-000000000000';
+SET @sy1t2 = 'sy1t2000-0000-0000-0000-000000000000';
+SET @sy2t1 = 'sy2t1000-0000-0000-0000-000000000000';
+SET @sy2t2 = 'sy2t2000-0000-0000-0000-000000000000';
+SET @sy3t1 = 'sy3t1000-0000-0000-0000-000000000000';
+SET @sy3t2 = 'sy3t2000-0000-0000-0000-000000000000';
+INSERT INTO SchoolTerm (id, year, term)
+VALUES
+    (@sy1t1, 2022, 1),
+    (@sy1t2, 2022, 2),
+    (@sy2t1, 2021, 1),
+    (@sy2t2, 2021, 2)
+;
+
 -- Insert schools
 SET @sid1 = 'sid10000-0000-0000-0000-000000000000';
 SET @sid2 = 'sid20000-0000-0000-0000-000000000000';
-INSERT INTO School (id, name, address)
+INSERT INTO School (id, name, address, schoolTermId)
 VALUES
-    (@sid1, 'King\'s Landing', '107/2B Wall\'s Treet, Seven Kingdoms, Game Of Thrones'),
-    (@sid2, 'Sơn Ca', '144 Trần Hưng Đạo, phường Mỹ Bình, thành phố Long Xuyên, tỉnh An Giang');
+    (@sid1, 'King\'s Landing', '107/2B Wall\'s Treet, Seven Kingdoms, Game Of Thrones', @sy1t2),
+    (@sid2, 'Sơn Ca', '144 Trần Hưng Đạo, phường Mỹ Bình, thành phố Long Xuyên, tỉnh An Giang', @sy1t2);
 
 
 -- Insert Managers to school 1
@@ -143,13 +158,12 @@ VALUES
 SET @clid1 = 'clid1000-0000-0000-0000-000000000000';
 SET @clid2 = 'clid2000-0000-0000-0000-000000000000';
 SET @clid3 = 'clid3000-0000-0000-0000-000000000000';
-INSERT INTO Class (id, name, schoolYear, schoolId)
+INSERT INTO Class (id, schoolYear, name, schoolId)
 VALUES
-    (@clid1, 'Stark A', 2022, @sid1),
-    (@clid2, 'Stark A', 2021, @sid1),
-    (@clid3, 'Stark B', 2022, @sid1)
+    (@clid1, 2022, 'Stark A', @sid1),
+    (@clid2, 2021, 'Stark B', @sid1),
+    (@clid3, 2021, 'Stark C', @sid1)
 ;
-
 
 -- Teacher - Class
 INSERT INTO TeacherClassRelationship (teacherId, classId)
@@ -246,7 +260,8 @@ VALUES
     (@stid3, @clid1),
     (@stid4, @clid1),
     (@stid6, @clid1),
-    (@stid5, @clid3)
+    (@stid5, @clid3),
+    (@stid1, @clid2)
 ;
 
 -- Relative
@@ -263,10 +278,10 @@ VALUES
 -- LeaveLetter
 SET @leaveletid1 = uuid();
 SET @leaveletid2 = uuid();
-INSERT INTO LeaveLetter (id, createdAt, status, startDate, endDate, reason, updatedByTeacherId, studentId, createdByParentId)
+INSERT INTO LeaveLetter (id, createdAt, status, startDate, endDate, reason, updatedByTeacherId, studentId, createdByParentId, schoolTermId)
 VALUES
-    (@leaveletid1, '2023-05-31', 'Confirmed', '2023-06-02', '2023-06-02', 'Bé bị sốt', @tid1, @stid1, @prid1),
-    (@leaveletid2, '2023-05-31', 'Rejected', '2023-06-04', '2023-06-04', 'Bé đi du lịch với cả nhà', @tid1, @stid4, @prid1)
+    (@leaveletid1, '2023-05-31', 'Confirmed', '2023-06-02', '2023-06-02', 'Bé bị sốt', @tid1, @stid1, @prid1, @sy1t1),
+    (@leaveletid2, '2023-05-31', 'Rejected', '2023-06-04', '2023-06-04', 'Bé đi du lịch với cả nhà', @tid1, @stid4, @prid1, @sy1t2)
 ;
 
 INSERT INTO LeaveLetterPhoto (photo, leaveLetterId)
@@ -276,8 +291,8 @@ VALUES ('./seed/leave/fever', @leaveletid1);
 SET @medletid1 = uuid();
 SET @medphotoc = './seed/medicine/vitaminc';
 SET @medphotodc = './seed/medicine/dauca';
-INSERT INTO MedicineLetter (id, startDate, endDate, createdAt, status, note, updatedByTeacherId, createdByParentId, studentId)
-VALUES (@medletid1,'2023-06-04','2023-06-14', '2023-05-31', 'Confirmed', 'Bé bị sốt', @tid2, @prid1, @stid1);
+INSERT INTO MedicineLetter (id, startDate, endDate, createdAt, status, note, updatedByTeacherId, createdByParentId, studentId, schoolTermId)
+VALUES (@medletid1,'2023-06-04','2023-06-14', '2023-05-31', 'Confirmed', 'Bé bị sốt', @tid2, @prid1, @stid1, @sy1t1);
 
 SET @medid1 = uuid();
 SET @medid2 = uuid();
@@ -292,22 +307,22 @@ VALUES (@medid1,"Used", "2023-06-04", 'Bé uống hết thuốc', @medletid1);
 
 -- PickupLetter
 SET @pickupid1 = 'pickupid-1000-0000-0000-000000000000';
-INSERT INTO PickupLetter (id, note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
+INSERT INTO PickupLetter (id, note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId, schoolTermId)
 VALUES (@pickupid1, 'Chiều nay mẹ bé bận, nhờ chú Tư rước bé', '2023-01-05T17:00:00', '2023-01-04',
-        'Confirmed', @rlid1, @tid1, @stid4);
+        'Confirmed', @rlid1, @tid1, @stid4, @sy1t1);
 
-INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId)
+INSERT INTO PickupLetter (note, pickupTime, createdAt, status, pickerRelativeId, updatedByTeacherId, studentId, schoolTermId)
 VALUES
-	('Chiều nay mẹ bé bận', '2023-05-22T17:00:00', '2023-05-21', 'Confirmed', @rlid2, @tid1, @stid1),
-    ('Chiều nay mẹ bé bận', '2023-05-23T17:00:00', '2023-05-22', 'Confirmed', @rlid2, @tid1, @stid1),
-    ('Chiều nay mẹ bé bận', '2023-05-24T17:00:00', '2023-05-23', 'Confirmed', @rlid2, @tid1, @stid1),
-    ('Chiều nay mẹ bé bận', '2023-05-25T17:00:00', '2023-05-24', 'Confirmed', @rlid2, @tid1, @stid1),
-    ('Chiều nay mẹ bé bận', '2023-05-26T17:00:00', '2023-05-25', 'Confirmed', @rlid2, @tid1, @stid1);
+	('Chiều nay mẹ bé bận', '2023-05-22T17:00:00', '2023-05-21', 'Confirmed', @rlid2, @tid1, @stid1, @sy1t1),
+    ('Chiều nay mẹ bé bận', '2023-05-23T17:00:00', '2023-05-22', 'Confirmed', @rlid2, @tid1, @stid1, @sy1t1),
+    ('Chiều nay mẹ bé bận', '2023-05-24T17:00:00', '2023-05-23', 'Confirmed', @rlid2, @tid1, @stid1, @sy1t1),
+    ('Chiều nay mẹ bé bận', '2023-05-25T17:00:00', '2023-05-24', 'Confirmed', @rlid2, @tid1, @stid1, @sy1t2),
+    ('Chiều nay mẹ bé bận', '2023-05-26T17:00:00', '2023-05-25', 'Confirmed', @rlid2, @tid1, @stid1, @sy1t2);
 -- NoteLetter
 SET @notletid1 = 'notletid-1000-0000-0000-000000000000';
 SET @notletphotos = '{"photoPaths": ["./seed/note/canmongtay"]}';
-INSERT INTO NoteThread (id, createdAt, startDate, endDate, status, content, createdByParentId, studentId, photos)
-VALUES (@notletid1, '2023-05-30', '2023-05-30', '2023-06-03', 'Confirmed', 'Bé hay cắn móng tay, cô chú ý giúp', @prid1, @stid1, @notletphotos);
+INSERT INTO NoteThread (id, createdAt, startDate, endDate, status, content, createdByParentId, studentId, photos, schoolTermId)
+VALUES (@notletid1, '2023-05-30', '2023-05-30', '2023-06-03', 'Confirmed', 'Bé hay cắn móng tay, cô chú ý giúp', @prid1, @stid1, @notletphotos, @sy1t1);
 
 INSERT INTO NoteMessage (createdAt, content, userId, noteThreadId)
 VALUES
@@ -317,10 +332,10 @@ VALUES
 
 -- Post1
 SET @postid1 = 'postid10-0000-0000-0000-000000000000';
-INSERT INTO Post (id, createdAt, userId, photos, content)
+INSERT INTO Post (id, createdAt, userId, photos, content, schoolTermId)
 VALUES
 	(@postid1, '2023-01-06', @mgrid4, @multi_avatar,
-		'THÔNG BÁO: Nghỉ học tránh bão số 1000\nDựa vào dự báo thời tiết của VTV, bão số 1000 dự kiến sẽ đổ bộ vào khu vực tỉnh chúng ta vào ngày thứ 2 tới." Để tránh những ảnh hưởng đáng tiếc xảy ra, nhà trường xin thông báo cho các phụ huynh về việc tạm ngưng việc học của bé vào T2 tới và sẽ tiếp tục việc học vào T3');
+		'THÔNG BÁO: Nghỉ học tránh bão số 1000\nDựa vào dự báo thời tiết của VTV, bão số 1000 dự kiến sẽ đổ bộ vào khu vực tỉnh chúng ta vào ngày thứ 2 tới." Để tránh những ảnh hưởng đáng tiếc xảy ra, nhà trường xin thông báo cho các phụ huynh về việc tạm ngưng việc học của bé vào T2 tới và sẽ tiếp tục việc học vào T3', @sy1t1);
 
 INSERT INTO PostReaction (time, reaction, userId, postId)
 VALUES
@@ -345,10 +360,10 @@ VALUES (@mgrid1, @postid1), (@mgrid2, @postid1), (@mgrid3, @postid1),
 
 -- Post2
 SET @postid2 = 'postid20-0000-0000-0000-000000000000';
-INSERT INTO Post (id, createdAt, userId, photos, content)
+INSERT INTO Post (id, createdAt, userId, photos, content, schoolTermId)
 VALUES
 	(@postid2, '2023-01-10', @tid2, @multi_avatar,
-		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời');
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời', @sy1t1);
 
 INSERT INTO PostReaction (time, reaction, userId, postId)
 VALUES ('2023-01-10T20:00:00', 'Like', @mgrid1, @postid2);
@@ -364,23 +379,23 @@ SET @postid3 = 'postid30-0000-0000-0000-000000000000';
 SET @postid4 = 'postid40-0000-0000-0000-000000000000';
 SET @postid5 = 'postid50-0000-0000-0000-000000000000';
 SET @postid6 = 'postid60-0000-0000-0000-000000000000';
-INSERT INTO Post (id, createdAt, userId, photos, content)
+INSERT INTO Post (id, createdAt, userId, photos, content, schoolTermId)
 VALUES
 	(@postid3, '2023-04-11', @tid2, @multi_avatar,
-		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời'),
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời', @sy1t1),
 	(@postid4, '2023-04-11', @tid2, @multi_avatar,
-		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời'),
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời', @sy1t1),
 	(@postid5, '2023-04-11', @tid2, @multi_avatar,
-		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời'),
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời', @sy1t1),
 	(@postid6, '2023-04-11', @tid2, @multi_avatar,
-		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời')
+		'THÔNG BÁO: Hoạt động ngoại khóa tìm hiểu cấu tạo các loại hoa\nNgày mai lớp có hoạt động dã ngoại, nhờ quý phụ huynh cho các bé mặc đồ thoải mãi dễ hoạt động ngoài trời', @sy1t2)
 ;
 
 -- Album
 SET @albumid1 = 'albumid1-0000-0000-0000-000000000000';
 Set @album1photo='["./seed/album/park1","./seed/album/park2","./seed/album/park3","./seed/album/park4","./seed/album/park5","./seed/album/park6","./seed/album/park7","./seed/album/park8"]';
-INSERT INTO Album (id, title, description, photos, createdAt, classId, eventDate, teacherId)
-VALUES (@albumid1, 'Các bé đi chơi công viên', 'Hoạt động ngoại khóa bao gồm chơi thể thao, vui chơi giải trí ở công viên Lê Văn Tám', @album1photo, '2023-01-02T17:00:00', @clid1, '2023-01-02', @tid1);
+INSERT INTO Album (id, title, description, photos, createdAt, classId, eventDate, teacherId, schoolTermId)
+VALUES (@albumid1, 'Các bé đi chơi công viên', 'Hoạt động ngoại khóa bao gồm chơi thể thao, vui chơi giải trí ở công viên Lê Văn Tám', @album1photo, '2023-01-02T17:00:00', @clid1, '2023-01-02', @tid1, @sy1t1);
 
 SET @topicid1 = 'topicid1-0000-0000-0000-000000000000';
 SET @topicid2 = 'topicid2-0000-0000-0000-000000000000';
@@ -400,57 +415,57 @@ VALUES
 ;
 
 -- Attendance T2 2023-01-02
-INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)
+INSERT INTO Attendance (date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo, schoolTermId)
 VALUES
-    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', '[]', '[]', 'AbsenseWithPermission', @stid1, @tid1, @tid1, 36.5),
-    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid2, 36.5),
-    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2, 36.5),
-    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, 36.5),
-    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, 36.5)
+    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', '[]', '[]', 'AbsenseWithPermission', @stid1, @tid1, @tid1, 36.5, @sy1t1),
+    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid2, 36.5, @sy1t1),
+    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2, 36.5, @sy1t1),
+    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, 36.5, @sy1t1),
+    ('2023-05-02', '2023-05-02T7:00:00', '2023-05-02T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, 36.5, @sy1t1)
 ;
 
 -- Attendance T5 2023-01-05
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkoutNote, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, pickerRelativeId, thermo)
+(date, checkinTime, checkoutTime, checkoutNote, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, pickerRelativeId, thermo, schoolTermId)
 VALUES
-    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, '["./bothui/bothui1.jpeg"]', '["./bothui/bothui5.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, null, 36.5),
-    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1, null, 36.5),
-    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2, null, 36.5),
-    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', 'Bé được chú Tư rước', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, @rlid1, 36.5),
-    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, null, 36.5)
+    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, '["./bothui/bothui1.jpeg"]', '["./bothui/bothui5.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, null, 36.5, @sy1t1),
+    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1, null, 36.5, @sy1t1),
+    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid3, @tid2, @tid2, null, 36.5, @sy1t1),
+    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', 'Bé được chú Tư rước', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, @rlid1, 36.5, @sy1t1),
+    ('2023-05-05', '2023-05-05T7:00:00', '2023-05-05T17:00:00', null, @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, null, 36.5, @sy1t1)
 ;
 
 -- Attendance T4 2023-01-11
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)
+(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo, schoolTermId)
 VALUES
-    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', '["./bothui/bothui3.jpeg"]', '["./bothui/bothui2.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, 36.5),
-    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1, 36.5),
-    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithoutPermission', @stid3, @tid2, @tid2, 36.5),
-    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, 36.5),
-    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, 36.5)
+    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', '["./bothui/bothui3.jpeg"]', '["./bothui/bothui2.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, 36.5, @sy1t2),
+    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid2, @tid1, @tid1, 36.5, @sy1t2),
+    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'AbsenseWithoutPermission', @stid3, @tid2, @tid2, 36.5, @sy1t2),
+    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid4, @tid1, @tid1, 36.5, @sy1t2),
+    ('2023-05-11', '2023-05-11T7:00:00', '2023-05-11T17:00:00', @multi_avatar, @multi_avatar, 'CheckedOut', @stid6, @tid2, @tid2, 36.5, @sy1t2)
 ;
 
 -- Attendance more for student @stid1
 INSERT INTO Attendance
-(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo)
+(date, checkinTime, checkoutTime, checkinPhotos, checkoutPhotos, status, studentId, checkinTeacherId, checkoutTeacherId, thermo, schoolTermId)
 VALUES
-    ('2023-05-12', '2023-05-12T7:00:00', '2023-05-12T17:00:00', concat('["./bothui/bothui3.jpeg"]'), concat('["./bothui/bothui5.jpeg"]'), 'CheckedOut', @stid1, @tid1, @tid1, 36.5),
-    ('2023-05-13', '2023-05-13T7:00:00', '2023-05-13T17:00:00', '["./bothui/bothui3.jpeg"]', '["./bothui/bothui2.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, 36.5),
-    ('2023-05-14', '2023-05-14T7:00:00', '2023-05-14T17:00:00', '["./bothui/bothui2.jpeg"]', '["./bothui/bothui1.jpeg"]', 'AbsenseWithoutPermission', @stid1, @tid2, @tid2, 36.5),
-    ('2023-05-15', '2023-05-15T7:00:00', '2023-05-15T17:00:00', '["./bothui/bothui1.jpeg"]', '["./bothui/bothui3.jpeg"]', 'AbsenseWithPermission', @stid1, @tid1, @tid1, 36.5),
-    ('2023-05-16', '2023-05-16T7:00:00', '2023-05-16T17:00:00', '["./bothui/bothui5.jpeg"]', '["./bothui/bothui2.jpeg"]', 'AbsenseWithPermission', @stid1, @tid2, @tid2, 36.5)
+    ('2023-05-12', '2023-05-12T7:00:00', '2023-05-12T17:00:00', concat('["./bothui/bothui3.jpeg"]'), concat('["./bothui/bothui5.jpeg"]'), 'CheckedOut', @stid1, @tid1, @tid1, 36.5, @sy1t2),
+    ('2023-05-13', '2023-05-13T7:00:00', '2023-05-13T17:00:00', '["./bothui/bothui3.jpeg"]', '["./bothui/bothui2.jpeg"]', 'CheckedOut', @stid1, @tid1, @tid1, 36.5, @sy1t2),
+    ('2023-05-14', '2023-05-14T7:00:00', '2023-05-14T17:00:00', '["./bothui/bothui2.jpeg"]', '["./bothui/bothui1.jpeg"]', 'AbsenseWithoutPermission', @stid1, @tid2, @tid2, 36.5, @sy1t2),
+    ('2023-05-15', '2023-05-15T7:00:00', '2023-05-15T17:00:00', '["./bothui/bothui1.jpeg"]', '["./bothui/bothui3.jpeg"]', 'AbsenseWithPermission', @stid1, @tid1, @tid1, 36.5, @sy1t2),
+    ('2023-05-16', '2023-05-16T7:00:00', '2023-05-16T17:00:00', '["./bothui/bothui5.jpeg"]', '["./bothui/bothui2.jpeg"]', 'AbsenseWithPermission', @stid1, @tid2, @tid2, 36.5, @sy1t2)
 ;
 
 -- DailyRemark
 SET @dremkid1 = 'dremkid1-0000-0000-0000-000000000000';
 SET @dremkid2 = 'dremkid2-0000-0000-0000-000000000000';
 SET @dremkid3 = 'dremkid3-0000-0000-0000-000000000000';
-INSERT INTO DailyRemark (id, date, teacherId, studentId)
+INSERT INTO DailyRemark (id, date, teacherId, studentId, schoolTermId)
 VALUES
-    (@dremkid1, '2023-05-29', @tid1, @stid1),
-    (@dremkid2, '2023-05-31', @tid1, @stid1),
-    (@dremkid3, '2023-05-30', @tid2, @stid1)
+    (@dremkid1, '2023-05-29', @tid1, @stid1, @sy1t1),
+    (@dremkid2, '2023-05-31', @tid1, @stid1, @sy1t1),
+    (@dremkid3, '2023-05-30', @tid2, @stid1, @sy1t2)
 ;
 
 INSERT INTO DailyRemarkActivity (dailyRemarkId, activity, content)
@@ -516,13 +531,13 @@ VALUES (@menuid1, @clid1), (@menuid1, @clid3);
 
 
 -- PeriodRemark
-INSERT INTO PeriodRemark (period, startTime, endTime, teacherId, studentId, content)
+INSERT INTO PeriodRemark (period, startTime, endTime, teacherId, studentId, content, schoolTermId)
 VALUES
-    ('Week', '2023-05-01', '2023-05-31', @tid1, @stid1, 'Bé chăm ngoan, nhưng còn hơi rụt rè, mong gia đình cho bé thêm tình thương'),
-    ('Week', '2023-05-01', '2023-05-31', @tid1, @stid2, 'Bé chăm ngoan'),
-    ('Week', '2023-05-01', '2023-05-31', @tid1, @stid3, 'Bé chăm ngoan'),
-    ('Week', '2023-05-01', '2023-05-31', @tid2, @stid4, 'Bé chăm ngoan'),
-    ('Week', '2023-05-01', '2023-05-31', @tid2, @stid6, 'Bé chăm ngoan')
+    ('Week', '2023-05-01', '2023-05-31', @tid1, @stid1, 'Bé chăm ngoan, nhưng còn hơi rụt rè, mong gia đình cho bé thêm tình thương', @sy1t1),
+    ('Week', '2023-05-01', '2023-05-31', @tid1, @stid2, 'Bé chăm ngoan', @sy1t1),
+    ('Week', '2023-05-01', '2023-05-31', @tid1, @stid3, 'Bé chăm ngoan', @sy1t1),
+    ('Week', '2023-05-01', '2023-05-31', @tid2, @stid4, 'Bé chăm ngoan', @sy1t1),
+    ('Week', '2023-05-01', '2023-05-31', @tid2, @stid6, 'Bé chăm ngoan', @sy1t1)
 ;
 
 -- TuitionFee

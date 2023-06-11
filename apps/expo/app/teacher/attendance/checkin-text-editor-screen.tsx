@@ -70,6 +70,7 @@ const CheckinTextEditorScreen = () => {
   ) => {
     attMutation.mutate({
       studentId: studentId,
+      classId: authContext.classId ?? "",
       status: status,
       note: note,
       photos: photos,

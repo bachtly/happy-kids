@@ -11,9 +11,12 @@ const albumRouter = createTRPCRouter({
   getAlbumList: protectedProcedure
     .input(GetAlbumListRequest)
     .query(async ({ input }) => {
-      if (input.classId !== "")
-        return await albumService.getAlbumListByClass(input.classId);
-      return await albumService.getAlbumListByStudent(input.studentId);
+      if (input.studentId !== "")
+        return await albumService.getAlbumListByStudent(
+          input.studentId,
+          input.classId
+        );
+      return await albumService.getAlbumListByClass(input.classId);
     }),
 
   getAlbum: protectedProcedure

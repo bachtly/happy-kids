@@ -11,9 +11,9 @@ interface MedLetterItem {
   id: string;
   note: string;
   status: MedicineLetterStatus;
-  createdAt: Date;
-  startDate: Date;
-  endDate: Date;
+  createdAt: Date | null;
+  startDate: Date | null;
+  endDate: Date | null;
   studentName: string;
 }
 

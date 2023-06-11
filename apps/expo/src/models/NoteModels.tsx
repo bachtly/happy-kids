@@ -6,8 +6,8 @@ interface NoteThread {
   status: NoteThreadStatus;
   content: string;
 
-  createdAt: Date;
-  startDate: Date;
+  createdAt: Date | null;
+  startDate: Date | null;
   endDate: Date | null;
 }
 

@@ -26,7 +26,8 @@ const DailyRemark = z.object({
 const GetDailyRemarkListRequest = z.object({
   timeStart: z.date(),
   timeEnd: z.date(),
-  studentId: z.string()
+  studentId: z.string(),
+  classId: z.string()
 });
 
 const GetDailyRemarkListResponse = z.object({
@@ -68,7 +69,8 @@ const InsertDailyRemarkActivityRequest = z.object({
   activities: z.array(Activity),
   remarkId: z.nullable(z.string()),
   date: z.nullable(z.date()),
-  studentId: z.nullable(z.string())
+  studentId: z.nullable(z.string()),
+  classId: z.string()
 });
 
 const InsertDailyRemarkActivityResponse = z.object({});

@@ -9,13 +9,14 @@ const MedicineHome = () => {
   const [studentId, _] = useState<string | undefined>(
     useSearchParams().studentId
   );
+  const [classId, __] = useState<string | undefined>(useSearchParams().classId);
   const [errorMessage, setErrorMessage] = useState("");
 
   if (!studentId) setErrorMessage(SYSTEM_ERROR_MESSAGE);
   return (
     <Body>
       <MedicineHomeView
-        classId={""}
+        classId={classId ?? ""}
         studentId={studentId ?? ""}
         isTeacher={false}
       />

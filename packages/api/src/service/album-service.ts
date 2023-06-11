@@ -29,6 +29,7 @@ class AlbumService {
           "AlbumTopicRelationship.topicId",
           "AlbumTopic.id"
         )
+        .leftJoin("SchoolTerm", "SchoolTerm.id", "Album.schoolTermId")
         .select([
           "Album.id",
           "Album.title",
@@ -38,9 +39,13 @@ class AlbumService {
           "Album.eventDate",
           "AlbumTopic.topic",
           "AlbumTopic.id as topicId",
-          "Album.teacherId"
+          "Album.teacherId",
+          "SchoolTerm.term as schoolTerm",
+          "SchoolTerm.year as schoolYear",
+          "SchoolTerm.id as schoolTermId"
         ])
         .where("Album.classId", "=", classId)
+        .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
         .execute()
         .then(async (resp) => {
           type albumType = Omit<
@@ -76,11 +81,7 @@ class AlbumService {
                 item.teacherId ?? ""
               );
               m.set(item.id, {
-                id: item.id,
-                title: item.title,
-                createdAt: item.createdAt,
-                description: item.description,
-                eventDate: item.eventDate,
+                ...item,
                 photos: photos,
                 topics: item.topicId
                   ? [{ id: item.topicId, topic: item.topic ?? "" }]
@@ -110,7 +111,7 @@ class AlbumService {
     };
   };
 
-  getAlbumListByStudent = async (studentId: string) => {
+  getAlbumListByStudent = async (studentId: string, classId: string) => {
     const albums = await Promise.all(
       await this.mysqlDB
         .selectFrom("Student")
@@ -132,6 +133,7 @@ class AlbumService {
           "AlbumTopic.id"
         )
         .leftJoin("User", "User.id", "Album.teacherId")
+        .leftJoin("SchoolTerm", "SchoolTerm.id", "Album.schoolTermId")
         .select([
           "Album.id",
           "Album.title",
@@ -141,9 +143,14 @@ class AlbumService {
           "Album.photos",
           "AlbumTopic.topic",
           "AlbumTopic.id as topicId",
-          "Album.teacherId"
+          "Album.teacherId",
+          "SchoolTerm.term as schoolTerm",
+          "SchoolTerm.year as schoolYear",
+          "SchoolTerm.id as schoolTermId"
         ])
         .where("Student.id", "=", studentId)
+        .where("Class.id", "=", classId)
+        .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
         .execute()
         .then(async (resp) => {
           type albumType = Omit<
@@ -180,11 +187,7 @@ class AlbumService {
                 : null;
 
               m.set(item.id, {
-                id: item.id,
-                title: item.title,
-                createdAt: item.createdAt,
-                description: item.description,
-                eventDate: item.eventDate,
+                ...item,
                 photos: photos,
                 topics: item.topicId
                   ? [{ id: item.topicId, topic: item.topic ?? "" }]
@@ -224,6 +227,7 @@ class AlbumService {
         "AlbumTopicRelationship.albumId"
       )
       .leftJoin("AlbumTopic", "AlbumTopicRelationship.topicId", "AlbumTopic.id")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "Album.schoolTermId")
       .select([
         "Album.id",
         "Album.title",
@@ -231,7 +235,10 @@ class AlbumService {
         "Album.photos",
         "Album.eventDate",
         "AlbumTopic.topic as topics",
-        "Album.teacherId"
+        "Album.teacherId",
+        "SchoolTerm.term as schoolTerm",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.id as schoolTermId"
       ])
       .where("Album.id", "=", albumId)
       .execute()
@@ -275,6 +282,9 @@ class AlbumService {
     userId: string
   ) => {
     if (photos.length === 0) throw "Vui lòng thêm ảnh";
+    const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+      classId
+    );
     const photoPaths = photos
       .filter((item) => item != "")
       .map((item) => {
@@ -292,7 +302,8 @@ class AlbumService {
         createdAt: new Date(),
         classId: classId,
         eventDate,
-        teacherId: userId
+        teacherId: userId,
+        schoolTermId
       })
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows)

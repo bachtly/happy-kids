@@ -54,17 +54,21 @@ const MedicineHomeView = ({
           classId
         }
       : {
-          studentId
+          studentId,
+          classId
         },
     {
       onSuccess: (resp) => {
+        resp.medicineLetterList.forEach((item) =>
+          console.log(item.schoolYear, item.schoolTerm)
+        );
         setLetterList(
           resp.medicineLetterList
             .map((item) => ({
               id: item.id,
               createdAt: item.createdAt,
-              status: item.status,
-              note: item.note,
+              status: item.status ?? "NotConfirmed",
+              note: item.note ?? "",
               startDate: item.startDate,
               endDate: item.endDate,
               studentName: item.studentName

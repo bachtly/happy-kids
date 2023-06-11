@@ -52,7 +52,8 @@ const NoteHomeView = ({
           classId
         }
       : {
-          studentId
+          studentId,
+          classId
         },
     {
       onSuccess: (resp) => {
@@ -61,11 +62,11 @@ const NoteHomeView = ({
             .map((item) => ({
               id: item.id,
               createdAt: item.createdAt,
-              status: item.status,
+              status: item.status ?? "NotConfirmed",
               startDate: item.startDate,
               endDate: item.endDate,
               studentName: item.studentName,
-              content: item.content
+              content: item.content ?? ""
             }))
             .sort((item1, item2) =>
               moment(item2.createdAt).diff(moment(item1.createdAt))

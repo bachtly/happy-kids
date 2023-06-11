@@ -7,17 +7,24 @@ import type { FileServiceInterface } from "../utils/FileService";
 import NotiService, { NotificationTopics } from "./noti-service";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { TimeServiceInterface } from "../utils/TimeService";
+import AccountService from "./account-service";
 
 @injectable()
 class PickupService {
   constructor(
     private mysqlDB: Kysely<DB>,
+    private accountService: AccountService,
     @inject("FileService") private fileService: FileServiceInterface,
     private notiService: NotiService,
     @inject("TimeService") private timeService: TimeServiceInterface
   ) {}
 
-  getPickupList = async (timeStart: Date, timeEnd: Date, studentId: string) => {
+  getPickupList = async (
+    timeStart: Date,
+    timeEnd: Date,
+    studentId: string,
+    classId: string
+  ) => {
     console.log(
       `getPickupList receive request ${JSON.stringify({
         timeStart: timeStart,
@@ -28,8 +35,15 @@ class PickupService {
 
     const pickups = await this.mysqlDB
       .selectFrom("PickupLetter")
+      .innerJoin("Student", "Student.id", "PickupLetter.studentId")
+      .innerJoin(
+        "StudentClassRelationship",
+        "Student.id",
+        "StudentClassRelationship.studentId"
+      )
+      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "PickupLetter.schoolTermId")
       .leftJoin("Relative", "PickupLetter.pickerRelativeId", "Relative.id")
-      .leftJoin("Student", "PickupLetter.studentId", "Student.id")
       .select([
         "PickupLetter.id as id",
         "status",
@@ -39,7 +53,9 @@ class PickupService {
       ])
       .where("pickupTime", ">=", timeStart)
       .where("pickupTime", "<=", timeEnd)
-      .where("studentId", "=", studentId)
+      .where("Student.id", "=", studentId)
+      .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => resp.flat())
       .catch((err: Error) => {
@@ -191,7 +207,8 @@ class PickupService {
     pickerId: string,
     time: Date,
     studentId: string,
-    note: string
+    note: string,
+    classId: string
   ) => {
     console.log(
       `insertPickupLetter receive request ${JSON.stringify({
@@ -205,6 +222,10 @@ class PickupService {
     if (pickerId.trim() === "") throw "Vui lòng chọn người đón";
     if (note.trim() === "") throw "Vui lòng thêm ghi chú";
 
+    const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+      classId
+    );
+
     const id = uuidv4();
     const count = await this.mysqlDB
       .insertInto("PickupLetter")
@@ -215,7 +236,8 @@ class PickupService {
         createdAt: moment(moment.now()).toDate(),
         pickupTime: time,
         note: note,
-        status: "NotConfirmed"
+        status: "NotConfirmed",
+        schoolTermId
       })
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows)

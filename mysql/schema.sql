@@ -7,7 +7,14 @@ CREATE TABLE `KindergartenSchema`.`School` (
   `id` varchar(36) PRIMARY KEY NOT NULL DEFAULT (UUID()),
   `name` varchar(255) NOT NULL,
   `address` varchar(255),
-  `createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+  `createdAt` datetime NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+  `schoolTermId` varchar(36)
+);
+
+CREATE TABLE `KindergartenSchema`.`SchoolTerm` (
+  `id` varchar(36) PRIMARY KEY NOT NULL DEFAULT (UUID()),
+  `year` int NOT NULL,
+  `term` int NOT NULL
 );
 
 CREATE TABLE `KindergartenSchema`.`Class` (
@@ -67,7 +74,8 @@ CREATE TABLE `KindergartenSchema`.`Post` (
   `createdAt` datetime,
   `content` text,
   `photos` text,
-  `userId` varchar(36)
+  `userId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`PostComment` (
@@ -101,7 +109,8 @@ CREATE TABLE `KindergartenSchema`.`LeaveLetter` (
   `reason` text,
   `updatedByTeacherId` varchar(36),
   `createdByParentId` varchar(36),
-  `studentId` varchar(36)
+  `studentId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`LeaveLetterPhoto` (
@@ -119,7 +128,8 @@ CREATE TABLE `KindergartenSchema`.`MedicineLetter` (
   `endDate` date,
   `updatedByTeacherId` varchar(36),
   `createdByParentId` varchar(36),
-  `studentId` varchar(36)
+  `studentId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Medicine` (
@@ -147,7 +157,8 @@ CREATE TABLE `KindergartenSchema`.`PickupLetter` (
   `status` ENUM ('NotConfirmed', 'Confirmed', 'Rejected'),
   `pickerRelativeId` varchar(36),
   `updatedByTeacherId` varchar(36),
-  `studentId` varchar(36)
+  `studentId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`NoteThread` (
@@ -159,7 +170,8 @@ CREATE TABLE `KindergartenSchema`.`NoteThread` (
   `startDate` date,
   `endDate` date,
   `createdByParentId` varchar(36),
-  `studentId` varchar(36)
+  `studentId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`NoteMessage` (
@@ -184,7 +196,8 @@ CREATE TABLE `KindergartenSchema`.`Attendance` (
   `studentId` varchar(36),
   `checkinTeacherId` varchar(36),
   `checkoutTeacherId` varchar(36),
-  `pickerRelativeId` varchar(36)
+  `pickerRelativeId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`Timetable` (
@@ -230,7 +243,8 @@ CREATE TABLE `KindergartenSchema`.`DailyRemark` (
   `id` varchar(36) PRIMARY KEY DEFAULT (UUID()),
   `date` datetime,
   `teacherId` varchar(36),
-  `studentId` varchar(36)
+  `studentId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`DailyRemarkActivity` (
@@ -247,7 +261,8 @@ CREATE TABLE `KindergartenSchema`.`PeriodRemark` (
   `startTime` datetime,
   `endTime` datetime,
   `teacherId` varchar(36),
-  `studentId` varchar(36)
+  `studentId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`TuitionFee` (
@@ -268,7 +283,8 @@ CREATE TABLE `KindergartenSchema`.`Album` (
   `createdAt` datetime,
   `eventDate` datetime,
   `teacherId` varchar(36),
-  `classId` varchar(36)
+  `classId` varchar(36),
+  `schoolTermId` varchar(36)
 );
 
 CREATE TABLE `KindergartenSchema`.`AlbumTopic` (
@@ -301,6 +317,8 @@ CREATE TABLE `KindergartenSchema`.`UserNotification` (
   `userId` varchar(36)
 );
 
+ALTER TABLE `KindergartenSchema`.`School` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`Class` ADD FOREIGN KEY (`schoolId`) REFERENCES `KindergartenSchema`.`School` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`StudentClassRelationship` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
@@ -318,6 +336,8 @@ ALTER TABLE `KindergartenSchema`.`Relative` ADD FOREIGN KEY (`parentId`) REFEREN
 ALTER TABLE `KindergartenSchema`.`Student` ADD FOREIGN KEY (`parentId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Post` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`Post` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`PostComment` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
@@ -337,6 +357,8 @@ ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`createdByParent
 
 ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`LeaveLetter` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`LeaveLetterPhoto` ADD FOREIGN KEY (`leaveLetterId`) REFERENCES `KindergartenSchema`.`LeaveLetter` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`updatedByTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
@@ -344,6 +366,8 @@ ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`updatedByTea
 ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`createdByParentId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`MedicineLetter` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Medicine` ADD FOREIGN KEY (`medicineLetterId`) REFERENCES `KindergartenSchema`.`MedicineLetter` (`id`);
 
@@ -355,9 +379,13 @@ ALTER TABLE `KindergartenSchema`.`PickupLetter` ADD FOREIGN KEY (`updatedByTeach
 
 ALTER TABLE `KindergartenSchema`.`PickupLetter` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`PickupLetter` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`NoteThread` ADD FOREIGN KEY (`createdByParentId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`NoteThread` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`NoteThread` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`NoteMessage` ADD FOREIGN KEY (`userId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
@@ -370,6 +398,8 @@ ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`checkinTeacherId
 ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`checkoutTeacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`pickerRelativeId`) REFERENCES `KindergartenSchema`.`Relative` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`Attendance` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Timetable` ADD FOREIGN KEY (`classId`) REFERENCES `KindergartenSchema`.`Class` (`id`);
 
@@ -387,17 +417,23 @@ ALTER TABLE `KindergartenSchema`.`DailyRemark` ADD FOREIGN KEY (`teacherId`) REF
 
 ALTER TABLE `KindergartenSchema`.`DailyRemark` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`DailyRemark` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`DailyRemarkActivity` ADD FOREIGN KEY (`dailyRemarkId`) REFERENCES `KindergartenSchema`.`DailyRemark` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`PeriodRemark` ADD FOREIGN KEY (`teacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`PeriodRemark` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
+ALTER TABLE `KindergartenSchema`.`PeriodRemark` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
+
 ALTER TABLE `KindergartenSchema`.`TuitionFee` ADD FOREIGN KEY (`studentId`) REFERENCES `KindergartenSchema`.`Student` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Album` ADD FOREIGN KEY (`teacherId`) REFERENCES `KindergartenSchema`.`User` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`Album` ADD FOREIGN KEY (`classId`) REFERENCES `KindergartenSchema`.`Class` (`id`);
+
+ALTER TABLE `KindergartenSchema`.`Album` ADD FOREIGN KEY (`schoolTermId`) REFERENCES `KindergartenSchema`.`SchoolTerm` (`id`);
 
 ALTER TABLE `KindergartenSchema`.`AlbumTopicRelationship` ADD FOREIGN KEY (`albumId`) REFERENCES `KindergartenSchema`.`Album` (`id`);
 

@@ -3,6 +3,14 @@ Table KindergartenSchema.School {
   name varchar [not null]
   address varchar
   createdAt datetime [not null, default: `CURRENT_TIMESTAMP`]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
+}
+
+Table KindergartenSchema.SchoolTerm {
+  id varchar(36) [pk, not null, default: `UUID()`]
+  year int [not null]
+  term int [not null]
 }
 
 Table KindergartenSchema.Class {
@@ -74,6 +82,8 @@ Table KindergartenSchema.Post {
   content text
   photos text
   userId varchar(36) [ref: - KindergartenSchema.User.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.PostComment {
@@ -114,6 +124,8 @@ Table KindergartenSchema.LeaveLetter {
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   createdByParentId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.LeaveLetterPhoto {
@@ -132,6 +144,8 @@ Table KindergartenSchema.MedicineLetter {
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   createdByParentId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.Medicine {
@@ -165,6 +179,8 @@ Table KindergartenSchema.PickupLetter {
   pickerRelativeId varchar(36) [ref: - KindergartenSchema.Relative.id]
   updatedByTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.NoteThread {
@@ -177,6 +193,8 @@ Table KindergartenSchema.NoteThread {
   endDate date
   createdByParentId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.NoteMessage {
@@ -210,6 +228,8 @@ Table KindergartenSchema.Attendance {
   checkinTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   checkoutTeacherId varchar(36) [ref: - KindergartenSchema.User.id]
   pickerRelativeId varchar(36) [ref: - KindergartenSchema.Relative.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.Timetable {
@@ -264,6 +284,8 @@ Table KindergartenSchema.DailyRemark {
   date datetime
   teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.DailyRemarkActivity {
@@ -288,6 +310,8 @@ Table KindergartenSchema.PeriodRemark {
   endTime datetime
   teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   studentId varchar(36) [ref: - KindergartenSchema.Student.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Enum KindergartenSchema.TuitionFeeStatusEnum {
@@ -315,6 +339,8 @@ Table KindergartenSchema.Album {
   eventDate datetime
   teacherId varchar(36) [ref: - KindergartenSchema.User.id]
   classId varchar(36) [ref: - KindergartenSchema.Class.id]
+
+  schoolTermId varchar(36) [ref: - KindergartenSchema.SchoolTerm.id]
 }
 
 Table KindergartenSchema.AlbumTopic {

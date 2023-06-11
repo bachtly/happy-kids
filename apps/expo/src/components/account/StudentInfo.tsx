@@ -30,7 +30,6 @@ const StudentInfo = ({ studentMeta, visible, setVisible }: PropsType) => {
         name: data.fullname,
         avatar: data.avatarUrl,
         birthdate: data.birthdate,
-        className: studentMeta.className,
         height: data.height,
         weight: data.weight
       });
@@ -43,6 +42,8 @@ const StudentInfo = ({ studentMeta, visible, setVisible }: PropsType) => {
         authContext
       )
   });
+
+  const sClass = studentMeta.classes.find((item) => item.isActive);
   return (
     <FakeScreenSendWrapper
       title=""
@@ -69,13 +70,25 @@ const StudentInfo = ({ studentMeta, visible, setVisible }: PropsType) => {
         />
 
         <EditableFormField
-          label="Lớp"
+          label="Trường"
           placeholder=""
           setText={(_) => {}}
-          text={student?.className ?? ""}
-          icon="school"
+          text={studentMeta.school.name}
+          icon="office-building"
           textInputProps={{ editable: false }}
         />
+        {sClass && (
+          <EditableFormField
+            label="Lớp đang học"
+            placeholder=""
+            setText={(_) => {}}
+            text={`${sClass.name} (HK${studentMeta.school.term ?? "_"} - ${
+              studentMeta.school.year ?? "____"
+            })`}
+            icon="school"
+            textInputProps={{ editable: false }}
+          />
+        )}
 
         <BirthdateFormField
           date={student?.birthdate ? moment(student.birthdate) : null}

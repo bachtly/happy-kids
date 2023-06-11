@@ -14,6 +14,7 @@ export const medicineRouter = createTRPCRouter({
       return await medicineService.createMedicineLetter(
         ctx.user.userId,
         input.studentId,
+        input.classId,
         input.startDate,
         input.endDate,
         input.note,

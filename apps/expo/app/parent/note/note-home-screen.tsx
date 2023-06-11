@@ -6,11 +6,16 @@ const NoteHome = () => {
   const [studentId, _] = useState<string | undefined>(
     useSearchParams().studentId
   );
+  const [classId, __] = useState<string | undefined>(useSearchParams().classId);
 
   if (!studentId) throw Error("missing params in medicine home screen");
   return (
     <Body>
-      <NoteHomeView classId={""} studentId={studentId} isTeacher={false} />
+      <NoteHomeView
+        classId={classId ?? ""}
+        studentId={studentId}
+        isTeacher={false}
+      />
     </Body>
   );
 };

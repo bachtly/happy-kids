@@ -15,7 +15,10 @@ const periodRemarkRouter = createTRPCRouter({
     .output(GetPeriodRemarkListResponse)
     .mutation(
       async ({ input }) =>
-        await periodRemarkService.getPeriodRemarkList(input.studentId)
+        await periodRemarkService.getPeriodRemarkList(
+          input.studentId,
+          input.classId
+        )
     ),
 
   getPeriodRemarkListFromClassId: protectedProcedure
@@ -41,7 +44,8 @@ const periodRemarkRouter = createTRPCRouter({
           input.startTime,
           input.endTime,
           input.studentId,
-          ctx.user.userId
+          ctx.user.userId,
+          input.classId
         )
     )
 });

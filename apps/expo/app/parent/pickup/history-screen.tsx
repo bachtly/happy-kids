@@ -50,7 +50,8 @@ const HistoryScreen = () => {
     pickupMutation.mutate({
       timeStart: timeStart.toDate(),
       timeEnd: timeEnd.toDate(),
-      studentId: studentId ?? ""
+      studentId: studentId ?? "",
+      classId: authContext.classId ?? ""
     });
   };
 

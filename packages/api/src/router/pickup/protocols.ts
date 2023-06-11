@@ -13,7 +13,8 @@ const Pickup = z.object({
 const GetPickupListRequest = z.object({
   timeStart: z.date(),
   timeEnd: z.date(),
-  studentId: z.string()
+  studentId: z.string(),
+  classId: z.string()
 });
 
 const GetPickupListResponse = z.object({
@@ -66,7 +67,8 @@ const InsertPickupLetterRequest = z.object({
   pickerId: z.string(),
   date: z.date(),
   studentId: z.string(),
-  note: z.string()
+  note: z.string(),
+  classId: z.string()
 });
 
 const InsertPickupLetterResponse = z.object({});

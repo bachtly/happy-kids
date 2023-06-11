@@ -18,7 +18,8 @@ const dailyRemarkRouter = createTRPCRouter({
         await dailyRemarkService.getDailyRemarkList(
           input.timeStart,
           input.timeEnd,
-          input.studentId
+          input.studentId,
+          input.classId
         )
     ),
 
@@ -43,7 +44,8 @@ const dailyRemarkRouter = createTRPCRouter({
           input.remarkId,
           input.date,
           input.studentId,
-          ctx.user.userId
+          ctx.user.userId,
+          input.classId
         )
     )
 });

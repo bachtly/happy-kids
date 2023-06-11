@@ -20,7 +20,7 @@ import feedbackIcon from "../../assets/images/feedback.png";
 
 const ParentHomeScreen = () => {
   const router = useRouter();
-  const { studentId } = useAuthContext();
+  const { studentId, classId } = useAuthContext();
 
   return (
     <Body>
@@ -38,7 +38,7 @@ const ParentHomeScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: "/parent/attendance/tab/history-screen",
-                    params: { studentId }
+                    params: { studentId, classId }
                   })
                 }
               />
@@ -50,7 +50,7 @@ const ParentHomeScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: "/parent/remark/remark-home-screen",
-                    params: { studentId }
+                    params: { studentId, classId }
                   })
                 }
               />
@@ -63,7 +63,7 @@ const ParentHomeScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: "/parent/album/album-home-screen",
-                    params: { studentId }
+                    params: { studentId, classId }
                   })
                 }
               />
@@ -81,7 +81,7 @@ const ParentHomeScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: "/parent/note/note-home-screen",
-                    params: { studentId }
+                    params: { studentId, classId }
                   })
                 }
               />
@@ -91,7 +91,7 @@ const ParentHomeScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: "/parent/medicine/medicine-home-screen",
-                    params: { studentId }
+                    params: { studentId, classId }
                   })
                 }
               />
@@ -101,7 +101,7 @@ const ParentHomeScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: "/parent/leaveletter/leaveletter-home-screen",
-                    params: { studentId }
+                    params: { studentId, classId }
                   })
                 }
               />

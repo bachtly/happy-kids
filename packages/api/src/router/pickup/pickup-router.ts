@@ -27,7 +27,8 @@ const pickupRouter = createTRPCRouter({
         await pickupService.getPickupList(
           input.timeStart,
           input.timeEnd,
-          input.studentId
+          input.studentId,
+          input.classId
         )
     ),
 
@@ -68,7 +69,8 @@ const pickupRouter = createTRPCRouter({
           input.pickerId,
           input.date,
           input.studentId,
-          input.note
+          input.note,
+          input.classId
         )
     ),
 

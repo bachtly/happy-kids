@@ -55,7 +55,8 @@ const StatisticsScreen = () => {
     attMutation.mutate({
       timeStart: timeStart.toDate(),
       timeEnd: timeEnd.toDate(),
-      studentId: studentId ?? ""
+      studentId: studentId ?? "",
+      classId: authContext.classId ?? ""
     });
   };
 

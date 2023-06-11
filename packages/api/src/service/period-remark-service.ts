@@ -5,16 +5,18 @@ import moment from "moment";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { PhotoServiceInterface } from "../utils/PhotoService";
+import AccountService from "./account-service";
 
 @injectable()
 class PeriodRemarkService {
   constructor(
     private mysqlDB: Kysely<DB>,
+    private accountService: AccountService,
     @inject("FileService") private fileService: FileServiceInterface,
     @inject("PhotoService") private photoService: PhotoServiceInterface
   ) {}
 
-  getPeriodRemarkList = async (studentId: string) => {
+  getPeriodRemarkList = async (studentId: string, classId: string) => {
     console.log(
       `getPeriodRemarkList receive request ${JSON.stringify({
         studentId: studentId
@@ -24,6 +26,14 @@ class PeriodRemarkService {
     const remarks = await Promise.all(
       await this.mysqlDB
         .selectFrom("PeriodRemark")
+        .innerJoin("Student", "Student.id", "PeriodRemark.studentId")
+        .innerJoin(
+          "StudentClassRelationship",
+          "Student.id",
+          "StudentClassRelationship.studentId"
+        )
+        .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+        .leftJoin("SchoolTerm", "SchoolTerm.id", "PeriodRemark.schoolTermId")
         .innerJoin("User as Teacher", "PeriodRemark.teacherId", "Teacher.id")
         .select([
           "PeriodRemark.id",
@@ -33,7 +43,9 @@ class PeriodRemarkService {
           "Teacher.fullname as teacherFullname",
           "Teacher.avatarUrl as teacherAvatarUrl"
         ])
-        .where("studentId", "=", studentId)
+        .where("Student.id", "=", studentId)
+        .where("Class.id", "=", classId)
+        .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
         .execute()
         .then((resp) =>
           resp.flat().map(async (item) => ({
@@ -123,7 +135,8 @@ class PeriodRemarkService {
     startTime: Date,
     endTime: Date,
     studentId: string,
-    teacherId: string
+    teacherId: string,
+    classId: string
   ) => {
     console.log(
       `insertPeriodRemark receive request ${JSON.stringify({
@@ -153,6 +166,9 @@ class PeriodRemarkService {
           throw SYSTEM_ERROR_MESSAGE;
         });
     } else {
+      const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+        classId
+      );
       const count = await this.mysqlDB
         .insertInto("PeriodRemark")
         .values({
@@ -161,7 +177,8 @@ class PeriodRemarkService {
           startTime: startTime,
           endTime: endTime,
           studentId: studentId,
-          teacherId: teacherId
+          teacherId: teacherId,
+          schoolTermId
         })
         .executeTakeFirstOrThrow()
         .then((res) => res.numInsertedOrUpdatedRows)

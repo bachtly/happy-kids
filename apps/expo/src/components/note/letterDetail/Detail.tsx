@@ -87,12 +87,12 @@ const Detail = ({
             {isTeacher ? (
               <TeacherStatus
                 userId={userId}
-                status={data.noteThread.status}
+                status={data.noteThread.status ?? "NotConfirmed"}
                 refetch={fetchData}
                 noteThreadId={id}
               />
             ) : (
-              <ParentStatus status={data.noteThread.status} />
+              <ParentStatus status={data.noteThread.status ?? "NotConfirmed"} />
             )}
 
             <Divider />

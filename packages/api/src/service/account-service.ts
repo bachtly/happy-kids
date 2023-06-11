@@ -114,25 +114,72 @@ class AccountService {
         "Student.id"
       )
       .innerJoin("Class", "StudentClassRelationship.classId", "Class.id")
+      .leftJoin("School", "School.id", "Class.schoolId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "School.schoolTermId")
       .select([
-        "Student.id as studentId",
+        "Student.id as id",
         "Student.fullname as studentName",
         "Student.avatarUrl as avatar",
         "StudentClassRelationship.classId as classId",
-        "Class.name as className"
+        "Class.name as className",
+        "Class.schoolYear as classSchoolYear",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.term as schoolTerm",
+        "School.schoolTermId as schoolTermId",
+        "School.name as schoolName"
       ])
       .where("User.id", "=", parentId)
       .execute()
-      .then((resp) =>
-        Promise.all(
-          resp.map(async (item) => ({
+      .then((resp) => {
+        type studentType = Omit<
+          (typeof resp)[number],
+          "classId" | "className"
+        > & {
+          classes: {
+            id: string;
+            name: string;
+            isActive: boolean;
+            year: number;
+          }[];
+        };
+
+        const m = new Map<string, studentType>();
+
+        for (const item of resp) {
+          const student = m.get(item.id);
+          if (!student) {
+            m.set(item.id, {
+              ...item,
+              classes: [
+                {
+                  id: item.classId,
+                  name: item.className,
+                  year: item.classSchoolYear,
+                  isActive: item.schoolYear === item.classSchoolYear
+                }
+              ]
+            });
+          } else {
+            student.classes.push({
+              id: item.classId,
+              name: item.className,
+              year: item.classSchoolYear,
+              isActive: item.schoolYear === item.classSchoolYear
+            });
+          }
+        }
+
+        const re = Array.from(m.values());
+
+        return Promise.all(
+          re.map(async (item) => ({
             ...item,
             avatar: item.avatar
               ? await this.photoService.getPhotoFromPath(item.avatar)
               : ""
           }))
-        )
-      )
+        );
+      })
       .catch((err: Error) => {
         console.log(err);
         throw SYSTEM_ERROR_MESSAGE;
@@ -161,6 +208,21 @@ class AccountService {
     const re = await this.getStudentInfo(studentId);
     if (re.parentId !== parentId) throw SYSTEM_ERROR_MESSAGE;
     return re;
+  };
+
+  getSchoolTermIdByClass = async (classId: string) => {
+    const resp = await this.mysqlDB
+      .selectFrom("Class")
+      .leftJoin("School", "School.id", "Class.schoolId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "School.schoolTermId")
+      .select(["SchoolTerm.id"])
+      .where("Class.id", "=", classId)
+      .executeTakeFirstOrThrow()
+      .catch((err: Error) => {
+        console.log(err);
+        throw SYSTEM_ERROR_MESSAGE;
+      });
+    return resp.id;
   };
 }
 

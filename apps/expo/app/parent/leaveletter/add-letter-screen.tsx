@@ -75,8 +75,10 @@ const AddLetter = () => {
     dateStart &&
       dateEnd &&
       studentId &&
+      authContext.classId &&
       postLeaveLetterMutation.mutate({
         studentId: studentId,
+        classId: authContext.classId,
         startDate: dateStart.toDate(),
         endDate: dateEnd.toDate(),
         reason: reason,

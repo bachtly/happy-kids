@@ -61,11 +61,11 @@ const ThreadView = ({ userId, id }: { userId: string; id: string }) => {
               items={data.noteThread.messages.map((item) => {
                 // console.log(item.userId);
                 return {
-                  sendUser: item.user,
-                  content: item.content,
-                  id: item.id,
-                  sendTime: item.createdAt,
-                  sendUserId: item.userId
+                  sendUser: item.user ?? "",
+                  content: item.content ?? "",
+                  id: item.id ?? "",
+                  sendTime: item.createdAt ?? new Date(),
+                  sendUserId: item.userId ?? ""
                 };
               })}
             />

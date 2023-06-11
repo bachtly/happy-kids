@@ -24,7 +24,8 @@ const attendanceRouter = createTRPCRouter({
         await attendanceService.getAttendanceList(
           input.timeStart,
           input.timeEnd,
-          input.studentId
+          input.studentId,
+          input.classId
         )
     ),
 
@@ -44,7 +45,8 @@ const attendanceRouter = createTRPCRouter({
         await attendanceService.getAttendanceStatistics(
           input.timeStart,
           input.timeEnd,
-          input.studentId
+          input.studentId,
+          input.classId
         )
     ),
 
@@ -63,6 +65,7 @@ const attendanceRouter = createTRPCRouter({
       async ({ ctx, input }) =>
         await attendanceService.checkin(
           input.studentId,
+          input.classId,
           input.status,
           input.note ?? "",
           ctx.user.userId,

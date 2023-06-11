@@ -20,6 +20,7 @@
     "bcryptjs": "^2.4.3",
     "expo-server-sdk": "^3.7.0",
     "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
     "node-cron": "^3.0.2",
     "superjson": "1.12.2",
     "uuid": "^9.0.0",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.1",
     "@types/jsonwebtoken": "^9.0.2",
+    "@types/lodash": "^4.14.195",
     "@types/node-cron": "^3.0.7",
     "@types/uuid": "^9.0.1",
     "dotenv-cli": "^7.0.0",

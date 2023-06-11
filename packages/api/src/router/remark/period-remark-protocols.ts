@@ -12,7 +12,8 @@ const PeriodRemark = z.object({
 });
 
 const GetPeriodRemarkListRequest = z.object({
-  studentId: z.string()
+  studentId: z.string(),
+  classId: z.string()
 });
 
 const GetPeriodRemarkListResponse = z.object({
@@ -51,7 +52,8 @@ const InsertPeriodRemarkRequest = z.object({
   startTime: z.date(),
   endTime: z.date(),
   studentId: z.string(),
-  id: z.nullable(z.string())
+  id: z.nullable(z.string()),
+  classId: z.string()
 });
 
 const InsertPeriodRemarkResponse = z.object({});

@@ -8,6 +8,8 @@ const LeaveLetterHome = () => {
   const [studentId, _] = useState<string | undefined>(
     useSearchParams().studentId
   );
+  const [classId, __] = useState<string | undefined>(useSearchParams().classId);
+
   const [errorMessage, setErrorMessage] = useState("");
 
   if (!studentId) setErrorMessage(SYSTEM_ERROR_MESSAGE);
@@ -15,7 +17,7 @@ const LeaveLetterHome = () => {
   return (
     <Body>
       <LeaveLetterHomeView
-        classId={""}
+        classId={classId ?? ""}
         studentId={studentId ?? ""}
         isTeacher={false}
       />

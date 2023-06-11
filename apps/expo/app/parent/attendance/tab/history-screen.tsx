@@ -25,7 +25,7 @@ const HistoryScreen = () => {
   // properties
   const isFocused = useIsFocused();
   const authContext = useAuthContext();
-  const { studentId } = useAuthContext();
+  const { studentId, classId } = useAuthContext();
   const errorContext = useContext(ErrorContext);
 
   // states
@@ -68,12 +68,14 @@ const HistoryScreen = () => {
     attMutation.mutate({
       timeStart: timeStart.toDate(),
       timeEnd: timeEnd.toDate(),
-      studentId: studentId ?? ""
+      studentId: studentId ?? "",
+      classId: classId ?? ""
     });
     statMutation.mutate({
       timeStart: timeStart.toDate(),
       timeEnd: timeEnd.toDate(),
-      studentId: studentId ?? ""
+      studentId: studentId ?? "",
+      classId: classId ?? ""
     });
   };
 

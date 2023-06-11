@@ -36,7 +36,8 @@ const PeriodRemarkScreen = ({ studentId }: { studentId: string }) => {
 
   const refresh = () => {
     remarkMutation.mutate({
-      studentId: studentId ?? ""
+      studentId: studentId ?? "",
+      classId: authContext.classId ?? ""
     });
   };
 

@@ -77,14 +77,14 @@ const Detail = ({
           <View className="flex-1 px-5 pb-5">
             {isTeacher ? (
               <TeacherStatus
-                status={data.leaveLetter.status}
+                status={data.leaveLetter.status ?? "NotConfirmed"}
                 refetch={fetchData}
                 isFetching={isFetching}
                 leaveLetterId={id}
               />
             ) : (
               <ParentStatus
-                status={data.leaveLetter.status}
+                status={data.leaveLetter.status ?? "NotConfirmed"}
                 updatedByTeacher={data.leaveLetter.updatedByTeacher}
               />
             )}

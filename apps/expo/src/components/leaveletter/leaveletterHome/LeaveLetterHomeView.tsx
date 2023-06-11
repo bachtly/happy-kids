@@ -54,7 +54,8 @@ const LeaveLetterHomeView = ({
           classId
         }
       : {
-          studentId
+          studentId,
+          classId
         },
     {
       onSuccess: (resp) => {
@@ -62,15 +63,17 @@ const LeaveLetterHomeView = ({
           resp.leaveLetterList
             .map((item) => ({
               id: item.id,
-              reason: item.reason,
+              reason: item.reason ?? "",
               createdAt: item.createdAt,
-              status: item.status,
+              status: item.status ?? "NotConfirmed",
               startDate: item.startDate,
               endDate: item.endDate,
               studentName: item.studentName
             }))
             .sort((item1, item2) =>
-              moment(item2.createdAt).diff(moment(item1.createdAt))
+              moment(item2.createdAt ?? undefined).diff(
+                moment(item1.createdAt ?? undefined)
+              )
             )
         );
       },

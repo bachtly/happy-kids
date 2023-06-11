@@ -53,7 +53,8 @@ const AddPeriodRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
         startTime: startOfMonth.toDate(),
         endTime: endOfMonth.toDate(),
         studentId: remark.studentId,
-        id: remark.id
+        id: remark.id,
+        classId: authContext.classId ?? ""
       });
   };
 

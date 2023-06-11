@@ -3,31 +3,29 @@ import { DB } from "kysely-codegen";
 import { inject, injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-
-import {
-  GetLeaveLetterListResponse,
-  GetLeaveLetterResponse,
-  LeaveLetter,
-  LetterStatus,
-  PostLeaveLetterResponse
-} from "../router/leaveletter/protocols";
+import { omit } from "lodash";
+import { LetterStatus } from "../router/leaveletter/protocols";
 import type { FileServiceInterface } from "../utils/FileService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import NotiService, { NotificationTopics } from "./noti-service";
+import AccountService from "./account-service";
 
 @injectable()
 class LeaveLetterService {
   constructor(
     private mysqlDB: Kysely<DB>,
     private notiService: NotiService,
+    private accountService: AccountService,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
+
   private createLeaveLetterOnly = async (
     parentId: string,
     studentId: string,
     startDate: Date,
     endDate: Date,
-    reason: string
+    reason: string,
+    schoolTermId: string | null
   ) => {
     const id = uuidv4();
     return this.mysqlDB
@@ -40,7 +38,8 @@ class LeaveLetterService {
         startDate: startDate,
         endDate: endDate,
         studentId: studentId,
-        createdByParentId: parentId
+        createdByParentId: parentId,
+        schoolTermId
       })
       .executeTakeFirstOrThrow()
       .then((_) => {
@@ -101,18 +100,23 @@ class LeaveLetterService {
   createLeaveLetter = async (
     parentId: string,
     studentId: string,
+    classId: string,
     startDate: Date,
     endDate: Date,
     reason: string,
     photos: string[]
-  ): Promise<z.infer<typeof PostLeaveLetterResponse>> => {
+  ) => {
     try {
+      const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+        classId
+      );
       const { id } = await this.createLeaveLetterOnly(
         parentId,
         studentId,
         startDate,
         endDate,
-        reason
+        reason,
+        schoolTermId
       );
 
       await this.createLeaveLetterPhotoOnly(id, photos).catch(async (err) => {
@@ -170,28 +174,38 @@ class LeaveLetterService {
   };
 
   private getLeaveLetterListByStudent = async (
-    studentId: string
-  ): Promise<z.infer<typeof GetLeaveLetterListResponse>> => {
+    studentId: string,
+    classId: string
+  ) => {
     return this.mysqlDB
       .selectFrom("LeaveLetter")
       .innerJoin("Student", "Student.id", "LeaveLetter.studentId")
+      .innerJoin(
+        "StudentClassRelationship",
+        "Student.id",
+        "StudentClassRelationship.studentId"
+      )
+      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "LeaveLetter.schoolTermId")
       .select([
         "LeaveLetter.id as id",
-        "startDate",
-        "endDate",
-        "reason",
-        "createdAt",
-        "status",
-        "Student.fullname as studentName"
+        "LeaveLetter.startDate as startDate",
+        "LeaveLetter.endDate as endDate",
+        "LeaveLetter.reason as reason",
+        "LeaveLetter.createdAt as createdAt",
+        "LeaveLetter.status as status",
+        "Student.fullname as studentName",
+        "SchoolTerm.term as schoolTerm",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.id as schoolTermId"
       ])
-      .where("studentId", "=", studentId)
+      .where("Student.id", "=", studentId)
+      .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => {
-        const res = z.array(LeaveLetter).safeParse(resp);
-        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
-
         return {
-          leaveLetterList: res.data
+          leaveLetterList: resp
         };
       })
       .catch((err: Error) => {
@@ -199,9 +213,7 @@ class LeaveLetterService {
         throw SYSTEM_ERROR_MESSAGE;
       });
   };
-  private getLeaveLetterListByClassId = async (
-    classId: string
-  ): Promise<z.infer<typeof GetLeaveLetterListResponse>> => {
+  private getLeaveLetterListByClassId = async (classId: string) => {
     return this.mysqlDB
       .selectFrom("Student")
       .innerJoin(
@@ -211,6 +223,7 @@ class LeaveLetterService {
       )
       .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
       .innerJoin("LeaveLetter", "LeaveLetter.studentId", "Student.id")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "LeaveLetter.schoolTermId")
       .select([
         "LeaveLetter.id as id",
         "LeaveLetter.startDate as startDate",
@@ -218,17 +231,17 @@ class LeaveLetterService {
         "LeaveLetter.reason as reason",
         "LeaveLetter.createdAt as createdAt",
         "LeaveLetter.status as status",
-        "Student.fullname as studentName"
+        "Student.fullname as studentName",
+        "SchoolTerm.term as schoolTerm",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.id as schoolTermId"
       ])
       .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => {
-        // console.log(resp);
-        const res = z.array(LeaveLetter).safeParse(resp);
-        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
-
         return {
-          leaveLetterList: res.data
+          leaveLetterList: resp
         };
       })
       .catch((err: Error) => {
@@ -239,16 +252,16 @@ class LeaveLetterService {
   getLeaveLetterList = async (
     studentId: string | undefined,
     classId: string | undefined
-  ): Promise<z.infer<typeof GetLeaveLetterListResponse>> => {
-    if (studentId) return this.getLeaveLetterListByStudent(studentId);
+  ) => {
+    if (studentId && classId)
+      return this.getLeaveLetterListByStudent(studentId, classId);
     if (classId) return this.getLeaveLetterListByClassId(classId);
     return {
       leaveLetterList: []
     };
   };
-  getLeaveLetter = async (
-    leaveLetterId: string
-  ): Promise<z.infer<typeof GetLeaveLetterResponse>> => {
+
+  getLeaveLetter = async (leaveLetterId: string) => {
     const resp = await this.mysqlDB
       .selectFrom("LeaveLetter")
       .leftJoin(
@@ -291,10 +304,13 @@ class LeaveLetterService {
       });
 
     if (resp.length == 0) throw SYSTEM_ERROR_MESSAGE;
-    const res = LeaveLetter.safeParse(resp[0]);
-    if (!res.success) throw SYSTEM_ERROR_MESSAGE;
 
-    const leaveLetter = res.data;
+    const leaveLetter: Omit<(typeof resp)[0], "letter_photo"> & {
+      photos: string[];
+    } = {
+      ...omit(resp[0], ["letter_photo"]),
+      photos: []
+    };
     const getPhoto = async (photoPath: string) => {
       if (photoPath === "") return "";
       return await this.fileService

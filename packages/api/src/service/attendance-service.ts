@@ -8,25 +8,29 @@ import { PhotoService } from "../utils/PhotoService";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { TimeServiceInterface } from "../utils/TimeService";
 import { leaveletterService, pickupService } from "./common-services";
+import AccountService from "./account-service";
 
 @injectable()
 class AttendanceService {
   constructor(
     private mysqlDB: Kysely<DB>,
     private photoService: PhotoService,
+    private accountService: AccountService,
     @inject("TimeService") private timeService: TimeServiceInterface
   ) {}
 
   getAttendanceList = async (
     timeStart: Date,
     timeEnd: Date,
-    studentId: string
+    studentId: string,
+    classId: string
   ) => {
     console.log(
       `getAttendanceListService receive request ${JSON.stringify({
         timeStart: timeStart,
         timeEnd: timeEnd,
-        studentId: studentId
+        studentId: studentId,
+        classId: classId
       })}`
     );
 
@@ -55,6 +59,7 @@ class AttendanceService {
           "Student.id"
         )
         .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+        .leftJoin("SchoolTerm", "SchoolTerm.id", "Attendance.schoolTermId")
         .select([
           "Attendance.id",
           "Attendance.date",
@@ -76,6 +81,8 @@ class AttendanceService {
         .where("date", ">=", this.timeService.getStartOfDay(timeStart))
         .where("date", "<=", this.timeService.getEndOfDay(timeEnd))
         .where("Student.id", "=", studentId)
+        .where("Class.id", "=", classId)
+        .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
         .orderBy("date", "desc")
         .execute()
         .then((resp) =>
@@ -201,7 +208,8 @@ class AttendanceService {
   getAttendanceStatistics = async (
     timeStart: Date,
     timeEnd: Date,
-    studentId: string
+    studentId: string,
+    classId: string
   ) => {
     console.log(
       `getAttendanceStatistics receive request ${JSON.stringify({
@@ -213,11 +221,22 @@ class AttendanceService {
 
     const records = await this.mysqlDB
       .selectFrom("Attendance")
+      .innerJoin("Student", "Student.id", "Attendance.studentId")
+      .innerJoin(
+        "StudentClassRelationship",
+        "Student.id",
+        "StudentClassRelationship.studentId"
+      )
+      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "Attendance.schoolTermId")
       .select(["status", sql<number>`count(status)`.as("count")])
       .groupBy("status")
       .where("date", ">=", this.timeService.getStartOfDay(timeStart))
       .where("date", "<=", this.timeService.getEndOfDay(timeEnd))
-      .where("studentId", "=", studentId)
+      .where("Student.id", "=", studentId)
+      .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => resp.flat())
       .catch((err: Error) => {
@@ -370,6 +389,7 @@ class AttendanceService {
 
   checkin = async (
     studentId: string,
+    classId: string,
     status: z.infer<typeof AttendanceStatus>,
     note: string,
     teacherId: string,
@@ -394,7 +414,7 @@ class AttendanceService {
     if (status == "CheckedIn" && photos.length == 0)
       throw "Vui lòng tải lên hình ảnh điểm danh của bé";
 
-    const attendanceId = await this.isAttendanceExist(studentId, date);
+    const attendanceId = await this.isAttendanceExist(studentId, classId, date);
     if (attendanceId) {
       await this.mysqlDB
         .updateTable("Attendance")
@@ -412,7 +432,7 @@ class AttendanceService {
           ),
           thermo: thermo
         })
-        .where("id", "=", attendanceId)
+        .where("Attendance.id", "=", attendanceId)
         .executeTakeFirstOrThrow()
         .catch((err: Error) => {
           console.log(err);
@@ -422,6 +442,9 @@ class AttendanceService {
       return {};
     }
 
+    const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+      classId
+    );
     await this.mysqlDB
       .insertInto("Attendance")
       .values({
@@ -436,7 +459,8 @@ class AttendanceService {
             return this.photoService.storePhoto(photo, "./attendance");
           })
         ),
-        thermo: thermo
+        thermo: thermo,
+        schoolTermId
       })
       .executeTakeFirstOrThrow()
       .catch((err: Error) => {
@@ -447,11 +471,25 @@ class AttendanceService {
     return {};
   };
 
-  isAttendanceExist = async (studentId: string, date: Date) => {
+  isAttendanceExist = async (
+    studentId: string,
+    classId: string,
+    date: Date
+  ) => {
     return await this.mysqlDB
       .selectFrom("Attendance")
-      .select(["id"])
-      .where("Attendance.studentId", "=", studentId)
+      .innerJoin("Student", "Student.id", "Attendance.studentId")
+      .innerJoin(
+        "StudentClassRelationship",
+        "Student.id",
+        "StudentClassRelationship.studentId"
+      )
+      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "Attendance.schoolTermId")
+      .select(["Attendance.id"])
+      .where("Student.id", "=", studentId)
+      .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .where("date", "<=", this.timeService.getEndOfDay(date))
       .where("date", ">=", this.timeService.getStartOfDay(date))
       .executeTakeFirst()

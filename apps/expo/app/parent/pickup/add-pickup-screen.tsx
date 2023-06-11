@@ -64,7 +64,8 @@ const AddPickupScreen = () => {
         pickerId: picker?.id ?? "",
         date: combineDateTime(date, time).toDate(),
         studentId: studentId,
-        note: note
+        note: note,
+        classId: authContext.classId ?? ""
       });
   };
 

@@ -15,6 +15,7 @@ export const noteRouter = createTRPCRouter({
       return await noteService.createNoteThread(
         ctx.user.userId,
         input.studentId,
+        input.classId,
         input.startDate,
         input.endDate,
         input.content,

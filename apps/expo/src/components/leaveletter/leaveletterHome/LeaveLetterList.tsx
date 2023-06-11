@@ -12,9 +12,9 @@ export type LeaveLetterItem = {
   id: string;
   reason: string;
   status: LeaveLetterStatus;
-  createdAt: Date;
-  startDate: Date;
-  endDate: Date;
+  createdAt: Date | null;
+  startDate: Date | null;
+  endDate: Date | null;
   studentName: string;
 };
 
@@ -33,10 +33,11 @@ export function LeaveLetterList({
 }: ItemListProps): React.ReactElement {
   const router = useRouter();
   const renderItem = ({ item }: { item: LeaveLetterItem }) => {
-    const startDate = moment(item.startDate);
-    const endDate = moment(item.endDate);
-    const createdAt = moment(item.createdAt);
-    const diffDate = endDate.diff(startDate, "days");
+    const toDateString = (date: Date | null) =>
+      date ? moment(date).format("DD/MM/YYYY") : "__/__/____";
+    const startDate = toDateString(item.startDate);
+    const endDate = toDateString(item.endDate);
+    const createdAt = toDateString(item.createdAt);
     return (
       <CustomCard
         onPress={() => {
@@ -51,8 +52,8 @@ export function LeaveLetterList({
         <Text variant={"labelLarge"} className={"mb-2"}>
           Xin nghỉ {`cho bé ${item.studentName} `}
           <Text className={""}>
-            ({startDate.format("DD/MM/YYYY")}
-            {diffDate == 0 ? "" : ` đến ${endDate.format("DD/MM/YYYY")}`})
+            ({startDate}
+            {startDate !== startDate ? "" : ` đến ${endDate}`})
           </Text>{" "}
         </Text>
         <View className={"flex flex-row justify-between gap-x-4 "}>
@@ -66,7 +67,7 @@ export function LeaveLetterList({
               {item.reason}{" "}
             </Text>
             <Text variant={"bodyMedium"} className={""}>
-              Ngày tạo: {createdAt.format("DD/MM/YYYY")}
+              Ngày tạo: {createdAt}
             </Text>
             <LetterStatusText status={item.status} />
           </View>

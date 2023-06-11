@@ -8,11 +8,13 @@ import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { PhotoServiceInterface } from "../utils/PhotoService";
 import { z } from "zod";
 import { Activity } from "../router/remark/daily-remark-protocols";
+import AccountService from "./account-service";
 
 @injectable()
 class DailyRemarkService {
   constructor(
     private mysqlDB: Kysely<DB>,
+    private accountService: AccountService,
     @inject("FileService") private fileService: FileServiceInterface,
     @inject("PhotoService") private photoService: PhotoServiceInterface
   ) {}
@@ -20,7 +22,8 @@ class DailyRemarkService {
   getDailyRemarkList = async (
     timeStart: Date,
     timeEnd: Date,
-    studentId: string
+    studentId: string,
+    classId: string
   ) => {
     console.log(
       `getDailyRemarkList receive request ${JSON.stringify({
@@ -42,6 +45,14 @@ class DailyRemarkService {
     const remarkActivities = await Promise.all(
       await this.mysqlDB
         .selectFrom("DailyRemark")
+        .innerJoin("Student", "Student.id", "DailyRemark.studentId")
+        .innerJoin(
+          "StudentClassRelationship",
+          "Student.id",
+          "StudentClassRelationship.studentId"
+        )
+        .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+        .leftJoin("SchoolTerm", "SchoolTerm.id", "DailyRemark.schoolTermId")
         .innerJoin(
           "DailyRemarkActivity as Activity",
           "DailyRemark.id",
@@ -60,7 +71,9 @@ class DailyRemarkService {
         ])
         .where("date", ">=", timeStart)
         .where("date", "<=", timeEnd)
-        .where("studentId", "=", studentId)
+        .where("Student.id", "=", studentId)
+        .where("Class.id", "=", classId)
+        .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
         .execute()
         .then((resp) =>
           resp.flat().map(async (item) => ({
@@ -228,7 +241,8 @@ class DailyRemarkService {
   insertDailyRemark = async (
     date: Date | null,
     studentId: string | null,
-    teacherId: string | null
+    teacherId: string | null,
+    schoolTermId: string | null
   ) => {
     console.log(
       `insertDailyRemark receive request ${JSON.stringify({
@@ -246,7 +260,8 @@ class DailyRemarkService {
         id: id,
         date: date,
         studentId: studentId,
-        teacherId: teacherId
+        teacherId: teacherId,
+        schoolTermId
       })
       .executeTakeFirstOrThrow()
       .then((res) => res.numInsertedOrUpdatedRows)
@@ -265,7 +280,8 @@ class DailyRemarkService {
     remarkId: string | null,
     date: Date | null,
     studentId: string | null,
-    teacherId: string | null
+    teacherId: string | null,
+    classId: string
   ) => {
     console.log(
       `insertDailyRemarkActivity receive request ${JSON.stringify({
@@ -277,8 +293,17 @@ class DailyRemarkService {
       })}`
     );
 
+    const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+      classId
+    );
+
     if (remarkId === null) {
-      remarkId = await this.insertDailyRemark(date, studentId, teacherId);
+      remarkId = await this.insertDailyRemark(
+        date,
+        studentId,
+        teacherId,
+        schoolTermId
+      );
     } else {
       await this.mysqlDB
         .deleteFrom("DailyRemarkActivity")

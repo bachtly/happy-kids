@@ -14,12 +14,14 @@ import CustomWhiteStackScreen from "../../../src/components/CustomWhiteStackScre
 import WhiteBody from "../../../src/components/WhiteBody";
 import CustomTitle from "../../../src/components/common/CustomTitle";
 import LoadingBar from "../../../src/components/common/LoadingBar";
+import { useAuthContext } from "../../../src/utils/auth-context-provider";
 
 const AddLetter = () => {
   const now = moment();
 
   const { studentId } = useSearchParams();
 
+  const authContext = useAuthContext();
   const [alertModalVisible, setAlertModalVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [dateStart, setDateStart] = useState<Moment | null>(now);
@@ -48,13 +50,15 @@ const AddLetter = () => {
       setAlertModalVisible(true);
       return;
     }
-    postNoteThreadMutation.mutate({
-      content: message,
-      startDate: dateStart.toDate(),
-      endDate: dateEnd.toDate(),
-      studentId: studentId,
-      photos: images
-    });
+    authContext.classId &&
+      postNoteThreadMutation.mutate({
+        content: message,
+        startDate: dateStart.toDate(),
+        endDate: dateEnd.toDate(),
+        studentId: studentId,
+        classId: authContext.classId,
+        photos: images
+      });
   };
 
   return (

@@ -39,7 +39,8 @@ const DailyRemarkScreen = ({ studentId }: { studentId: string }) => {
     remarkMutation.mutate({
       timeStart: timeStart.toDate(),
       timeEnd: timeEnd.toDate(),
-      studentId: studentId ?? ""
+      studentId: studentId ?? "",
+      classId: authContext.classId ?? ""
     });
   };
 

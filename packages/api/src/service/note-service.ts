@@ -4,23 +4,19 @@ import { inject, injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
-import {
-  GetNoteThreadListResponse,
-  GetNoteThreadResponse,
-  NoteMessage,
-  NoteThread,
-  ThreadStatus
-} from "../router/note/protocols";
+import { NoteMessage, ThreadStatus } from "../router/note/protocols";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
 import { TRPCError } from "@trpc/server";
 import NotiService, { NotificationTopics } from "./noti-service";
+import AccountService from "./account-service";
 
 @injectable()
 class NoteService {
   constructor(
     private mysqlDB: Kysely<DB>,
     private notiService: NotiService,
+    private accountService: AccountService,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
 
@@ -96,6 +92,7 @@ class NoteService {
   createNoteThread = async (
     parentId: string,
     studentId: string,
+    classId: string,
     startDate: Date,
     endDate: Date,
     content: string,
@@ -111,6 +108,9 @@ class NoteService {
       };
       return getPhotoPath(photoB64);
     });
+    const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+      classId
+    );
     return this.mysqlDB
       .insertInto("NoteThread")
       .values({
@@ -123,7 +123,8 @@ class NoteService {
         photos: JSON.stringify({ photoPaths }),
         createdAt: new Date(),
         studentId: studentId,
-        createdByParentId: parentId
+        createdByParentId: parentId,
+        schoolTermId
       })
       .executeTakeFirstOrThrow()
       .then((_) => {
@@ -146,11 +147,21 @@ class NoteService {
       });
   };
 
-  private getNoteThreadListByStudent = async (studentId: string) => {
+  private getNoteThreadListByStudent = async (
+    studentId: string,
+    classId: string
+  ) => {
     return this.mysqlDB
       .selectFrom("NoteThread")
       .innerJoin("Student", "Student.id", "NoteThread.studentId")
+      .innerJoin(
+        "StudentClassRelationship",
+        "Student.id",
+        "StudentClassRelationship.studentId"
+      )
+      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
       .innerJoin("User", "User.id", "NoteThread.createdByParentId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "NoteThread.schoolTermId")
       .select([
         "NoteThread.id as id",
         "NoteThread.createdAt as createdAt",
@@ -160,21 +171,19 @@ class NoteService {
         "content",
         "User.fullname as createdByParent",
 
-        "Student.fullname as studentName"
+        "Student.fullname as studentName",
+
+        "SchoolTerm.term as schoolTerm",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.id as schoolTermId"
       ])
-      .where("studentId", "=", studentId)
+      .where("Student.id", "=", studentId)
+      .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => {
-        // console.log(resp);
-
-        const res = z.array(NoteThread).safeParse(resp);
-        if (!res.success)
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: SYSTEM_ERROR_MESSAGE
-          });
         return {
-          noteThreadList: res.data
+          noteThreadList: resp
         };
       })
       .catch((e: Error) => {
@@ -186,9 +195,7 @@ class NoteService {
       });
   };
 
-  private getNoteThreadListByClass = async (
-    classId: string
-  ): Promise<z.infer<typeof GetNoteThreadListResponse>> => {
+  private getNoteThreadListByClass = async (classId: string) => {
     return this.mysqlDB
       .selectFrom("Student")
       .innerJoin(
@@ -199,6 +206,7 @@ class NoteService {
       .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
       .innerJoin("NoteThread", "NoteThread.studentId", "Student.id")
       .innerJoin("User", "User.id", "NoteThread.createdByParentId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "NoteThread.schoolTermId")
       .select([
         "NoteThread.id as id",
         "NoteThread.createdAt as createdAt",
@@ -208,21 +216,18 @@ class NoteService {
         "content",
         "User.fullname as createdByParent",
 
-        "Student.fullname as studentName"
+        "Student.fullname as studentName",
+
+        "SchoolTerm.term as schoolTerm",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.id as schoolTermId"
       ])
       .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => {
-        // console.log(resp);
-
-        const res = z.array(NoteThread).safeParse(resp);
-        if (!res.success)
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: SYSTEM_ERROR_MESSAGE
-          });
         return {
-          noteThreadList: res.data
+          noteThreadList: resp
         };
       })
       .catch((e: Error) => {
@@ -236,8 +241,9 @@ class NoteService {
   getNoteThreadList = async (
     studentId: string | undefined,
     classId: string | undefined
-  ): Promise<z.infer<typeof GetNoteThreadListResponse>> => {
-    if (studentId) return this.getNoteThreadListByStudent(studentId);
+  ) => {
+    if (studentId && classId)
+      return this.getNoteThreadListByStudent(studentId, classId);
     if (classId) return this.getNoteThreadListByClass(classId);
 
     throw new TRPCError({
@@ -246,9 +252,7 @@ class NoteService {
     });
   };
 
-  getNoteThread = async (
-    noteThreadId: string
-  ): Promise<z.infer<typeof GetNoteThreadResponse>> => {
+  getNoteThread = async (noteThreadId: string) => {
     try {
       const resp = await this.mysqlDB
         .selectFrom("NoteThread")
@@ -340,14 +344,8 @@ class NoteService {
         studentName: resp[0].studentName,
         createdByParent: resp[0].createdByParent
       };
-      const res = NoteThread.safeParse(noteThread);
-      if (!res.success)
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: SYSTEM_ERROR_MESSAGE
-        });
       return {
-        noteThread: res.data
+        noteThread: noteThread
       };
     } catch (err: unknown) {
       console.log(err);

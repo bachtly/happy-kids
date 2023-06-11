@@ -76,23 +76,25 @@ const AddLetter = () => {
       );
       return;
     }
-    postMedicineLetterMutation.mutate({
-      studentId: studentId,
-      startDate: dateStart.toDate(),
-      endDate: dateEnd.toDate(),
-      medicines: medicineList.map((item) => ({
-        id: "",
-        name: item.medItem.name,
-        amount: item.medItem.amount,
-        photo: item.medItem.photo,
-        time: GetTimeNumber(
-          batchList[item.batchNumber]?.hours() ?? 0,
-          batchList[item.batchNumber]?.minutes() ?? 0
-        ),
-        batchNumber: item.batchNumber
-      })),
-      note: note
-    });
+    authContext.classId &&
+      postMedicineLetterMutation.mutate({
+        studentId: studentId,
+        classId: authContext.classId,
+        startDate: dateStart.toDate(),
+        endDate: dateEnd.toDate(),
+        medicines: medicineList.map((item) => ({
+          id: "",
+          name: item.medItem.name,
+          amount: item.medItem.amount,
+          photo: item.medItem.photo,
+          time: GetTimeNumber(
+            batchList[item.batchNumber]?.hours() ?? 0,
+            batchList[item.batchNumber]?.minutes() ?? 0
+          ),
+          batchNumber: item.batchNumber
+        })),
+        note: note
+      });
   };
 
   if (!studentId)

@@ -14,6 +14,7 @@ export const leaveletterRouter = createTRPCRouter({
       return await leaveletterService.createLeaveLetter(
         ctx.user.userId,
         input.studentId,
+        input.classId,
         input.startDate,
         input.endDate,
         input.reason,

@@ -41,7 +41,8 @@ const PostMedicineLetterParams = z.object({
   medicines: z.array(Medicine),
   note: z.string(),
 
-  studentId: z.string()
+  studentId: z.string(),
+  classId: z.string()
 });
 
 const PostMedicineLetterResponse = z.object({

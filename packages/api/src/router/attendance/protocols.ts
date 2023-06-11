@@ -13,7 +13,8 @@ const AttendanceStatus = z.enum([
 const GetAttendanceListRequest = z.object({
   timeStart: z.date(),
   timeEnd: z.date(),
-  studentId: z.string()
+  studentId: z.string(),
+  classId: z.string()
 });
 
 const AttendanceItem = z.object({
@@ -91,7 +92,8 @@ const GetAttendanceItemDetailResponse = z.object({
 const GetAttendanceStatisticsRequest = z.object({
   timeStart: z.date(),
   timeEnd: z.date(),
-  studentId: z.string()
+  studentId: z.string(),
+  classId: z.string()
 });
 
 const AttendanceStatistics = z.object({
@@ -147,6 +149,7 @@ const GetStudentListResponse = z.object({
 
 const CheckInRequest = z.object({
   studentId: z.string(),
+  classId: z.string(),
   status: AttendanceStatus,
   note: z.nullable(z.string()),
   photos: z.nullable(z.array(z.string())),

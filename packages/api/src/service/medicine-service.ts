@@ -4,7 +4,6 @@ import { inject, injectable } from "tsyringe";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import {
-  GetMedicineLetterListResponse,
   GetMedicineLetterResponse,
   LetterStatus,
   Medicine,
@@ -17,12 +16,14 @@ import { sortAndUnique } from "../utils/arrayHelper";
 import { SYSTEM_ERROR_MESSAGE } from "../utils/errorHelper";
 import type { FileServiceInterface } from "../utils/FileService";
 import NotiService, { NotificationTopics } from "./noti-service";
+import AccountService from "./account-service";
 
 @injectable()
 class MedicineService {
   constructor(
     private mysqlDB: Kysely<DB>,
     private notiService: NotiService,
+    private accountService: AccountService,
     @inject("FileService") private fileService: FileServiceInterface
   ) {}
   private createMedicineLetterOnly = async (
@@ -30,7 +31,8 @@ class MedicineService {
     studentId: string,
     startDate: Date,
     endDate: Date,
-    note: string
+    note: string,
+    schoolTermId: string | null
   ) => {
     const id = uuidv4();
     // console.log(id);
@@ -45,7 +47,8 @@ class MedicineService {
         startDate: startDate,
         endDate: endDate,
         studentId: studentId,
-        createdByParentId: parentId
+        createdByParentId: parentId,
+        schoolTermId
       })
       .executeTakeFirstOrThrow()
       .then((_) => {
@@ -112,17 +115,22 @@ class MedicineService {
   createMedicineLetter = async (
     parentId: string,
     studentId: string,
+    classId: string,
     startDate: Date,
     endDate: Date,
     note: string,
     medicines: z.infer<typeof Medicine>[]
   ): Promise<z.infer<typeof PostMedicineLetterResponse>> => {
+    const schoolTermId = await this.accountService.getSchoolTermIdByClass(
+      classId
+    );
     const { id } = await this.createMedicineLetterOnly(
       parentId,
       studentId,
       startDate,
       endDate,
-      note
+      note,
+      schoolTermId
     );
 
     await this.createMedicineOnly(id, medicines);
@@ -208,28 +216,38 @@ class MedicineService {
   };
 
   private getMedicineLetterListByStudent = async (
-    studentId: string
-  ): Promise<z.infer<typeof GetMedicineLetterListResponse>> => {
+    studentId: string,
+    classId: string
+  ) => {
     return this.mysqlDB
       .selectFrom("MedicineLetter")
       .innerJoin("Student", "Student.id", "MedicineLetter.studentId")
+      .innerJoin(
+        "StudentClassRelationship",
+        "Student.id",
+        "StudentClassRelationship.studentId"
+      )
+      .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "MedicineLetter.schoolTermId")
       .select([
         "MedicineLetter.id as id",
-        "startDate",
-        "endDate",
-        "note",
-        "createdAt",
-        "status",
-        "Student.fullname as studentName"
+        "MedicineLetter.startDate",
+        "MedicineLetter.endDate",
+        "MedicineLetter.note",
+        "MedicineLetter.createdAt",
+        "MedicineLetter.status",
+        "Student.fullname as studentName",
+        "SchoolTerm.term as schoolTerm",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.id as schoolTermId"
       ])
-      .where("studentId", "=", studentId)
+      .where("Student.id", "=", studentId)
+      .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => {
-        // console.log(resp);
-        const res = z.array(MedicineLetter).safeParse(resp);
-        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
         return {
-          medicineLetterList: res.data
+          medicineLetterList: resp
         };
       })
       .catch((err: Error) => {
@@ -238,9 +256,7 @@ class MedicineService {
       });
   };
 
-  private getMedicineLetterListByClassId = async (
-    classId: string
-  ): Promise<z.infer<typeof GetMedicineLetterListResponse>> => {
+  private getMedicineLetterListByClassId = async (classId: string) => {
     return this.mysqlDB
       .selectFrom("Student")
       .innerJoin(
@@ -250,6 +266,7 @@ class MedicineService {
       )
       .innerJoin("Class", "Class.id", "StudentClassRelationship.classId")
       .innerJoin("MedicineLetter", "MedicineLetter.studentId", "Student.id")
+      .leftJoin("SchoolTerm", "SchoolTerm.id", "MedicineLetter.schoolTermId")
       .select([
         "MedicineLetter.id as id",
         "MedicineLetter.startDate as startDate",
@@ -257,16 +274,17 @@ class MedicineService {
         "MedicineLetter.note as note",
         "MedicineLetter.createdAt as createdAt",
         "MedicineLetter.status as status",
-        "Student.fullname as studentName"
+        "Student.fullname as studentName",
+        "SchoolTerm.term as schoolTerm",
+        "SchoolTerm.year as schoolYear",
+        "SchoolTerm.id as schoolTermId"
       ])
       .where("Class.id", "=", classId)
+      .whereRef("Class.schoolYear", "=", "SchoolTerm.year")
       .execute()
       .then((resp) => {
-        // console.log(resp);
-        const res = z.array(MedicineLetter).safeParse(resp);
-        if (!res.success) throw SYSTEM_ERROR_MESSAGE;
         return {
-          medicineLetterList: res.data
+          medicineLetterList: resp
         };
       })
       .catch((err: Error) => {
@@ -278,12 +296,14 @@ class MedicineService {
   getMedicineLetterList = async (
     studentId: string | undefined,
     classId: string | undefined
-  ): Promise<z.infer<typeof GetMedicineLetterListResponse>> => {
-    if (studentId) return this.getMedicineLetterListByStudent(studentId);
+  ) => {
+    if (studentId && classId)
+      return this.getMedicineLetterListByStudent(studentId, classId);
     if (classId) return this.getMedicineLetterListByClassId(classId);
 
     throw SYSTEM_ERROR_MESSAGE;
   };
+
   getMedicineLetter = async (
     medicineLetterId: string
   ): Promise<z.infer<typeof GetMedicineLetterResponse>> => {

@@ -11,22 +11,6 @@ const NoteMessage = z.object({
   user: z.string().default("")
 });
 
-const NoteThread = z.object({
-  id: z.string(),
-  createdAt: z.date(),
-  startDate: z.date(),
-  endDate: z.date(),
-
-  status: ThreadStatus,
-  content: z.string(),
-  photos: z.array(z.string()).default([]),
-
-  messages: z.array(NoteMessage).default([]),
-
-  createdByParent: z.string().nullable().default(null),
-  studentName: z.string().default("")
-});
-
 const PostNoteThreadParams = z.object({
   startDate: z.date(),
   endDate: z.date(),
@@ -34,7 +18,8 @@ const PostNoteThreadParams = z.object({
   content: z.string(),
   photos: z.array(z.string()).default([]),
 
-  studentId: z.string()
+  studentId: z.string(),
+  classId: z.string()
 });
 
 const PostNoteThreadResponse = z.object({
@@ -47,8 +32,6 @@ const PostNoteMessageParams = z.object({
   studentId: z.string().nullable()
 });
 
-const PostNoteMessageResponse = z.object({});
-
 const UpdateStatusNoteThreadParams = z.object({
   noteThreadId: z.string(),
   status: ThreadStatus
@@ -59,29 +42,17 @@ const GetNoteThreadListParams = z.object({
   classId: z.string().optional()
 });
 
-const GetNoteThreadListResponse = z.object({
-  noteThreadList: z.array(NoteThread)
-});
-
 const GetNoteThreadParams = z.object({
   noteThreadId: z.string()
 });
 
-const GetNoteThreadResponse = z.object({
-  noteThread: NoteThread.nullable()
-});
-
 export {
-  NoteThread,
   PostNoteThreadParams,
   PostNoteThreadResponse,
   PostNoteMessageParams,
-  PostNoteMessageResponse,
   UpdateStatusNoteThreadParams,
   GetNoteThreadListParams,
-  GetNoteThreadListResponse,
   GetNoteThreadParams,
-  GetNoteThreadResponse,
   ThreadStatus,
   NoteMessage
 };

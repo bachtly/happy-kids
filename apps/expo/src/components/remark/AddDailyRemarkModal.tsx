@@ -97,7 +97,8 @@ const AddDailyRemarkModal: FC<AddDailyRemarkModalProps> = (props) => {
         activities: activities.map((item) => item.activityObj),
         remarkId: remark.id,
         date: remark.date ?? moment().toDate(),
-        studentId: remark.studentId ?? null
+        studentId: remark.studentId ?? null,
+        classId: authContext.classId ?? ""
       });
 
     submit();
