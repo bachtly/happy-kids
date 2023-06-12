@@ -330,7 +330,7 @@ class AttendanceService {
                 const leavelettersResp =
                   await leaveletterService.getLeaveLetterList(
                     item.studentId,
-                    undefined
+                    classId
                   );
                 const leaveletters = leavelettersResp.leaveLetterList.filter(
                   (letter) =>
