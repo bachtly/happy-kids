@@ -4,6 +4,7 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import * as Device from "expo-device";
 import { api } from "./api";
+import { useAuthContext } from "./auth-context-provider";
 
 Notifications.setNotificationHandler({
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -28,12 +29,17 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const responseListener = useRef<Notifications.Subscription>();
 
   const [token, setToken] = useState<undefined | string>(undefined);
+  const { userId } = useAuthContext();
 
   const notiMutation = api.noti.registerToken.useMutation();
 
   useEffect(() => {
     console.log("[NOTIFICATION CONTEXT] Use effect");
-    void registerForPushNotificationsAsync().then((token) => setToken(token));
+    void registerForPushNotificationsAsync().then((token) => {
+      console.log("Success get Expo Notification token", token);
+      setToken(token);
+      token && notiMutation.mutate({ token: token });
+    });
 
     // notificationListener.current =
     //   Notifications.addNotificationReceivedListener((notification) => {});
@@ -62,12 +68,7 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
       responseListener.current &&
         Notifications.removeNotificationSubscription(responseListener.current);
     };
-  }, []);
-
-  useEffect(() => {
-    console.log("Token has changed", token);
-    token && notiMutation.mutate({ token: token });
-  }, [token]);
+  }, [userId]);
 
   return (
     <NotificationContext.Provider value={{ token: token }}>
