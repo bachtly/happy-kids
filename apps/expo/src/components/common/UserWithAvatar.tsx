@@ -15,8 +15,8 @@ const UserWithAvatar = ({
   rightButton?: React.ReactNode;
 }) => {
   return (
-    <View className={"flex-1 flex-row justify-between"}>
-      <View className={"mb-2 flex-1 flex-row space-x-2"}>
+    <View className={"w-full flex-row justify-between"}>
+      <View className={"mb-2 flex-row space-x-2"}>
         <Avatar.Image
           className={"my-auto"}
           size={42}
@@ -33,7 +33,7 @@ const UserWithAvatar = ({
           </Text>
         </View>
       </View>
-      <View>{rightButton}</View>
+      {rightButton && <View>{rightButton}</View>}
     </View>
   );
 };
