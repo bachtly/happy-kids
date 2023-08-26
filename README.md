@@ -1,55 +1,33 @@
-```
-.github
-  └─ workflows
-        └─ CI with pnpm cache setup
-.vscode
-  └─ Recommended extensions and settings for VSCode users
-apps
-  ├─ expo
-  |   ├─ Expo SDK 48
-  |   ├─ React Native using React 18
-  |   ├─ Navigation using Expo Router
-  |   ├─ Tailwind using Nativewind
-  |   └─ Typesafe API calls using tRPC
-  └─ next.js
-      ├─ Next.js 13
-      ├─ React 18
-      ├─ Tailwind CSS
-      └─ E2E Typesafe API Server & Client
-packages
- ├─ api
- |   └─ tRPC v10 router definition
- ├─ auth
-     └─ authentication using next-auth. **NOTE: Only for Next.js app, not Expo**
- └─ db
-     └─ typesafe db-calls using Kysely
-```
+# Introduction
+HappyKids is a result of the capstone project in our university which general requirement is: create a mobile app to support the parent and teacher in managing kids activities during the day.
+The project's owners are also the 3 contributors of this repository.
 
-## Quick Start
+## Try it now
+Link to .apk file: https://expo.dev/artifacts/eas/2sgsskPDz1dUSpeVwwpi6h.apk
+Test accounts:
+--------
+|
+# Quick Start
 
 To get it running, follow the steps below:
 
-### Setup dependencies
-
 ```
 1. Node version
-v19.6.0
+v19.x.x
 
 2. Install dependencies
 pnpm i
 
-3. Configure environment variables. There is an `.env.example` in the root directory you can use for reference
+3. Configure environment variables. There is an `.env.example` in the root directory you can use for reference. Move it to `/nextjs` as well.
 cp .env.example .env
 
-4. Start Mysql Server
-mysql.server start
+4. Start containers
+docker-compose up
 
 5. Generate Kysely Models from Mysql
 pnpm kysely-codegen
 
-6. Install Android Studio tools [as shown on expo docs](https://docs.expo.dev/workflow/android-studio-emulator/).
-
-7. Run at the project root folder.
+6. Run at the project root folder.
 pnpm dev
 
 (Optional) It might be easier to run each app in separate terminal windows so you get the logs from each app separately
@@ -57,43 +35,41 @@ pnpm --filter expo dev
 pnpm --filter nextjs dev
 ```
 
-### Setup IDE
+# Deployment
 
+## Expo
+
+### Build
 ```
-1. Download Webstorm 2022.3.x
-
-2. Download prettier pluggin for Webstorm
-
-3. Run prettier automatically on save
-https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code
-```
-
-### Make sure that pre-commit hook is running
-
-## Deployment
-
-### Expo
-The target is having a pre-release version, which allow internal users (teammates, instructors) to download from a URL.
-The app shoud allow updating whenever we build new version.
-#### First build 
-*(Note: should run at the first time. Updates should be used for following builds)*
-```
-pnpm install
 cd apps/expo && eas build --profile preview --platform android
 ```
-#### Updates
+
+### Update
 ```
-pnpm install
 eas update:configure --platform android
 ```
-Copy lines of code as the output suggests in to `app.config.ts`. Then run the following command.\
-**Note: The `expo-update` package, which is added during update, should not be committed.
-It will cause stack overflow when buildng the app again**
+
+Copy lines of code as the output suggests in to `app.config.ts`. Then run the following command.
+
 ```
 cd apps/expo && eas update --branch preview --message "Updating the app" --platform android
 ```
 
-### Backend
+## Database
+Database is deployed in docker-compose. The schema SQL script need to be run manually. First, you need to copy mysql scripts to container.
+```
+sudo docker cp mysql happykids_mysql:/
+```
+Go into the docker container, open mysql shell, then paste the script
+to execute.
+```
+sudo docker exec -it happykids_mysql /bin/sh
+mysql -u root --default-character-set=utf8 -p
+source mysql/schema.sql
+source mysql/seed.sql
+```
+
+## Server
 **First remember to create a `.env` file inside `app/nextjs`**\
 A nodejs docker is deployed to expose API for client to call. Nginx should be the web server.
 Should manually install and build nextjs first, then start the service.
@@ -108,18 +84,4 @@ For authentication to work, we need to generate encryption keys:
 cd apps/nextjs/public/storage/secret/ 
 ssh-keygen -t rsa -m PEM -f access.key
 openssl rsa -in access.key -pubout -outform PEM -out access.key.pub
-```
-
-### Database
-Database is deployed in docker-compose. The schema SQL script need to be run manually. First, you need to copy mysql scripts to container.
-```
-sudo docker cp mysql mysql:/
-```
-Go into the docker container, open mysql shell, then paste the script
-to execute.
-```
-sudo docker exec -it mysql /bin/sh
-mysql -u root --default-character-set=utf8 -p
-source mysql/schema.sql
-source mysql/seed.sql
 ```
