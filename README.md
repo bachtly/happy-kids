@@ -3,10 +3,15 @@ HappyKids is a result of the capstone project in our university which general re
 The project's owners are also the 3 contributors of this repository.
 
 ## Try it now
-Link to .apk file: https://expo.dev/artifacts/eas/2sgsskPDz1dUSpeVwwpi6h.apk
-Test accounts:
---------
-|
+Download [this apk file](https://expo.dev/artifacts/eas/2sgsskPDz1dUSpeVwwpi6h.apk) to experiment. In the app, users of different roles could have different views, please use below test accounts to experiment.
+|Role|Username|Password|
+|---|---|---|
+|Teacher|bach_teacher1|password123|
+|Parent|bach_parent1|password123|
+
+## Video demo
+
+
 # Quick Start
 
 To get it running, follow the steps below:
