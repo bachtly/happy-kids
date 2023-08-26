@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { View, TextInput } from "react-native";
 import { useTheme, Button, Divider } from "react-native-paper";
 import MultiImagePicker from "../../../src/components/common/MultiImagePicker";
-import "querystring";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { useRouter } from "expo-router";

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Image, RefreshControl, ScrollView, View } from "react-native";
 import { RadioButton, Text } from "react-native-paper";
-import "querystring";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { useRouter, useSearchParams } from "expo-router";

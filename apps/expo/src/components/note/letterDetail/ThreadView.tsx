@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from "react";
 import { View, ScrollView, RefreshControl } from "react-native";
 import { useTheme } from "react-native-paper";
 import { useNavigation } from "expo-router";
-import "querystring";
 import { api } from "../../../utils/api";
 import { useAuthContext } from "../../../utils/auth-context-provider";
 import { ErrorContext } from "../../../utils/error-context";

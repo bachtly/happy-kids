@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, ScrollView, RefreshControl } from "react-native";
-import "querystring";
 import { api } from "../../../src/utils/api";
 import { useAuthContext } from "../../../src/utils/auth-context-provider";
 import { useRouter, useSearchParams } from "expo-router";
