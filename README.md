@@ -11,7 +11,7 @@ Download [this apk file](https://expo.dev/artifacts/eas/2sgsskPDz1dUSpeVwwpi6h.a
 |Parent|bach_parent1|password123|
 
 ## Video demo
-https://github.com/edwardly1002/happy-kids/blob/467de3678b7b9aed370cacb6b93d162ee6741905/demo/demo.webm
+https://github.com/bachtly/happy-kids/blob/467de3678b7b9aed370cacb6b93d162ee6741905/demo/demo.webm
 
 # Quick Start
 
