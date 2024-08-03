@@ -1,8 +1,9 @@
 # Introduction
-HappyKids is a result of the capstone project in our university which general requirement is: create a mobile app to support the parent and teacher in managing kids activities during the day.
-The project's owners are also the 3 contributors of this repository.
+HappyKids is a mobile app which supports the parents and teachers in managing kids activities during the day.
 
 ## Try it now
+**The backend server is shutdown due to shortage in maintenence cost. Please deploy the system on your device for preview. Thank you**
+
 Download [this apk file](https://expo.dev/artifacts/eas/2sgsskPDz1dUSpeVwwpi6h.apk) to experiment. In the app, users of different roles could have different views, please use below test accounts to experiment.
 |Role|Username|Password|
 |---|---|---|
