@@ -4,6 +4,9 @@ HappyKids is a mobile app which supports the parents and teachers in managing ki
 ## Try it now
 **The backend server is shutdown due to shortage in maintenence cost. Please deploy the system on your device for preview. Thank you**
 
+<img src="https://github.com/user-attachments/assets/c59c5e28-d498-43f7-b6ec-b30f75d4b62c" data-canonical-src="https://github.com/user-attachments/assets/c59c5e28-d498-43f7-b6ec-b30f75d4b62c" width="300"/>
+<img src="https://github.com/user-attachments/assets/4469b42a-0f57-4b4a-a54e-11060c359f2e" data-canonical-src="https://github.com/user-attachments/assets/4469b42a-0f57-4b4a-a54e-11060c359f2e" width="300"/>
+
 Download [this apk file](https://expo.dev/artifacts/eas/2sgsskPDz1dUSpeVwwpi6h.apk) to experiment. In the app, users of different roles could have different views, please use below test accounts to experiment.
 |Role|Username|Password|
 |---|---|---|
@@ -11,7 +14,8 @@ Download [this apk file](https://expo.dev/artifacts/eas/2sgsskPDz1dUSpeVwwpi6h.a
 |Parent|bach_parent1|password123|
 
 ## Video demo
-https://github.com/bachtly/happy-kids/blob/467de3678b7b9aed370cacb6b93d162ee6741905/demo/demo.webm
+Please watch demo videos in folder `demo`
+
 
 # Quick Start
 
