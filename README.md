@@ -45,6 +45,10 @@ pnpm --filter expo dev
 pnpm --filter nextjs dev
 ```
 
+# High-level design
+![architecture](https://github.com/user-attachments/assets/40bbceb2-3356-4ac6-a923-399ae98192b0)
+
+
 # Deployment
 
 ## Expo
