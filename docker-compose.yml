@@ -9,7 +9,7 @@ services:
     command: "pnpm --filter nextjs start"
 
   mysql:
-    image: mysql
+    image: mysql:8.0
     container_name: happykids_mysql
     ports:
       - 3306:3306
