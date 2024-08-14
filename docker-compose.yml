@@ -7,6 +7,8 @@ services:
     ports:
       - 3000:3000
     command: "pnpm --filter nextjs start"
+    links:
+      - "mysql:mysql"
 
   mysql:
     image: mysql:8.0

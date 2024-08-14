@@ -37,7 +37,10 @@ const getBaseUrl = () => {
   // const localhost = Constants.manifest?.debuggerHost?.split(":")[0];
   // if (!localhost)
   //   throw new Error("failed to get localhost, configure it manually");
-  return `38.54.15.251:3000`;
+
+  const url = "http://38.54.15.251/3000";
+  console.log(url);
+  return url;
   // return "https://happykids.cloud:8000";
 };
 
