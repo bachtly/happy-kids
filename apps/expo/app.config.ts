@@ -12,10 +12,6 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
     image: "./assets/images/happy-kids-logo.png",
     resizeMode: "contain"
   },
-  updates: {
-    fallbackToCacheTimeout: 0
-    // url: "https://u.expo.dev/86937d69-86ef-4543-b67f-31a8cfbd0c71"
-  },
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
@@ -29,9 +25,6 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
     package: "com.hcmut.happykids",
     softwareKeyboardLayoutMode: "resize",
     googleServicesFile: "./google-services.json"
-    // runtimeVersion: {
-    //   "policy": "sdkVersion"
-    // }
   },
   extra: {
     eas: {

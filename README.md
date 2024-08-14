@@ -55,6 +55,21 @@ pnpm --filter nextjs dev
 
 ### Build
 ```
+eas update
+```
+Run the update command above then copy the configs in the terminal's output to app.config.ts. The config looks like:
+```
+{
+  "updates": {
+    "url": "https://u.expo.dev/..."
+  },
+  "runtimeVersion": {
+    "policy": "sdkVersion"
+  }
+}
+```
+
+```
 cd apps/expo && eas build --profile preview --platform android
 ```
 
