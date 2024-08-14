@@ -92,11 +92,17 @@ Database is deployed in docker-compose. The schema SQL script need to be run man
 ```
 sudo docker cp mysql happykids_mysql:/
 ```
-Go into the docker container, open mysql shell, then paste the script
+Go into the docker container:
 to execute.
 ```
 sudo docker exec -it happykids_mysql /bin/sh
+```
+Open mysql shell:
+```
 mysql -u root --default-character-set=utf8 -p
+```
+Then, paste these commands for seeding the database.
+```
 source mysql/schema.sql
 source mysql/seed.sql
 ```
