@@ -2,7 +2,7 @@ import { ConfigContext, ExpoConfig } from "@expo/config";
 
 const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
   name: "HappyKids",
-  slug: "mamnon",
+  slug: "mamnon-master",
   scheme: "expo",
   version: "1.0.0",
   orientation: "portrait",
@@ -28,7 +28,7 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
   },
   extra: {
     eas: {
-      projectId: "86937d69-86ef-4543-b67f-31a8cfbd0c71"
+      projectId: "5cbd6873-2611-4681-a1b8-90a2ed47e27e"
     },
     expo: {
       plugins: [
@@ -41,7 +41,13 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
       ]
     }
   },
-  plugins: ["./expo-plugins/with-modify-gradle.js", "expo-build-properties"]
+  plugins: ["./expo-plugins/with-modify-gradle.js", "expo-build-properties"],
+  updates: {
+    url: "https://u.expo.dev/5cbd6873-2611-4681-a1b8-90a2ed47e27e"
+  },
+  runtimeVersion: {
+    policy: "sdkVersion"
+  }
 });
 
 export default defineConfig;

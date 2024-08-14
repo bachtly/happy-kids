@@ -49,9 +49,12 @@ pnpm --filter nextjs dev
 ![architecture](https://github.com/user-attachments/assets/40bbceb2-3356-4ac6-a923-399ae98192b0)
 
 
-# Deployment
+# Build & Deployment
 
 ## Expo
+
+### Setup expo
+Follow the guidance here for expo setup details: https://docs.expo.dev/build/setup/
 
 ### Build
 ```
